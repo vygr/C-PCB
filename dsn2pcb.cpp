@@ -121,7 +121,6 @@ auto read_node_name(std::istream &in)
 
 auto read_string(std::istream &in)
 {
-	auto t = tree{};
 	std::string s;
 	for (;;)
 	{
@@ -131,13 +130,11 @@ auto read_string(std::istream &in)
 		in.get(c);
 		s.push_back(c);
 	}
-	t.m_value = s;
-	return t;
+	return tree{s, {}};
 }
 
 auto read_quoted_string(std::istream &in)
 {
-	auto t = tree{};
 	std::string s;
 	for (;;)
 	{
@@ -147,8 +144,7 @@ auto read_quoted_string(std::istream &in)
 		in.get(c);
 		s.push_back(c);
 	}
-	t.m_value = s;
-	return t;
+	return tree{s, {}};
 }
 
 tree read_tree(std::istream &in)
@@ -203,18 +199,12 @@ const tree *search_tree(const tree &t, const char *s)
 
 void print_tree(const tree &t, int indent)
 {
-	if (t.m_value != "")
+	if (!t.m_value.empty())
 	{
-		for (auto i = 0; i < indent; ++i)
-		{
-			std::cout << "  ";
-		}
+		for (auto i = 0; i < indent; ++i) std::cout << "  ";
 		std::cout << t.m_value << '\n';
 	}
-	for (auto &ct : t.m_branches)
-	{
-		print_tree(ct, indent+1);
-	}
+	for (auto &ct : t.m_branches) print_tree(ct, indent+1);
 }
 
 int main(int argc, char *argv[])
@@ -238,6 +228,8 @@ int main(int argc, char *argv[])
 			else
 			{
 			help:
+				std::cout << "dsn2pcb [switches] [filename]\neg. dsn2pcb -b 6 test1.dsn\n";
+				std::cout << "reads from stdin if no filename.\n";
 				std::cout << "-b: border gap, default 0\n";
 				exit(0);
 			}
@@ -316,7 +308,7 @@ int main(int argc, char *argv[])
 						ss >> the_pin.m_x;
 						ss_reset(ss, image_node->m_branches[4].m_value);
 						ss >> the_pin.m_y;
-						the_pin.m_angle = the_pin.m_angle * (M_PI / 180.0);
+						the_pin.m_angle *= (M_PI / 180.0);
 					}
 					else
 					{
@@ -503,6 +495,7 @@ int main(int argc, char *argv[])
 			}
 		}
 	}
+
 	auto the_tracks = tracks{};
 	for (auto &network_node : network_root->m_branches)
 	{
