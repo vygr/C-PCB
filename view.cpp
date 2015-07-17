@@ -322,7 +322,7 @@ auto draw_layers(const outputs &tracks, int pcb_height, int pcb_depth, float arg
                     if ((s != 0) || (term.m_radius != 0))
                     {
                         draw_filled_polygon(point_2d{0.0, yoffset},
-                            thicken_path_as_tristrip(points, term.m_radius + (track.m_gap * s), 3, 2, 16));
+                            thicken_path_as_tristrip(points, term.m_radius + (term.m_gap * s), 3, 2, 16));
                     }
                     else
                     {
