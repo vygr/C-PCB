@@ -55,7 +55,7 @@ auto read_dimentions(std::istream &in)
 }
 
 //read, (x, y)
-auto read_cord(std::istream &in)
+auto read_point_2d(std::istream &in)
 {
 	if (read_until(in, '(')) exit(1);
 	auto p = point_2d{};
@@ -74,7 +74,7 @@ auto read_shape(std::istream &in)
 	for (;;)
 	{
 		if (in.peek() == ']') break;
-		cords.push_back(read_cord(in));
+		cords.push_back(read_point_2d(in));
 	}
 	if (read_until(in, ']')) exit(1);
 	return cords;

@@ -70,6 +70,7 @@ struct output
 	terminals m_terms;
 	paths m_paths;
 };
+typedef std::vector<output> outputs;
 
 //sortable node
 struct sort_node

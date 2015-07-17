@@ -7,16 +7,17 @@ Build with:
 
 clang++ -O2 --std=c++14 pcb.cpp router.cpp layer.cpp mymath.cpp -opcb
 clang++ -O2 --std=c++14 dsn2pcb.cpp -odsn2pcb
+clang++ -O2 --std=c++14 view.cpp mymath.cpp -oview -lglfw3 -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
 
 Example command lines would be:
 
-./pcb --v 1 netlist.pcb | go run view.go --o 1 --s 7
-./dsn2pcb test1.dsn | ./pcb --v 1 --z 8 --q 10 --r 2 | go run view.go
+./pcb --v 1 netlist.pcb | ./view --o 1 --s 7
+./dsn2pcb test1.dsn | ./pcb --v 1 --z 8 --q 10 --r 2 | ./view
 
 You can drop the output to a file and view it as an animation with:
 
 ./pcb --v 1 netlist.pcb 1 > anim
-go run view.go anim
+./view anim
 
 -h or --help for help on either app.
 
