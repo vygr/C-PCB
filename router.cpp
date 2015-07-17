@@ -595,7 +595,6 @@ std::pair<nodes, bool> net::backtrack_path(const node_set &vis, const node &end_
 		nodes{node{0, 0, -1}, node{0, 0, 1}}};
 	auto visited = vis;
 	auto path = nodes{end_node};
-	auto dv = point_3d{0.0, 0.0, 0.0};
 	for (;;)
 	{
 		auto path_node = path[path.size()-1];
@@ -622,23 +621,7 @@ std::pair<nodes, bool> net::backtrack_path(const node_set &vis, const node &end_
 			//no nearer nodes
 			return std::pair<nodes, bool>(std::move(path), false);
 		}
-		auto next_node = nearer_nodes[0];
-		auto dv2 = norm_3d(m_pcb->grid_to_space_point(path_node));
-		if (visited.find(next_node) == end(visited))
-		{
-			for (auto i = 1; i < nearer_nodes.size(); ++i)
-			{
-				auto node = nearer_nodes[i];
-				auto dv1 = norm_3d(m_pcb->grid_to_space_point(node));
-				if (dv == sub_3d(dv1, dv2))
-				{
-					next_node = node;
-				}
-			}
-		}
-		auto dv1 = norm_3d(m_pcb->grid_to_space_point(next_node));
-		dv = norm_3d(sub_3d(dv1, dv2));
-		path.push_back(next_node);
+		path.push_back(nearer_nodes[0]);
 	}
 }
 
