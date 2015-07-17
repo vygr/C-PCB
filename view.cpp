@@ -239,7 +239,7 @@ auto create_filled_circle(float radius)
 	return &circle_map[radius];
 }
 
-//draw single layer
+//draw layers
 auto draw_layers(const outputs &tracks, int pcb_height, int pcb_depth, float arg_m, float arg_s, float s)
 {
     for (auto depth = pcb_depth - 1; depth > -1; --depth)
@@ -380,7 +380,7 @@ int main(int argc, char *argv[])
 				std::cout << "reads from stdin if no filename.\n";
 				std::cout << "-s:  scale factor, default 9\n";
                 std::cout << "-o:  overlay modes 0..1, default 0\n";
-                std::cout << "-m:  arg_m 0..10, default 2\n";
+                std::cout << "-m:  margin 0..10, default 2\n";
 				exit(0);
 			}
 		}
@@ -471,7 +471,7 @@ int main(int argc, char *argv[])
         }
         if (tracks.empty()) break;
 
-        //scale track acording to window size
+        //scale tracks acording to window size
         auto scale = float(arg_s);
         auto border = float(arg_m * arg_s);
         for (auto &track : tracks)

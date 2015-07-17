@@ -180,12 +180,6 @@ tree read_tree(std::istream &in)
 	return t;
 }
 
-void ss_reset(std::stringstream &ss, std::string s)
-{
-	ss.str(s);
-	ss.clear();
-}
-
 const tree *search_tree(const tree &t, const char *s)
 {
 	if (t.m_value == s) return &t;
@@ -205,6 +199,12 @@ void print_tree(const tree &t, int indent)
 		std::cout << t.m_value << '\n';
 	}
 	for (auto &ct : t.m_branches) print_tree(ct, indent+1);
+}
+
+void ss_reset(std::stringstream &ss, std::string s)
+{
+	ss.str(s);
+	ss.clear();
 }
 
 int main(int argc, char *argv[])

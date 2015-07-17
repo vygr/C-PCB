@@ -1,5 +1,5 @@
-C-PCB
-======
+C-PCB By Chris Hinsley 2015
+===========================
 
 C++14 PCB router and solver.
 
@@ -16,7 +16,7 @@ Example command lines would be:
 
 You can drop the output to a file and view it as an animation with:
 
-./pcb --v 1 netlist.pcb 1 > anim
+./pcb --v 1 netlist.pcb > anim
 ./view anim
 
 -h or --help for help on either app.
