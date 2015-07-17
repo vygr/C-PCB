@@ -239,13 +239,106 @@ auto create_filled_circle(float radius)
 	return &circle_map[radius];
 }
 
+//draw single layer
+auto draw_layers(const outputs &tracks, int pcb_height, int pcb_depth, float arg_m, float arg_s, float s)
+{
+    for (auto depth = pcb_depth - 1; depth > -1; --depth)
+    {
+        //draw track
+        auto yoffset = float((pcb_height + (arg_m * 2)) * arg_s * depth);
+        for (auto &track : tracks)
+        {
+            //draw paths
+            for (auto &path : track.m_paths)
+            {
+                auto start = 0;
+                auto end = 0;
+                for (end = 0; end < path.size(); ++end)
+                {
+                    if (path[start].m_z != path[end].m_z)
+                    {
+                        if (path[start].m_z == float(depth))
+                        {
+                            if ((end - start) > 1)
+                            {
+                                auto points = points_2d{};
+                                points.reserve(end - start);
+                                for (auto i = begin(path) + start; i != begin(path) + end; ++i)
+                                {
+                                    points.push_back(point_2d{i->m_x, i->m_y});
+                                }
+                                draw_filled_polygon(point_2d{0.0, yoffset},
+                                    thicken_path_as_tristrip(points, track.m_radius + (track.m_gap * s), 3, 2, 16));
+                            }
+                        }
+                        start = end;
+                    }
+                }
+                if (path[start].m_z == float(depth))
+                {
+                    if ((end - start) > 1)
+                    {
+                        auto points = points_2d{};
+                        points.reserve(end - start);
+                        for (auto i = begin(path) + start; i != begin(path) + end; ++i)
+                        {
+                            points.push_back(point_2d{i->m_x, i->m_y});
+                        }
+                        draw_filled_polygon(point_2d{0.0, yoffset},
+                            thicken_path_as_tristrip(points, track.m_radius + (track.m_gap * s), 3, 2, 16));
+                    }
+                }
+            }
+        }
+        //draw terminals and vias
+        for (auto &track : tracks)
+        {
+            for (auto &path : track.m_paths)
+            {
+                for (auto i = 0; i < (path.size() - 1); ++i)
+                {
+                    if (path[i].m_z != path[i+1].m_z)
+                    {
+                        draw_filled_polygon(point_2d{path[i].m_x, path[i].m_y + yoffset},
+                            *create_filled_circle(track.m_via + (track.m_gap * s)));
+                    }
+                }
+            }
+            for (auto &term : track.m_terms)
+            {
+                if (term.m_shape.empty())
+                {
+                    draw_filled_polygon(point_2d{term.m_term.m_x, term.m_term.m_y + yoffset},
+                        *create_filled_circle(term.m_radius + (term.m_gap * s)));
+                }
+                else
+                {
+                    auto points = points_2d{};
+                    points.reserve(term.m_shape.size());
+                    for (auto &cord : term.m_shape)
+                    {
+                        points.push_back(point_2d{cord.m_x, cord.m_y});
+                    }
+                    if ((s != 0) || (term.m_radius != 0))
+                    {
+                        draw_filled_polygon(point_2d{0.0, yoffset},
+                            thicken_path_as_tristrip(points, term.m_radius + (track.m_gap * s), 3, 2, 16));
+                    }
+                    else
+                    {
+                        draw_filled_polygon(point_2d{0.0, yoffset}, points);
+                    }
+                }
+            }
+        }
+    }
+}
+
 void ss_reset(std::stringstream &ss, std::string s)
 {
 	ss.str(s);
 	ss.clear();
 }
-
-const int margin = 2;
 
 static void error_callback(int error, const char* description)
 {
@@ -264,7 +357,8 @@ int main(int argc, char *argv[])
 	auto use_file = false;
 	std::ifstream arg_infile;
 	auto arg_s = 9;
-	auto arg_o = 0;
+    auto arg_o = 0;
+    auto arg_m = 2;
 
 	std::stringstream ss;
 	for (auto i = 1; i < argc; ++i)
@@ -277,14 +371,16 @@ int main(int argc, char *argv[])
 			if (++i >= argc) goto help;
 			ss_reset(ss, argv[i]);
 			if (opt == "s") ss >> arg_s;
-			else if (opt == "o") ss >> arg_o;
+            else if (opt == "o") ss >> arg_o;
+            else if (opt == "m") ss >> arg_m;
 			else
 			{
 			help:
 				std::cout << "view [switches] [filename]\neg. view -s 9 -o 1 anim\n";
 				std::cout << "reads from stdin if no filename.\n";
 				std::cout << "-s:  scale factor, default 9\n";
-				std::cout << "-o:  overlay modes 0..1, default 0\n";
+                std::cout << "-o:  overlay modes 0..1, default 0\n";
+                std::cout << "-m:  arg_m 0..10, default 2\n";
 				exit(0);
 			}
 		}
@@ -304,8 +400,8 @@ int main(int argc, char *argv[])
     auto pcb_width = dimensions.m_width;
     auto pcb_height = dimensions.m_height;
     auto pcb_depth = dimensions.m_depth;
-    auto width = (pcb_width + (margin * 2)) * arg_s;
-    auto height = (pcb_height + (margin * 2)) * arg_s;
+    auto width = (pcb_width + (arg_m * 2)) * arg_s;
+    auto height = (pcb_height + (arg_m * 2)) * arg_s;
     if (arg_o == 1) height *= pcb_depth;
 
     //create window
@@ -377,7 +473,7 @@ int main(int argc, char *argv[])
 
         //scale track acording to window size
         auto scale = float(arg_s);
-        auto border = float(margin * arg_s);
+        auto border = float(arg_m * arg_s);
         for (auto &track : tracks)
         {
             track.m_radius *= scale;
@@ -518,178 +614,12 @@ int main(int argc, char *argv[])
         }
         else
         {
-            //draw paths for each layer in white
+            //draw each layer in white
             glUniform4f(vert_color_id, 1.0, 1.0, 1.0, 1.0);
-            for (auto depth = pcb_depth - 1; depth > -1; --depth)
-            {
-                auto yoffset = float((pcb_height + (margin * 2)) * arg_s * depth);
-                for (auto &track : tracks)
-                {
-                    for (auto &path : track.m_paths)
-                    {
-                        auto start = 0;
-                        auto end = 0;
-                        for (end = 0; end < path.size(); ++end)
-                        {
-                            if (path[start].m_z != path[end].m_z)
-                            {
-                                if (path[start].m_z == float(depth))
-                                {
-                                    if ((end - start) > 1)
-                                    {
-                                        auto points = points_2d{};
-                                        points.reserve(end - start);
-                                        for (auto i = begin(path) + start; i != begin(path) + end; ++i)
-                                        {
-                                            points.push_back(point_2d{i->m_x, i->m_y});
-                                        }
-                                        draw_filled_polygon(point_2d{0.0, yoffset},
-                                            thicken_path_as_tristrip(points, track.m_radius + track.m_gap, 3, 2, 16));
-                                    }
-                                }
-                                start = end;
-                            }
-                        }
-                        if (path[start].m_z == float(depth))
-                        {
-                            if ((end - start) > 1)
-                            {
-                                auto points = points_2d{};
-                                points.reserve(end - start);
-                                for (auto i = begin(path) + start; i != begin(path) + end; ++i)
-                                {
-                                    points.push_back(point_2d{i->m_x, i->m_y});
-                                }
-                                draw_filled_polygon(point_2d{0.0, yoffset},
-                                    thicken_path_as_tristrip(points, track.m_radius + track.m_gap, 3, 2, 16));
-                            }
-                        }
-                    }
-                }
-                //draw terminals and vias in white
-                for (auto &track : tracks)
-                {
-                    for (auto &path : track.m_paths)
-                    {
-                        for (auto i = 0; i < (path.size() - 1); ++i)
-                        {
-                            if (path[i].m_z != path[i+1].m_z)
-                            {
-                                draw_filled_polygon(point_2d{path[i].m_x, path[i].m_y + yoffset},
-                                    *create_filled_circle(track.m_via + track.m_gap));
-                            }
-                        }
-                    }
-                    for (auto &term : track.m_terms)
-                    {
-                        if (term.m_shape.empty())
-                        {
-                            draw_filled_polygon(point_2d{term.m_term.m_x, term.m_term.m_y + yoffset},
-                                *create_filled_circle(term.m_radius + term.m_gap));
-                        }
-                        else
-                        {
-                            auto points = points_2d{};
-                            points.reserve(term.m_shape.size());
-                            for (auto &cord : term.m_shape)
-                            {
-                                points.push_back(point_2d{cord.m_x, cord.m_y});
-                            }
-                            draw_filled_polygon(point_2d{0.0, yoffset},
-                                thicken_path_as_tristrip(points, term.m_radius + track.m_gap, 3, 2, 16));
-                        }
-                    }
-                }
-            }
-            //draw paths for each layer in black
+            draw_layers(tracks, pcb_height, pcb_depth, arg_m, arg_s, 1);
+            //draw each layer in black
             glUniform4f(vert_color_id, 0.0, 0.0, 0.0, 1.0);
-            for (auto depth = pcb_depth - 1; depth > -1; --depth)
-            {
-                auto yoffset = float((pcb_height + (margin * 2)) * arg_s * depth);
-                for (auto &track : tracks)
-                {
-                    for (auto &path : track.m_paths)
-                    {
-                        auto start = 0;
-                        auto end = 0;
-                        for (end = 0; end < path.size(); ++end)
-                        {
-                            if (path[start].m_z != path[end].m_z)
-                            {
-                                if (path[start].m_z == float(depth))
-                                {
-                                    if ((end - start) > 1)
-                                    {
-                                        auto points = points_2d{};
-                                        points.reserve(end - start);
-                                        for (auto i = begin(path) + start; i != begin(path) + end; ++i)
-                                        {
-                                            points.push_back(point_2d{i->m_x, i->m_y});
-                                        }
-                                        draw_filled_polygon(point_2d{0.0, yoffset},
-                                            thicken_path_as_tristrip(points, track.m_radius, 3, 2, 16));
-                                    }
-                                }
-                                start = end;
-                            }
-                        }
-                        if (path[start].m_z == float(depth))
-                        {
-                            if ((end - start) > 1)
-                            {
-                                auto points = points_2d{};
-                                points.reserve(end - start);
-                                for (auto i = begin(path) + start; i != begin(path) + end; ++i)
-                                {
-                                    points.push_back(point_2d{i->m_x, i->m_y});
-                                }
-                                draw_filled_polygon(point_2d{0.0, yoffset},
-                                    thicken_path_as_tristrip(points, track.m_radius, 3, 2, 16));
-                            }
-                        }
-                    }
-                }
-                //draw terminals and vias in white
-                for (auto &track : tracks)
-                {
-                    for (auto &path : track.m_paths)
-                    {
-                        for (auto i = 0; i < (path.size() - 1); ++i)
-                        {
-                            if (path[i].m_z != path[i+1].m_z)
-                            {
-                                draw_filled_polygon(point_2d{path[i].m_x, path[i].m_y + yoffset},
-                                    *create_filled_circle(track.m_via));
-                            }
-                        }
-                    }
-                    for (auto &term : track.m_terms)
-                    {
-                        if (term.m_shape.empty())
-                        {
-                            draw_filled_polygon(point_2d{term.m_term.m_x, term.m_term.m_y + yoffset},
-                                *create_filled_circle(term.m_radius));
-                        }
-                        else
-                        {
-                            auto points = points_2d{}; points.reserve(term.m_shape.size());
-                            for (auto &cord : term.m_shape)
-                            {
-                                points.push_back(point_2d{cord.m_x, cord.m_y});
-                            }
-                            if (term.m_radius != 0)
-                            {
-                                draw_filled_polygon(point_2d{0.0, yoffset},
-                                    thicken_path_as_tristrip(points, term.m_radius, 3, 2, 16));
-							}
-                            else
-                            {
-								draw_filled_polygon(point_2d{0.0, yoffset}, points);
-							}
-                        }
-                    }
-                }
-            }
+            draw_layers(tracks, pcb_height, pcb_depth, arg_m, arg_s, 0);
         }
 
         //show window just drawn
