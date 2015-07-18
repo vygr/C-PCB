@@ -587,23 +587,18 @@ nodess net::optimise_paths(const nodess &paths)
 }
 
 //backtrack path from ends to starts
-std::pair<nodes, bool> net::backtrack_path(const node_set &vis, const node &end_node,
+std::pair<nodes, bool> net::backtrack_path(const node_set &visited, const node &end_node,
 	 									float radius, float via, float gap)
 {
 	static auto via_vectors = nodess{
 		nodes{node{0, 0, -1}, node{0, 0, 1}},
 		nodes{node{0, 0, -1}, node{0, 0, 1}}};
-	auto visited = vis;
-	auto path = nodes{end_node};
+	auto path = nodes{};
+	auto path_node = end_node;
 	for (;;)
 	{
-		auto path_node = path[path.size()-1];
-		if (visited.find(path_node) != end(visited))
-		{
-			//found existing track
-			return std::pair<nodes, bool>(std::move(path), true);
-		}
-		auto nearer_nodes = nodes{};
+		path.push_back(path_node);
+		auto nearer_nodes = nodes{}; nearer_nodes.reserve(6);
 		for (auto &node : m_pcb->all_not_shorting(
 			m_pcb->all_nearer_sorted(m_pcb->m_routing_path_vectors, path_node, m_pcb->m_dfunc),
 			path_node, radius, gap))
@@ -616,18 +611,18 @@ std::pair<nodes, bool> net::backtrack_path(const node_set &vis, const node &end_
 		{
 			nearer_nodes.push_back(node);
 		}
-		if (nearer_nodes.empty())
-		{
-			//no nearer nodes
-			return std::pair<nodes, bool>(std::move(path), false);
-		}
-		auto nearer_node = nearer_nodes[0];
+		if (nearer_nodes.empty()) return std::pair<nodes, bool>(nodes{}, false);
 		auto search = std::find_if(begin(nearer_nodes), end(nearer_nodes), [&] (auto &node)
 		{
 			return visited.find(node) != end(visited);
 		});
-		if (search != end(nearer_nodes)) nearer_node = *search;
-		path.push_back(nearer_node);
+		if (search != end(nearer_nodes))
+		{
+			//found existing track
+			path.push_back(*search);
+			return std::pair<nodes, bool>(std::move(path), true);
+		}
+		path_node = nearer_nodes[0];
 	}
 }
 
@@ -644,12 +639,6 @@ bool net::route()
 	auto visited = node_set{};
 	for (auto index = 1; index < m_terminals.size(); ++index)
 	{
-		for (auto z = 0; z < m_pcb->m_depth; ++z)
-		{
-			auto x = int(m_terminals[index-1].m_term.m_x+0.5);
-			auto y = int(m_terminals[index-1].m_term.m_y+0.5);
-			visited.insert(node{x, y, z});
-		}
 		auto ends = nodes{}; ends.reserve(m_pcb->m_depth);
 		for (auto z = 0; z < m_pcb->m_depth; ++z)
 		{
@@ -657,27 +646,36 @@ bool net::route()
 			auto y = int(m_terminals[index].m_term.m_y+0.5);
 			ends.push_back(node{x, y, z});
 		}
+		auto search = std::find_if(begin(ends), end(ends), [&] (auto &node)
+		{
+			return visited.find(node) != end(visited);
+		});
+		if (search != end(ends)) continue;
+		for (auto z = 0; z < m_pcb->m_depth; ++z)
+		{
+			auto x = int(m_terminals[index-1].m_term.m_x+0.5);
+			auto y = int(m_terminals[index-1].m_term.m_y+0.5);
+			visited.insert(node{x, y, z});
+		}
 		m_pcb->mark_distances(m_pcb->m_routing_flood_vectors, m_radius, m_via, m_gap, visited, ends);
-		auto e = sort_nodes{}; e.reserve(ends.size());
+		auto sorted_ends = sort_nodes{}; sorted_ends.reserve(ends.size());
 		for (auto &node : ends)
 		{
-			e.push_back(sort_node{float(m_pcb->get_node(node)), node});
+			sorted_ends.push_back(sort_node{float(m_pcb->get_node(node)), node});
 		}
-		std::sort(begin(e), end(e), [&] (auto &s1, auto &s2)
+		std::sort(begin(sorted_ends), end(sorted_ends), [&] (auto &s1, auto &s2)
 		{
 			return s1.m_mark < s2.m_mark;
 		});
-		auto result = backtrack_path(visited, e[0].m_node, m_radius, m_via, m_gap);
-		auto path = std::move(result.first);
-		auto success = result.second;
+		auto result = backtrack_path(visited, sorted_ends[0].m_node, m_radius, m_via, m_gap);
 		m_pcb->unmark_distances();
-		if (!success)
+		if (!result.second)
 		{
 			remove();
 			return false;
 		}
-		for (auto &node : path) visited.insert(node);
-		m_paths.push_back(std::move(path));
+		for (auto &node : result.first) visited.insert(node);
+		m_paths.push_back(std::move(result.first));
 	}
 	m_paths = optimise_paths(m_paths);
 	add_paths_collision_lines();
