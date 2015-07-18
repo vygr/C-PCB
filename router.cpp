@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <iostream>
 
-const double spacial_cache_resolution = 0.75;
+const double spacial_cache_resolution = 1.0;
 
 extern point_3d norm_3d(const point_3d &p);
 extern point_3d sub_3d(const point_3d &p1, const point_3d &p2);
