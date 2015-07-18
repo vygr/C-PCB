@@ -616,12 +616,18 @@ std::pair<nodes, bool> net::backtrack_path(const node_set &vis, const node &end_
 		{
 			nearer_nodes.push_back(node);
 		}
-		if (nearer_nodes.size() == 0)
+		if (nearer_nodes.empty())
 		{
 			//no nearer nodes
 			return std::pair<nodes, bool>(std::move(path), false);
 		}
-		path.push_back(nearer_nodes[0]);
+		auto nearer_node = nearer_nodes[0];
+		auto search = std::find_if(begin(nearer_nodes), end(nearer_nodes), [&] (auto &node)
+		{
+			return visited.find(node) != end(visited);
+		});
+		if (search != end(nearer_nodes)) nearer_node = *search;
+		path.push_back(nearer_node);
 	}
 }
 
