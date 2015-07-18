@@ -230,10 +230,10 @@ nodes pcb::all_not_marked(const nodess &vec, const node &n)
 	return yield;
 }
 
-//generate all grid points surrounding node, that are nearer the goal node, sorted
-nodes pcb::all_nearer_sorted(const nodess &vec, const node &n, const node &g, dfunc_t dfunc)
+//generate all grid points surrounding node sorted
+nodes pcb::all_nearer_sorted(const nodess &vec, const node &n, dfunc_t dfunc)
 {
-	auto gp = grid_to_space_point(g);
+	auto gp = grid_to_space_point(n);
 	auto distance = float(get_node(n));
 	auto sns = all_marked(vec, n);
 	auto sns_end = std::remove_if(begin(sns), end(sns), [=, &gp] (auto &mn)
@@ -605,13 +605,13 @@ std::pair<nodes, bool> net::backtrack_path(const node_set &vis, const node &end_
 		}
 		auto nearer_nodes = nodes{};
 		for (auto &node : m_pcb->all_not_shorting(
-			m_pcb->all_nearer_sorted(m_pcb->m_routing_path_vectors, path_node, end_node, m_pcb->m_dfunc),
+			m_pcb->all_nearer_sorted(m_pcb->m_routing_path_vectors, path_node, m_pcb->m_dfunc),
 			path_node, radius, gap))
 		{
 			nearer_nodes.push_back(node);
 		}
 		for (auto &node : m_pcb->all_not_shorting(
-			m_pcb->all_nearer_sorted(via_vectors, path_node, end_node, m_pcb->m_dfunc),
+			m_pcb->all_nearer_sorted(via_vectors, path_node, m_pcb->m_dfunc),
 			path_node, via, gap))
 		{
 			nearer_nodes.push_back(node);
