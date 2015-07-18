@@ -1,6 +1,6 @@
 #include "layer.h"
 #include <algorithm>
-#include <math.h>
+#include <iostream>
 
 extern bool collide_thick_lines_2d(const point_2d &tl1_p1, const point_2d &tl1_p2,
 	 						const point_2d &tl2_p1, const point_2d &tl2_p2, float r);
@@ -26,14 +26,18 @@ layer::aabb layer::get_aabb(const line &l)
 	if (x1 > x2) std::swap(x1, x2);
 	if (y1 > y2) std::swap(y1, y2);
 	auto r = l.m_radius + l.m_gap;
-	auto minx = int(floor((x1 - r) * m_scale));
-	auto miny = int(floor((y1 - r) * m_scale));
-	auto maxx = int(ceil((x2 + r) * m_scale));
-	auto maxy = int(ceil((y2 + r) * m_scale));
+	auto minx = int((x1 - r) * m_scale);
+	auto miny = int((y1 - r) * m_scale);
+	auto maxx = int((x2 + r) * m_scale);
+	auto maxy = int((y2 + r) * m_scale);
 	minx = std::max(0, minx);
 	miny = std::max(0, miny);
-	maxx = std::min(m_width, maxx);
-	maxy = std::min(m_height, maxy);
+	maxx = std::max(0, maxx);
+	maxy = std::max(0, maxy);
+	minx = std::min(m_width - 1, minx);
+	maxx = std::min(m_width - 1, maxx);
+	miny = std::min(m_height - 1, miny);
+	maxy = std::min(m_height - 1, maxy);
 	return aabb{minx, miny, maxx, maxy};
 }
 
@@ -41,9 +45,9 @@ void layer::add_line(const line &l)
 {
 	auto bb = get_aabb(l);
 	auto r = std::make_shared<record>(0, l);
-	for (auto y = bb.m_miny; y < bb.m_maxy; ++y)
+	for (auto y = bb.m_miny; y <= bb.m_maxy; ++y)
 	{
-		for (auto x = bb.m_minx; x < bb.m_maxx; ++x)
+		for (auto x = bb.m_minx; x <= bb.m_maxx; ++x)
 		{
 			auto b = &m_buckets[y*m_width + x];
 			auto found = std::find_if(b->begin(), b->end(), [&] (auto &e)
@@ -58,9 +62,9 @@ void layer::add_line(const line &l)
 void layer::sub_line(const line &l)
 {
 	auto bb = get_aabb(l);
-	for (auto y = bb.m_miny; y < bb.m_maxy; ++y)
+	for (auto y = bb.m_miny; y <= bb.m_maxy; ++y)
 	{
-		for (auto x = bb.m_minx; x < bb.m_maxx; ++x)
+		for (auto x = bb.m_minx; x <= bb.m_maxx; ++x)
 		{
 			auto b = &m_buckets[y*m_width + x];
 			b->erase(std::remove_if(b->begin(), b->end(), [&] (auto &e)
@@ -75,9 +79,9 @@ bool layer::hit_line(const line &l)
 {
 	m_test += 1;
 	auto bb = get_aabb(l);
-	for (auto y = bb.m_miny; y < bb.m_maxy; ++y)
+	for (auto y = bb.m_miny; y <= bb.m_maxy; ++y)
 	{
-		for (auto x = bb.m_minx; x < bb.m_maxx; ++x)
+		for (auto x = bb.m_minx; x <= bb.m_maxx; ++x)
 		{
 			for (auto &record : m_buckets[y*m_width+x])
 			{
