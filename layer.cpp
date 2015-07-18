@@ -88,14 +88,8 @@ bool layer::hit_line(const line &l)
 				if (record->m_id == m_test) continue;
 				record->m_id = m_test;
 				auto r = l.m_radius + record->m_line.m_radius;
-				if (l.m_gap >= record->m_line.m_gap)
-				{
-					r += l.m_gap;
-				}
-				else
-				{
-					r += record->m_line.m_gap;
-				}
+				if (l.m_gap >= record->m_line.m_gap) r += l.m_gap;
+				else r += record->m_line.m_gap;
 				if (collide_thick_lines_2d(l.m_p1, l.m_p2, record->m_line.m_p1, record->m_line.m_p2, r)) return true;
 			}
 		}
@@ -108,9 +102,7 @@ layers::layers(const dims &dims, float s)
 {
 	m_layers.reserve(m_depth);
 	for (auto z = 0; z < m_depth; ++z)
-	{
 		m_layers.push_back(std::make_shared<layer>(layer::dims{dims.m_width, dims.m_height}, s));
-	}
 }
 
 layers::~layers()

@@ -262,10 +262,11 @@ int main(int argc, char *argv[])
 	if (best_cost != 1000000000)
 	{
 		best_pcb.print_netlist();
+		best_pcb.print_stats();
 	}
 	else
 	{
-		std::cout << "[]";
+		std::cout << "[]" << std::endl;
 	}
 	return 0;
 }

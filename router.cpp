@@ -24,7 +24,7 @@ pcb::pcb(const dims &dims, const nodess &rfvs, const nodess &rpvs,
 	, m_resolution(res)
 	, m_verbosity(verb)
 	, m_quantization(quant * res)
-	, m_viascost(viascost)
+	, m_viascost(viascost * res)
 	, m_layers(layers(layers::dims{static_cast<int>(dims.m_width * spacial_cache_resolution),
 		 							static_cast<int>(dims.m_height * spacial_cache_resolution),
 									dims.m_depth}, spacial_cache_resolution/res))
@@ -61,10 +61,7 @@ bool pcb::route(float timeout)
 	auto start_time = std::chrono::high_resolution_clock::now();
 	while (index < m_netlist.size())
 	{
-		if (m_netlist[index].route())
-		{
-			index++;
-		}
+		if (m_netlist[index].route()) index++;
 		else
 		{
 			if (index == 0)
@@ -90,10 +87,7 @@ bool pcb::route(float timeout)
 					}
 					hoisted_nets.erase(&m_netlist[pos]);
 				}
-				else
-				{
-					hoisted_nets.insert(&m_netlist[pos]);
-				}
+				else hoisted_nets.insert(&m_netlist[pos]);
 				while (index > pos)
 				{
 					m_netlist[index].remove();
@@ -128,14 +122,14 @@ void pcb::increase_quantization()
 void pcb::print_pcb()
 {
 	auto scale = 1.0 / m_resolution;
-	std::cout << '[' << m_width*scale << ',' << m_height*scale << ',' << m_depth << ']' << std::flush;
+	std::cout << '[' << m_width*scale << ',' << m_height*scale << ',' << m_depth << ']' << std::endl;
 }
 
 //output netlist and paths of board for viewer app
 void pcb::print_netlist()
 {
 	for (auto &net : m_netlist) net.print_net();
-	std::cout << "[]";
+	std::cout << "[]" << std::endl;
 }
 
 //output stats to screen
@@ -292,28 +286,17 @@ void pcb::mark_distances(const nodess &vec, float radius, float via, float gap,
 		if (flag) break;
 		auto new_nodes = node_set{};
 		for (auto &node : nodes)
-		{
 			for (auto &new_node : all_not_shorting(all_not_marked(vec, node), node, radius, gap))
-			{
 				new_nodes.insert(new_node);
-			}
-		}
 		auto new_vias_nodes = node_set{};
 		for (auto &node : nodes)
-		{
-			for (auto &new_vias_node : all_not_shorting(all_not_marked(via_vectors, node), node, via, gap))
-			{
-				new_vias_nodes.insert(new_vias_node);
-			}
-		}
-		if (new_vias_nodes.size() > 0) vias_nodes[distance+m_viascost] = std::move(new_vias_nodes);
+			for (auto &new_node : all_not_shorting(all_not_marked(via_vectors, node), node, via, gap))
+				new_vias_nodes.insert(new_node);
+		if (!new_vias_nodes.empty()) vias_nodes[distance+m_viascost] = std::move(new_vias_nodes);
 		auto delay_nodes = vias_nodes.find(distance);
 		if (delay_nodes != end(vias_nodes))
 		{
-			for (auto &vias_node : delay_nodes->second)
-			{
-				if (get_node(vias_node) == 0) new_nodes.insert(vias_node);
-			}
+			for (auto &node : delay_nodes->second) if (get_node(node) == 0) new_nodes.insert(node);
 			vias_nodes.erase(delay_nodes);
 		}
 		nodes = std::move(new_nodes);
@@ -373,10 +356,7 @@ int pcb::hoist_net(int n)
 	auto i = 0;
 	if (n != 0)
 	{
-		for (i = n; i >= 0; --i)
-		{
-			if (m_netlist[i].m_area < m_netlist[n].m_area) break;
-		}
+		for (i = n; i >= 0; --i) if (m_netlist[i].m_area < m_netlist[n].m_area) break;
 		i++;
 		if (n != i)
 		{
@@ -453,10 +433,8 @@ void net::add_terminal_collision_lines()
 		auto x = node.m_term.m_x;
 		auto y = node.m_term.m_y;
 		auto shape = node.m_shape;
-		if (shape.size() == 0)
-		{
+		if (shape.empty())
 			m_pcb->m_layers.add_line(point_3d{x, y, 0}, point_3d{x, y, float(m_pcb->m_depth - 1)}, r, g);
-		}
 		else
 		{
 			for (auto z = 0; z < m_pcb->m_depth; ++z)
@@ -483,10 +461,8 @@ void net::sub_terminal_collision_lines()
 		auto x = node.m_term.m_x;
 		auto y = node.m_term.m_y;
 		auto shape = node.m_shape;
-		if (shape.size() == 0)
-		{
+		if (shape.empty())
 			m_pcb->m_layers.sub_line(point_3d{x, y, 0}, point_3d{x, y, float(m_pcb->m_depth - 1)}, r, g);
-		}
 		else
 		{
 			for (auto z = 0; z < m_pcb->m_depth; ++z)
@@ -513,16 +489,8 @@ void net::add_paths_collision_lines()
 		{
 			auto p0 = p1;
 			p1 = m_pcb->grid_to_space_point(path[i]);
-			if (path[i-1].m_z != path[i].m_z)
-			{
-				//via direction
-				m_pcb->m_layers.add_line(p0, p1, m_via, m_gap);
-			}
-			else
-			{
-				//not via direction
-				m_pcb->m_layers.add_line(p0, p1, m_radius, m_gap);
-			}
+			if (path[i-1].m_z != path[i].m_z) m_pcb->m_layers.add_line(p0, p1, m_via, m_gap);
+			else m_pcb->m_layers.add_line(p0, p1, m_radius, m_gap);
 		}
 	}
 }
@@ -537,16 +505,8 @@ void net::sub_paths_collision_lines()
 		{
 			auto p0 = p1;
 			p1 = m_pcb->grid_to_space_point(path[i]);
-			if (path[i-1].m_z != path[i].m_z)
-			{
-				//via direction
-				m_pcb->m_layers.sub_line(p0, p1, m_via, m_gap);
-			}
-			else
-			{
-				//not via direction
-				m_pcb->m_layers.sub_line(p0, p1, m_radius, m_gap);
-			}
+			if (path[i-1].m_z != path[i].m_z) m_pcb->m_layers.sub_line(p0, p1, m_via, m_gap);
+			else m_pcb->m_layers.sub_line(p0, p1, m_radius, m_gap);
 		}
 	}
 }
@@ -629,11 +589,8 @@ std::pair<nodes, bool> net::backtrack_path(const node_set &visited, const node &
 //attempt to route this net on the current boards state
 bool net::route()
 {
-	if (m_radius == 0.0)
-	{
-		//unused terminals track !
-		return true;
-	}
+	//check for unused terminals track
+	if (m_radius == 0.0) return true;
 	m_paths = nodess{};
 	sub_terminal_collision_lines();
 	auto visited = node_set{};
@@ -659,10 +616,7 @@ bool net::route()
 		}
 		m_pcb->mark_distances(m_pcb->m_routing_flood_vectors, m_radius, m_via, m_gap, visited, ends);
 		auto sorted_ends = sort_nodes{}; sorted_ends.reserve(ends.size());
-		for (auto &node : ends)
-		{
-			sorted_ends.push_back(sort_node{float(m_pcb->get_node(node)), node});
-		}
+		for (auto &node : ends) sorted_ends.push_back(sort_node{float(m_pcb->get_node(node)), node});
 		std::sort(begin(sorted_ends), end(sorted_ends), [&] (auto &s1, auto &s2)
 		{
 			return s1.m_mark < s2.m_mark;
