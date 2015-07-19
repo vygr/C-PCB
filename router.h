@@ -137,8 +137,8 @@ public:
 	void print_netlist();
 	void print_stats();
 	point_3d grid_to_space_point(const node &n);
-	void all_not_shorting(nodes &yield, const nodes &gather, const node &n, float radius, float gap);
-	void all_nearer_sorted(nodes &yield, sort_nodes &marked_nodes, const nodess &vec, const node &n, dfunc_t dfunc);
+	nodes &all_not_shorting(const nodes &gather, const node &n, float radius, float gap);
+	nodes &all_nearer_sorted(const nodess &vec, const node &n, dfunc_t dfunc);
 	void mark_distances(const nodess &vec, float radius, float via, float gap,
 							const node_set &starts, const nodes &ends);
 	void unmark_distances();
@@ -154,8 +154,8 @@ public:
 
 private:
 	void set_node(const node &n, int value);
-	void all_marked(sort_nodes &yield, const nodess &vec, const node &n);
-	void all_not_marked(nodes &yield, const nodess &vec, const node &n);
+	sort_nodes &all_marked(const nodess &vec, const node &n);
+	nodes &all_not_marked(const nodess &vec, const node &n);
 	void reset_areas();
 	void shuffle_netlist();
 	int hoist_net(int n);
