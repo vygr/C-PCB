@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <iostream>
 
-const double spacial_cache_resolution = 0.75;
+const double spacial_hash_res = 0.75;
 
 extern point_3d norm_3d(const point_3d &p);
 extern point_3d sub_3d(const point_3d &p1, const point_3d &p2);
@@ -25,9 +25,9 @@ pcb::pcb(const dims &dims, const nodess &rfvs, const nodess &rpvs,
 	, m_verbosity(verb)
 	, m_quantization(quant * res)
 	, m_viascost(viascost * res)
-	, m_layers(layers(layers::dims{static_cast<int>(dims.m_width * spacial_cache_resolution),
-		 							static_cast<int>(dims.m_height * spacial_cache_resolution),
-									dims.m_depth}, spacial_cache_resolution/res))
+	, m_layers(layers(layers::dims{static_cast<int>(dims.m_width * spacial_hash_res),
+		 							static_cast<int>(dims.m_height * spacial_hash_res),
+									dims.m_depth}, spacial_hash_res/res))
 {
 	m_width *= res;
 	m_height *= res;

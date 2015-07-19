@@ -49,12 +49,7 @@ void layer::add_line(const line &l)
 	{
 		for (auto x = bb.m_minx; x <= bb.m_maxx; ++x)
 		{
-			auto b = &m_buckets[y*m_width + x];
-			auto found = std::find_if(b->begin(), b->end(), [&] (auto &e)
-			{
-				return e->m_line == l;
-			});
-			if (found == b->end()) b->push_back(r);
+			m_buckets[y*m_width + x].push_back(r);
 		}
 	}
 }
@@ -67,10 +62,11 @@ void layer::sub_line(const line &l)
 		for (auto x = bb.m_minx; x <= bb.m_maxx; ++x)
 		{
 			auto b = &m_buckets[y*m_width + x];
-			b->erase(std::remove_if(b->begin(), b->end(), [&] (auto &e)
+			auto itr = std::find_if(b->begin(), b->end(), [&] (auto &e)
 			{
 				return e->m_line == l;
-			}), b->end());
+			});
+			if (itr != b->end()) b->erase(itr);
 		}
 	}
 }
@@ -87,10 +83,8 @@ bool layer::hit_line(const line &l)
 			{
 				if (record->m_id == m_test) continue;
 				record->m_id = m_test;
-				auto r = l.m_radius + record->m_line.m_radius;
-				if (l.m_gap >= record->m_line.m_gap) r += l.m_gap;
-				else r += record->m_line.m_gap;
-				if (collide_thick_lines_2d(l.m_p1, l.m_p2, record->m_line.m_p1, record->m_line.m_p2, r)) return true;
+				if (collide_thick_lines_2d(l.m_p1, l.m_p2, record->m_line.m_p1, record->m_line.m_p2,
+					 l.m_radius + record->m_line.m_radius + std::max(l.m_gap, record->m_line.m_gap))) return true;
 			}
 		}
 	}
