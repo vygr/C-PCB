@@ -228,18 +228,18 @@ void pcb::all_nearer_sorted(nodes &yield, sort_nodes &marked_nodes, const nodess
 	auto gp = grid_to_space_point(n);
 	auto distance = float(get_node(n));
 	all_marked(marked_nodes, vec, n);
-	auto sns_end = std::remove_if(begin(marked_nodes), end(marked_nodes), [=, &gp] (auto &mn)
+	auto marked_nodes_end = std::remove_if(begin(marked_nodes), end(marked_nodes), [=, &gp] (auto &mn)
 	{
 		if ((distance - mn.m_mark) <= 0) return true;
 		mn.m_mark = dfunc(grid_to_space_point(mn.m_node), gp);
 		return false;
 	});
-	std::sort(begin(marked_nodes), sns_end, [&] (auto &s1, auto &s2)
+	std::sort(begin(marked_nodes), marked_nodes_end, [&] (auto &s1, auto &s2)
 	{
 		return s1.m_mark < s2.m_mark;
 	});
 	yield.clear();
-	std::for_each(begin(marked_nodes), sns_end, [&] (auto &sn)
+	std::for_each(begin(marked_nodes), marked_nodes_end, [&] (auto &sn)
 	{
 		yield.push_back(sn.m_node);
 	});
@@ -269,19 +269,14 @@ void pcb::mark_distances(const nodess &vec, float radius, float via, float gap,
 	auto vias_nodes = std::map<int, node_set>{};
 	auto not_marked_nodes = nodes{};
 	auto not_shorting_nodes = nodes{};
-	while ((frontier.size() > 0) || (vias_nodes.size() > 0))
+	while (!frontier.empty() || !vias_nodes.empty())
 	{
 		for (auto &node : frontier) set_node(node, distance);
-		auto flag = true;
-		for (auto &node : ends)
+		auto itr = std::find_if(begin(ends), end(ends), [&] (auto &node)
 		{
-			if (get_node(node) == 0)
-			{
-				flag = false;
-				break;
-			}
-		}
-		if (flag) break;
+			return (get_node(node) == 0);
+		});
+		if (itr == end(ends)) break;
 		auto new_nodes = node_set{};
 		for (auto &node : frontier)
 		{
