@@ -1,3 +1,4 @@
+#define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
 #include "router.h"
 #include "GLFW/glfw3.h"
 #include <OpenGL/gl3.h>
@@ -253,7 +254,7 @@ auto draw_layers(const outputs &tracks, int pcb_height, int pcb_depth, float arg
             {
                 auto start = 0;
                 auto end = 0;
-                for (end = 0; end < path.size(); ++end)
+                for (end = 0; end < static_cast<int>(path.size()); ++end)
                 {
                     if (path[start].m_z != path[end].m_z)
                     {
@@ -295,7 +296,7 @@ auto draw_layers(const outputs &tracks, int pcb_height, int pcb_depth, float arg
         {
             for (auto &path : track.m_paths)
             {
-                for (auto i = 0; i < (path.size() - 1); ++i)
+                for (auto i = 0; i < (static_cast<int>(path.size()) - 1); ++i)
                 {
                     if (path[i].m_z != path[i+1].m_z)
                     {
@@ -340,12 +341,12 @@ void ss_reset(std::stringstream &ss, std::string s)
 	ss.clear();
 }
 
-static void error_callback(int error, const char* description)
+static void error_callback(int, const char* description)
 {
     std::cerr << description;
 }
 
-static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+static void key_callback(GLFWwindow* window, int key, int, int action, int)
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GL_TRUE);
@@ -531,7 +532,7 @@ int main(int argc, char *argv[])
                     {
                         auto start = 0;
                         auto end = 0;
-                        for (end = 0; end < path.size(); ++end)
+                        for (end = 0; end < static_cast<int>(path.size()); ++end)
                         {
                             if (path[start].m_z != path[end].m_z)
                             {
@@ -575,7 +576,7 @@ int main(int argc, char *argv[])
             {
                 for (auto &path : track.m_paths)
                 {
-                    for (auto i = 0; i < (path.size() - 1); ++i)
+                    for (auto i = 0; i < (static_cast<int>(path.size()) - 1); ++i)
                     {
                         if (path[i].m_z != path[i+1].m_z)
                         {

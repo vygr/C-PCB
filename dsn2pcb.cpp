@@ -540,21 +540,21 @@ int main(int argc, char *argv[])
 	for (auto &track : the_tracks)
 	{
 		std::cout << "[" << track.m_radius << "," << track.m_via << "," << track.m_gap << ",[";
-		for (auto i = 0; i < track.m_terms.size(); ++i)
+		for (auto i = 0; i < static_cast<int>(track.m_terms.size()); ++i)
 		{
 			auto term = track.m_terms[i];
 			std::cout << "(" << term.m_radius << "," << term.m_gap
 			 			<< ",(" << term.m_term.m_x-float(minx-border)
 						<< "," << term.m_term.m_y-float(miny-border)
 						<< "," << term.m_term.m_z << "),[";
-			for (auto j = 0; j < term.m_shape.size(); ++j)
+			for (auto j = 0; j < static_cast<int>(term.m_shape.size()); ++j)
 			{
 				auto cord = term.m_shape[j];
 				std::cout << "(" << cord.m_x << "," << cord.m_y << ")";
-				if (j != (term.m_shape.size() - 1)) std::cout << ",";
+				if (j != (static_cast<int>(term.m_shape.size()) - 1)) std::cout << ",";
 			}
 			std::cout << "])";
-			if (i != (track.m_terms.size() - 1)) std::cout << ",";
+			if (i != (static_cast<int>(track.m_terms.size()) - 1)) std::cout << ",";
 		}
 		std::cout << "]]\n";
 	}

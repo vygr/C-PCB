@@ -319,7 +319,7 @@ auto thicken_path_as_lines(const points_2d &path, float radius, int capstyle, in
 				}
 			}
 		}
-		while ((index != -1) && (index != path.size()))
+		while ((index != -1) && (index != static_cast<int>(path.size())))
 		{
 			auto p1 = p2;
 			auto l1_v = l2_v;
@@ -441,7 +441,7 @@ auto thicken_path_as_tristrip(const points_2d &path, float radius, int capstyle,
 				}
 			}
 		}
-		while ((index != -1) && (index != path.size()))
+		while ((index != -1) && (index != static_cast<int>(path.size())))
 		{
 			auto p1 = p2;
 			auto l1_v = l2_v;

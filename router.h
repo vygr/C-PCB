@@ -13,7 +13,7 @@ class net;
 struct terminal
 {
 	bool operator==(const terminal &t) const {
-		return std::tie(t.m_radius, t.m_gap, t.m_term, t.m_shape) == std::tie(m_radius, m_gap, m_term, m_shape); };
+		return std::tie(t.m_radius, t.m_gap, t.m_term, t.m_shape) == std::tie(m_radius, m_gap, m_term, m_shape); }
 	float m_radius;
 	float m_gap;
 	point_3d m_term;
@@ -25,9 +25,9 @@ typedef std::vector<terminal> terminals;
 struct node
 {
 	bool operator<(const node &n) const {
-		return std::tie(n.m_x, n.m_y, n.m_z) < std::tie(m_x, m_y, m_z); };
+		return std::tie(n.m_x, n.m_y, n.m_z) < std::tie(m_x, m_y, m_z); }
 	bool operator==(const node &n) const {
-		return std::tie(n.m_x, n.m_y, n.m_z) == std::tie(m_x, m_y, m_z); };
+		return std::tie(n.m_x, n.m_y, n.m_z) == std::tie(m_x, m_y, m_z); }
 	int m_x;
 	int m_y;
 	int m_z;

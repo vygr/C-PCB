@@ -19,7 +19,7 @@ public:
 		bool operator==(const line &l) const
 		{
 			return std::tie(l.m_p1, l.m_p2, l.m_radius, l.m_gap) == std::tie(m_p1, m_p2, m_radius, m_gap);
-		};
+		}
 		point_2d m_p1;
 		point_2d m_p2;
 		float m_radius;
@@ -28,7 +28,7 @@ public:
 
 	struct record
 	{
-		record(int id, const line &l) : m_id(id), m_line(l) {};
+		record(int id, const line &l) : m_id(id), m_line(l) {}
 		int m_id;
 		line m_line;
 	};

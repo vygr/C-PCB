@@ -473,7 +473,7 @@ void net::sub_terminal_collision_lines()
 			for (auto z = 0; z < m_pcb->m_depth; ++z)
 			{
 				auto p1 = point_3d{x + shape[0].m_x, y + shape[0].m_y, float(z)};
-				for (auto i = 1; i < shape.size(); ++i)
+				for (auto i = 1; i < static_cast<int>(shape.size()); ++i)
 				{
 					auto p0 = p1;
 					p1 = point_3d{x + shape[i].m_x, y + shape[i].m_y, float(z)};
@@ -490,7 +490,7 @@ void net::add_paths_collision_lines()
 	for (auto &path : m_paths)
 	{
 		auto p1 = m_pcb->grid_to_space_point(path[0]);
-		for (auto i = 1; i < path.size(); ++i)
+		for (auto i = 1; i < static_cast<int>(path.size()); ++i)
 		{
 			auto p0 = p1;
 			p1 = m_pcb->grid_to_space_point(path[i]);
@@ -600,7 +600,7 @@ bool net::route()
 	m_paths = nodess{};
 	sub_terminal_collision_lines();
 	auto visited = node_set{};
-	for (auto index = 1; index < m_terminals.size(); ++index)
+	for (auto index = 1; index < static_cast<int>(m_terminals.size()); ++index)
 	{
 		auto ends = nodes{}; ends.reserve(m_pcb->m_depth);
 		for (auto z = 0; z < m_pcb->m_depth; ++z)
@@ -648,34 +648,34 @@ void net::print_net()
 {
 	auto scale = 1.0 / m_pcb->m_resolution;
 	std::cout << "[" << m_radius*scale << "," << m_via*scale << "," << m_gap*scale << ",[";
-	for (auto i = 0; i < m_terminals.size(); ++i)
+	for (auto i = 0; i < static_cast<int>(m_terminals.size()); ++i)
 	{
 		auto t = m_terminals[i];
 		std::cout << "(" << t.m_radius*scale << "," << t.m_gap*scale << ",("
 		 	<< t.m_term.m_x*scale << "," << t.m_term.m_y*scale << "," << t.m_term.m_z << "),[";
-		for (auto j = 0; j < t.m_shape.size(); ++j)
+		for (auto j = 0; j < static_cast<int>(t.m_shape.size()); ++j)
 		{
 			auto c = t.m_shape[j];
 			std::cout << "(" << c.m_x*scale << "," << c.m_y*scale << ")";
-			if (j != (t.m_shape.size() - 1)) std::cout << ",";
+			if (j != (static_cast<int>(t.m_shape.size()) - 1)) std::cout << ",";
 		}
 		std::cout << "])";
-		if (i != (m_terminals.size()) - 1) std::cout << ",";
+		if (i != (static_cast<int>(m_terminals.size())) - 1) std::cout << ",";
 	}
 	std::cout << "],[";
-	for (auto i = 0; i < m_paths.size(); ++i)
+	for (auto i = 0; i < static_cast<int>(m_paths.size()); ++i)
 	{
 		auto path = m_paths[i];
 		std::cout << "[";
-		for (auto j = 0; j < path.size(); ++j)
+		for (auto j = 0; j < static_cast<int>(path.size()); ++j)
 		{
 			auto p = path[j];
 			auto sp = m_pcb->grid_to_space_point(p);
 			std::cout << "(" << sp.m_x*scale << "," << sp.m_y*scale << "," << sp.m_z << ")";
-			if (j != (path.size() - 1)) std::cout << ",";
+			if (j != (static_cast<int>(path.size()) - 1)) std::cout << ",";
 		}
 		std::cout << "]";
-		if (i != (m_paths.size()) - 1) std::cout << ",";
+		if (i != (static_cast<int>(m_paths.size())) - 1) std::cout << ",";
 	}
 	std::cout << "]]";
 	return;
