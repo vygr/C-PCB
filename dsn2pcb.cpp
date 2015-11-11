@@ -355,12 +355,18 @@ int main(int argc, char *argv[])
 						ss >> x2;
 						ss_reset(ss, padstack_node->m_branches[0].m_branches[5].m_value);
 						ss >> y2;
-						x1 /= 1000.0;
-						y1 /= -1000.0;
-						x2 /= 1000.0;
-						y2 /= -1000.0;
-						points.push_back(point_2d{x1, y1});
-						points.push_back(point_2d{x2, y2});
+						if (x1 != 0.0
+							|| x2 != 0.0
+							|| y1 != 0.0
+							|| y2 != 0.0)
+						{
+							x1 /= 1000.0;
+							y1 /= -1000.0;
+							x2 /= 1000.0;
+							y2 /= -1000.0;
+							points.push_back(point_2d{x1, y1});
+							points.push_back(point_2d{x2, y2});
+						}
 					}
 					if (library_node.m_branches[1].m_branches[0].m_value == "rect")
 					{
@@ -414,7 +420,7 @@ int main(int argc, char *argv[])
 					the_instance.m_side = component_node->m_branches[3].m_value;
 					ss_reset(ss, component_node->m_branches[4].m_value);
 					ss >> the_instance.m_angle;
-					the_instance.m_angle *= (M_PI / 180.0);
+					the_instance.m_angle *= -(M_PI / 180.0);
 					the_instance.m_x /= 1000.0;
 					the_instance.m_y /= -1000.0;
 					instance_map[instance_name] = the_instance;
