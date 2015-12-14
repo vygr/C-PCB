@@ -351,7 +351,7 @@ void pcb::reset_areas()
 //shuffle order of netlist
 void pcb::shuffle_netlist()
 {
-    std::shuffle(begin(m_netlist), end(m_netlist), rand_gen);
+	std::shuffle(begin(m_netlist), end(m_netlist), rand_gen);
 	for (auto &net : m_netlist) net.shuffle_topology();
 }
 
@@ -425,7 +425,7 @@ net::net(const terminals &terms, float radius, float via, float gap, pcb *pcb)
 //randomize order of terminals
 void net::shuffle_topology()
 {
-    std::shuffle(begin(m_terminals), end(m_terminals), rand_gen);
+	std::shuffle(begin(m_terminals), end(m_terminals), rand_gen);
 }
 
 //add terminal entries to spacial cache
