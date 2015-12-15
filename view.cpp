@@ -1,6 +1,9 @@
 #define GLFW_INCLUDE_GLCOREARB
-#include "router.h"
+#ifdef __linux__
+	#include "GL/glew.h"
+#endif
 #include "GLFW/glfw3.h"
+#include "router.h"
 #include <limits>
 #include <iostream>
 #include <fstream>
