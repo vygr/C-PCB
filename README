@@ -7,7 +7,14 @@ Build with:
 
 clang++ -O2 --std=c++14 pcb.cpp router.cpp layer.cpp mymath.cpp -opcb
 clang++ -O2 --std=c++14 dsn2pcb.cpp -odsn2pcb
+
+Mac viewer:
+
 clang++ -O2 --std=c++14 view.cpp mymath.cpp -oview -lglfw3 -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
+
+Linux viewer:
+
+clang++ -O2 --std=c++14 view.cpp mymath.cpp -oview -lglfw3
 
 Example command lines would be:
 
