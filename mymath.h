@@ -2,6 +2,7 @@
 #define MYMATH_H
 
 #include <vector>
+#include <tuple>
 
 //public math structures
 
