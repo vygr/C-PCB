@@ -677,6 +677,6 @@ void net::print_net()
 		std::cout << "]";
 		if (i != (static_cast<int>(m_paths.size())) - 1) std::cout << ",";
 	}
-	std::cout << "]]";
+	std::cout << "]]\n";
 	return;
 }
