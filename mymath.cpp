@@ -114,6 +114,11 @@ auto dot_2d(const point_2d &p1, const point_2d &p2)
 	return p1.m_x * p2.m_x + p1.m_y * p2.m_y;
 }
 
+auto det_2d(const point_2d &p1, const point_2d &p2)
+{
+	return p1.m_x * p2.m_y - p1.m_y * p2.m_x;
+}
+
 auto dot_3d(const point_3d &p1, const point_3d &p2)
 {
 	return p1.m_x * p2.m_x + p1.m_y * p2.m_y + p1.m_z * p2.m_z;
@@ -178,32 +183,22 @@ auto distance_squared_to_line_2d(const point_2d &p, const point_2d &p1, const po
 
 auto collide_lines_2d(const point_2d &l1_p1, const point_2d &l1_p2, const point_2d &l2_p1, const point_2d &l2_p2)
 {
-	auto ax = l1_p2.m_x - l1_p1.m_x;
-	auto ay = l1_p2.m_y - l1_p1.m_y;
-	auto bx = l2_p1.m_x - l2_p2.m_x;
-	auto by = l2_p1.m_y - l2_p2.m_y;
-	auto cx = l1_p1.m_x - l2_p1.m_x;
-	auto cy = l1_p1.m_y - l2_p1.m_y;
-	auto an = by*cx - bx*cy;
-	auto ad = ay*bx - ax*by;
-	auto bn = ax*cy - ay*cx;
-	auto bd = ay*bx - ax*by;
-	if ((ad == 0.0) || (bd == 0.0)) return false;
-	if (ad > 0.0)
+	auto av = sub_2d(l1_p2, l1_p1);
+	auto bv = sub_2d(l2_p1, l2_p2);
+	auto cv = sub_2d(l1_p1, l2_p1);
+	auto dbca = det_2d(av, bv);
+	auto da2b = det_2d(bv, cv);
+	auto db2a = det_2d(av, cv);
+	if (dbca == 0.0) return false;
+	if (dbca > 0.0)
 	{
-		if ((an < 0.0) || (an > ad)) return false;
+		if ((da2b < 0.0) || (da2b > dbca)) return false;
+		if ((db2a < 0.0) || (db2a > dbca)) return false;
 	}
 	else
 	{
-		if ((an > 0.0) || (an < ad)) return false;
-	}
-	if (bd > 0)
-	{
-		if ((bn < 0) || (bn > bd)) return false;
-	}
-	else
-	{
-		if ((bn > 0) || (bn < bd)) return false;
+		if ((da2b > 0.0) || (da2b < dbca)) return false;
+		if ((db2a > 0.0) || (db2a < dbca)) return false;
 	}
 	return true;
 }
