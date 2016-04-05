@@ -7,16 +7,7 @@ Requires the glfw3 libs to be installed.
 
 Build with:
 
-clang++ -O2 --std=c++14 pcb.cpp router.cpp layer.cpp mymath.cpp -opcb
-clang++ -O2 --std=c++14 dsn2pcb.cpp -odsn2pcb
-
-Mac viewer:
-
-clang++ -O2 --std=c++14 `pkg-config --cflags glfw3` view.cpp mymath.cpp -oview `pkg-config --static --libs glfw3`
-
-Ubuntu viewer:
-
-clang++ -O2 --std=c++14 `pkg-config --cflags glfw3` view.cpp mymath.cpp -oview `pkg-config --static --libs glfw3` -lGLEW
+make -j
 
 Example command lines would be:
 
