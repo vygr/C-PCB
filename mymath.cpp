@@ -106,7 +106,7 @@ auto scale_2d(const point_2d &p, float s)
 
 auto perp_2d(const point_2d &p)
 {
-	return point_2d(p.m_y, -p.m_x);
+	return point_2d(-p.m_y, p.m_x);
 }
 
 auto dot_2d(const point_2d &p1, const point_2d &p2)
@@ -306,7 +306,7 @@ auto thicken_path_as_lines(const points_2d &path, float radius, int capstyle, in
 				auto rvy = rv.m_y;
 				for (auto i = 0; i <= resolution; ++i)
 				{
-					auto angle = (i * M_PI) / resolution;
+					auto angle = (i * -M_PI) / resolution;
 					auto s = float(sin(angle));
 					auto c = float(cos(angle));
 					auto rv = point_2d(rvx*c - rvy*s, rvx*s + rvy*c);
@@ -351,8 +351,8 @@ auto thicken_path_as_lines(const points_2d &path, float radius, int capstyle, in
 					auto rv = scale_2d(l1_npv, radius);
 					auto rvx = rv.m_x;
 					auto rvy = rv.m_y;
-					auto theta = float(acos(dot_2d(l1_npv, l2_npv)));
-					auto segs = int((theta/M_PI)*resolution) + 1;
+					auto theta = -float(acos(dot_2d(l1_npv, l2_npv)));
+					auto segs = int((theta/-M_PI)*resolution) + 1;
 					for (auto i = 0; i <= segs; ++i)
 					{
 						auto angle = (i * theta) / segs;
@@ -427,7 +427,7 @@ auto thicken_path_as_tristrip(const points_2d &path, float radius, int capstyle,
 				auto rvy = rv.m_y;
 				for (auto i = 0; i <= resolution; ++i)
 				{
-					auto angle = (i * M_PI) / resolution;
+					auto angle = (i * -M_PI) / resolution;
 					auto s = float(sin(angle));
 					auto c = float(cos(angle));
 					auto rv = point_2d(rvx*c - rvy*s, rvx*s + rvy*c);
@@ -476,8 +476,8 @@ auto thicken_path_as_tristrip(const points_2d &path, float radius, int capstyle,
 					auto rv = scale_2d(l1_npv, radius);
 					auto rvx = rv.m_x;
 					auto rvy = rv.m_y;
-					auto theta = float(acos(dot_2d(l1_npv, l2_npv)));
-					auto segs = int((theta/M_PI)*resolution) + 1;
+					auto theta = -float(acos(dot_2d(l1_npv, l2_npv)));
+					auto segs = int((theta/-M_PI)*resolution) + 1;
 					for (auto i = 0; i <= segs; ++i)
 					{
 						auto angle = (i * theta) / segs;
