@@ -184,21 +184,21 @@ auto distance_squared_to_line_2d(const point_2d &p, const point_2d &p1, const po
 auto collide_lines_2d(const point_2d &l1_p1, const point_2d &l1_p2, const point_2d &l2_p1, const point_2d &l2_p2)
 {
 	auto av = sub_2d(l1_p2, l1_p1);
-	auto bv = sub_2d(l2_p1, l2_p2);
-	auto cv = sub_2d(l1_p1, l2_p1);
+	auto bv = sub_2d(l2_p2, l2_p1);
+	auto cv = sub_2d(l2_p2, l1_p1);
 	auto axb = det_2d(av, bv);
-	auto axc = det_2d(cv, av);
-	auto bxc = det_2d(bv, cv);
+	auto axc = det_2d(av, cv);
+	auto cxb = det_2d(cv, bv);
 	if (axb == 0.0) return false;
 	if (axb > 0.0)
 	{
 		if ((axc < 0.0) || (axc > axb)) return false;
-		if ((bxc < 0.0) || (bxc > axb)) return false;
+		if ((cxb < 0.0) || (cxb > axb)) return false;
 	}
 	else
 	{
 		if ((axc > 0.0) || (axc < axb)) return false;
-		if ((bxc > 0.0) || (bxc < axb)) return false;
+		if ((cxb > 0.0) || (cxb < axb)) return false;
 	}
 	return true;
 }
