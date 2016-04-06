@@ -186,19 +186,19 @@ auto collide_lines_2d(const point_2d &l1_p1, const point_2d &l1_p2, const point_
 	auto av = sub_2d(l1_p2, l1_p1);
 	auto bv = sub_2d(l2_p1, l2_p2);
 	auto cv = sub_2d(l1_p1, l2_p1);
-	auto dbca = det_2d(av, bv);
-	auto da2b = det_2d(bv, cv);
-	auto db2a = det_2d(av, cv);
-	if (dbca == 0.0) return false;
-	if (dbca > 0.0)
+	auto axb = det_2d(av, bv);
+	auto axc = det_2d(cv, av);
+	auto bxc = det_2d(bv, cv);
+	if (axb == 0.0) return false;
+	if (axb > 0.0)
 	{
-		if ((da2b < 0.0) || (da2b > dbca)) return false;
-		if ((db2a < 0.0) || (db2a > dbca)) return false;
+		if ((axc < 0.0) || (axc > axb)) return false;
+		if ((bxc < 0.0) || (bxc > axb)) return false;
 	}
 	else
 	{
-		if ((da2b > 0.0) || (da2b < dbca)) return false;
-		if ((db2a > 0.0) || (db2a < dbca)) return false;
+		if ((axc > 0.0) || (axc < axb)) return false;
+		if ((bxc > 0.0) || (bxc < axb)) return false;
 	}
 	return true;
 }
