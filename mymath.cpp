@@ -69,15 +69,15 @@ auto chebyshev_distance_3d(const point_3d &p1, const point_3d &p2)
 auto reciprical_distance_2d(const point_2d &p1, const point_2d &p2)
 {
 	auto d = manhattan_distance_2d(p1, p2);
-	if (d == 0.0) return 1.0;
-	return 1.0 / d;
+	if (d == 0.0f) return 1.0f;
+	return 1.0f / d;
 }
 
 auto reciprical_distance_3d(const point_3d &p1, const point_3d &p2)
 {
 	auto d = manhattan_distance_3d(p1, p2);
-	if (d == 0.0) return 1.0;
-	return 1.0 / d;
+	if (d == 0.0f) return 1.0f;
+	return 1.0f / d;
 }
 
 ///////////////////////
@@ -102,6 +102,11 @@ auto sub_3d(const point_3d &p1, const point_3d &p2)
 auto scale_2d(const point_2d &p, float s)
 {
 	return point_2d(p.m_x * s, p.m_y * s);
+}
+
+auto scale_3d(const point_3d &p, float s)
+{
+	return point_3d(p.m_x * s, p.m_y * s, p.m_z * s);
 }
 
 auto perp_2d(const point_2d &p)
@@ -137,15 +142,15 @@ auto length_3d(const point_3d &p)
 auto norm_2d(const point_2d &p)
 {
 	auto l = length_2d(p);
-	if (l == 0.0) return point_2d(0.0, 0.0);
-	return point_2d(p.m_x / l, p.m_y / l);
+	if (l == 0.0f) return point_2d(0.0f, 0.0f);
+	return scale_2d(p, 1.0f / l);
 }
 
 auto norm_3d(const point_3d &p)
 {
 	auto l = length_3d(p);
-	if (l == 0.0) return point_3d(0.0, 0.0, 0.0);
-	return point_3d(p.m_x / l, p.m_y / l, p.m_z / l);
+	if (l == 0.0f) return point_3d(0.0f, 0.0f, 0.0f);
+	return scale_3d(p, 1.0f / l);
 }
 
 auto distance_2d(const point_2d &p1, const point_2d &p2)
@@ -164,7 +169,7 @@ auto distance_to_line_2d(const point_2d &p, const point_2d &p1, const point_2d &
 	auto lv = sub_2d(p2, p1);
 	auto pv = sub_2d(p, p1);
 	auto c1 = dot_2d(pv, lv);
-	if (c1 <= 0) return distance_2d(p, p1);
+	if (c1 <= 0.0f) return distance_2d(p, p1);
 	auto c2 = dot_2d(lv, lv);
 	if (c2 <= c1) return distance_2d(p, p2);
 	return distance_2d(p, add_2d(p1, scale_2d(lv, c1/c2)));
@@ -175,7 +180,7 @@ auto distance_squared_to_line_2d(const point_2d &p, const point_2d &p1, const po
 	auto lv = sub_2d(p2, p1);
 	auto pv = sub_2d(p, p1);
 	auto c1 = dot_2d(pv, lv);
-	if (c1 <= 0) return distance_squared_2d(p, p1);
+	if (c1 <= 0.0f) return distance_squared_2d(p, p1);
 	auto c2 = dot_2d(lv, lv);
 	if (c2 <= c1) return distance_squared_2d(p, p2);
 	return distance_squared_2d(p, add_2d(p1, scale_2d(lv, c1/c2)));
@@ -189,16 +194,16 @@ auto collide_lines_2d(const point_2d &l1_p1, const point_2d &l1_p2, const point_
 	auto axb = det_2d(av, bv);
 	auto axc = det_2d(av, cv);
 	auto cxb = det_2d(cv, bv);
-	if (axb == 0.0) return false;
-	if (axb > 0.0)
+	if (axb == 0.0f) return false;
+	if (axb > 0.0f)
 	{
-		if ((axc < 0.0) || (axc > axb)) return false;
-		if ((cxb < 0.0) || (cxb > axb)) return false;
+		if ((axc < 0.0f) || (axc > axb)) return false;
+		if ((cxb < 0.0f) || (cxb > axb)) return false;
 	}
 	else
 	{
-		if ((axc > 0.0) || (axc < axb)) return false;
-		if ((cxb > 0.0) || (cxb < axb)) return false;
+		if ((axc > 0.0f) || (axc < axb)) return false;
+		if ((cxb > 0.0f) || (cxb < axb)) return false;
 	}
 	return true;
 }
@@ -222,11 +227,11 @@ bool collide_thick_lines_2d(const point_2d &tl1_p1, const point_2d &tl1_p2,
 auto circle_as_lines(const point_2d &p, float radius, int resolution)
 {
 	auto out_points = points_2d{}; out_points.reserve(resolution+1);
-	auto rvx = float(0.0);
+	auto rvx = 0.0f;
 	auto rvy = radius;
 	for (auto i = 0; i <= resolution; ++i)
 	{
-		auto angle = (i * M_PI * 2.0) / resolution;
+		auto angle = (i * M_PI * 2.0f) / resolution;
 		auto s = float(sin(angle));
 		auto c = float(cos(angle));
 		auto rv = point_2d(rvx*c - rvy*s, rvx*s + rvy*c);
@@ -239,13 +244,13 @@ auto circle_as_lines(const point_2d &p, float radius, int resolution)
 auto circle_as_tristrip(const point_2d &p, float radius1, float radius2, int resolution)
 {
 	auto out_points = points_2d{}; out_points.reserve(resolution*2+2);
-	auto rvx1 = float(0.0);
+	auto rvx1 = 0.0f;
 	auto rvy1 = radius1;
-	auto rvx2 = float(0.0);
+	auto rvx2 = 0.0f;
 	auto rvy2 = radius2;
 	for (auto i = 0; i <= resolution; ++i)
 	{
-		auto angle = (i * M_PI * 2.0) / resolution;
+		auto angle = (i * M_PI * 2.0f) / resolution;
 		auto s = float(sin(angle));
 		auto c = float(cos(angle));
 		auto rv1 = point_2d(rvx1*c - rvy1*s, rvx1*s + rvy1*c);
@@ -260,7 +265,7 @@ auto circle_as_tristrip(const point_2d &p, float radius1, float radius2, int res
 
 auto thicken_path_as_lines(const points_2d &path, float radius, int capstyle, int joinstyle, int resolution)
 {
-	if (radius == 0.0) radius = 0.00000001;
+	if (radius == 0.0f) radius = 0.00000001f;
 	auto index = 0;
 	auto step = 1;
 	auto out_points = points_2d{};
@@ -324,9 +329,9 @@ auto thicken_path_as_lines(const points_2d &path, float radius, int capstyle, in
 			l2_v = sub_2d(p2, p1);
 			l2_pv = perp_2d(l2_v);
 			l2_npv = norm_2d(l2_pv);
-			auto nbv = norm_2d(scale_2d(add_2d(l1_npv, l2_npv), 0.5));
+			auto nbv = norm_2d(scale_2d(add_2d(l1_npv, l2_npv), 0.5f));
 			auto c = dot_2d(nbv, norm_2d(l1_v));
-			if (c <= 0.0) goto mitre_join;
+			if (c <= 0.0f) goto mitre_join;
 			switch (joinstyle)
 			{
 				case 0:
@@ -374,7 +379,7 @@ auto thicken_path_as_lines(const points_2d &path, float radius, int capstyle, in
 
 auto thicken_path_as_tristrip(const points_2d &path, float radius, int capstyle, int joinstyle, int resolution)
 {
-	if (radius == 0.0) radius = 0.00000001;
+	if (radius == 0.0f) radius = 0.00000001f;
 	auto index = 0;
 	auto step = 1;
 	auto out_points = points_2d{};
@@ -446,9 +451,9 @@ auto thicken_path_as_tristrip(const points_2d &path, float radius, int capstyle,
 			l2_v = sub_2d(p2, p1);
 			l2_pv = perp_2d(l2_v);
 			l2_npv = norm_2d(l2_pv);
-			auto nbv = norm_2d(scale_2d(add_2d(l1_npv, l2_npv), 0.5));
+			auto nbv = norm_2d(scale_2d(add_2d(l1_npv, l2_npv), 0.5f));
 			auto c = dot_2d(nbv, norm_2d(l1_v));
-			if (c <= 0.0) goto mitre_join;
+			if (c <= 0.0f) goto mitre_join;
 			switch (joinstyle)
 			{
 				case 0:
@@ -503,18 +508,18 @@ auto recursive_bezier(float x1, float y1, float x2, float y2, float x3, float y3
 	 					points_2d &points, float distance_tolerance)
 {
 	//calculate all the mid-points of the line segments
-	auto x12 = (x1 + x2) * 0.5;
-	auto y12 = (y1 + y2) * 0.5;
-	auto x23 = (x2 + x3) * 0.5;
-	auto y23 = (y2 + y3) * 0.5;
-	auto x34 = (x3 + x4) * 0.5;
-	auto y34 = (y3 + y4) * 0.5;
-	auto x123 = (x12 + x23) * 0.5;
-	auto y123 = (y12 + y23) * 0.5;
-	auto x234 = (x23 + x34) * 0.5;
-	auto y234 = (y23 + y34) * 0.5;
-	auto x1234 = (x123 + x234) * 0.5;
-	auto y1234 = (y123 + y234) * 0.5;
+	auto x12 = (x1 + x2) * 0.5f;
+	auto y12 = (y1 + y2) * 0.5f;
+	auto x23 = (x2 + x3) * 0.5f;
+	auto y23 = (y2 + y3) * 0.5f;
+	auto x34 = (x3 + x4) * 0.5f;
+	auto y34 = (y3 + y4) * 0.5f;
+	auto x123 = (x12 + x23) * 0.5f;
+	auto y123 = (y12 + y23) * 0.5f;
+	auto x234 = (x23 + x34) * 0.5f;
+	auto y234 = (y23 + y34) * 0.5f;
+	auto x1234 = (x123 + x234) * 0.5f;
+	auto y1234 = (y123 + y234) * 0.5f;
 
 	//try to approximate the full cubic curve by a single straight line
 	auto dx = x4 - x1;

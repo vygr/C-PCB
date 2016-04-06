@@ -4,6 +4,9 @@
 #include "mymath.h"
 #include <memory>
 
+extern float length_2d(const point_2d &p);
+extern float det_2d(const point_2d &p1, const point_2d &p2);
+
 //layer class
 class layer
 {
@@ -28,9 +31,29 @@ public:
 
 	struct record
 	{
-		record(int id, const line &l) : m_id(id), m_line(l) {}
+		record(int id, const line &l)
+		 	: m_id(id)
+			, m_line(l)
+		{
+			m_pa = l.m_p1.m_y - l.m_p2.m_y;
+			m_pb = l.m_p2.m_x - l.m_p1.m_x;
+			m_pc = det_2d(l.m_p1, l.m_p2);
+			auto scale = 1.0f / length_2d(point_2d(m_pa, m_pb));
+			m_pa *= scale;
+			m_pb *= scale;
+			m_pc *= scale;
+		}
+		auto reject(const line &l, float d)
+		{
+			auto dp1 = m_pa * l.m_p1.m_x + m_pb * l.m_p1.m_y + m_pc;
+			auto dp2 = m_pa * l.m_p2.m_x + m_pb * l.m_p2.m_y + m_pc;
+			if (dp1 > d && dp2 > d) return true;
+			if (dp1 < -d && dp2 < -d) return true;
+			return false;
+		}
 		int m_id;
 		line m_line;
+		float m_pa, m_pb, m_pc;
 	};
 
 	struct aabb

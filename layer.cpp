@@ -83,8 +83,9 @@ bool layer::hit_line(const line &l)
 			{
 				if (record->m_id == m_test) continue;
 				record->m_id = m_test;
-				if (collide_thick_lines_2d(l.m_p1, l.m_p2, record->m_line.m_p1, record->m_line.m_p2,
-					 l.m_radius + record->m_line.m_radius + std::max(l.m_gap, record->m_line.m_gap))) return true;
+				auto d = l.m_radius + record->m_line.m_radius + std::max(l.m_gap, record->m_line.m_gap);
+				if (record->reject(l, d)) continue;
+				if (collide_thick_lines_2d(l.m_p1, l.m_p2, record->m_line.m_p1, record->m_line.m_p2, d)) return true;
 			}
 		}
 	}
