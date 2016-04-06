@@ -6,6 +6,12 @@
 
 extern float length_2d(const point_2d &p);
 extern float det_2d(const point_2d &p1, const point_2d &p2);
+extern float dot_2d(const point_2d &p1, const point_2d &p2);
+extern point_2d sub_2d(const point_2d &p1, const point_2d &p2);
+extern point_2d perp_2d(const point_2d &p);
+extern point_2d scale_2d(const point_2d &p, float s);
+extern bool collide_thick_lines_2d(const point_2d &tl1_p1, const point_2d &tl1_p2,
+	 					const point_2d &tl2_p1, const point_2d &tl2_p2, float r);
 
 //layer class
 class layer
@@ -35,25 +41,38 @@ public:
 		 	: m_id(id)
 			, m_line(l)
 		{
-			m_pa = l.m_p1.m_y - l.m_p2.m_y;
-			m_pb = l.m_p2.m_x - l.m_p1.m_x;
-			m_pc = det_2d(l.m_p1, l.m_p2);
-			auto scale = 1.0f / length_2d(point_2d(m_pa, m_pb));
-			m_pa *= scale;
-			m_pb *= scale;
-			m_pc *= scale;
+			auto pv = perp_2d(sub_2d(l.m_p2, l.m_p1));
+			auto len = length_2d(pv);
+			auto s = 1.0f / len;
+			m_lv_norm = scale_2d(pv, s);
+			m_lv_dist = dot_2d(m_lv_norm, l.m_p1);
+
+			// m_pv_norm = perp_2d(m_lv_norm);
+			// m_pv_dist1 = dot_2d(m_pv_norm, l.m_p1);
+			// m_pv_dist2 = m_pv_dist1 - len;
 		}
-		auto reject(const line &l, float d)
+		auto hit(const line &l, float d)
 		{
-			auto dp1 = m_pa * l.m_p1.m_x + m_pb * l.m_p1.m_y + m_pc;
-			auto dp2 = m_pa * l.m_p2.m_x + m_pb * l.m_p2.m_y + m_pc;
-			if (dp1 > d && dp2 > d) return true;
-			if (dp1 < -d && dp2 < -d) return true;
-			return false;
+			auto dp1 = dot_2d(m_lv_norm, l.m_p1) - m_lv_dist;
+			auto dp2 = dot_2d(m_lv_norm, l.m_p2) - m_lv_dist;
+			if (dp1 > d && dp2 > d) return false;
+			if (dp1 < -d && dp2 < -d) return false;
+
+			// dp1 = dot_2d(m_pv_norm, l.m_p1);
+			// dp2 = dot_2d(m_pv_norm, l.m_p2);
+			// if (dp1 - m_pv_dist1 > d && dp2 - m_pv_dist1 > d) return false;
+			// if (dp1 - m_pv_dist2 < -d && dp2 - m_pv_dist2 < -d) return false;
+
+			return collide_thick_lines_2d(l.m_p1, l.m_p2, m_line.m_p1, m_line.m_p2, d);
 		}
 		int m_id;
 		line m_line;
-		float m_pa, m_pb, m_pc;
+		point_2d m_lv_norm;
+		float m_lv_dist;
+
+		// point_2d m_pv_norm;
+		// float m_pv_dist1;
+		// float m_pv_dist2;
 	};
 
 	struct aabb

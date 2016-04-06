@@ -1,9 +1,5 @@
 #include "layer.h"
 #include <algorithm>
-#include <iostream>
-
-extern bool collide_thick_lines_2d(const point_2d &tl1_p1, const point_2d &tl1_p2,
-	 						const point_2d &tl2_p1, const point_2d &tl2_p2, float r);
 
 layer::layer(const dims &dims, float s)
 	: m_width(dims.m_width)
@@ -84,8 +80,7 @@ bool layer::hit_line(const line &l)
 				if (record->m_id == m_test) continue;
 				record->m_id = m_test;
 				auto d = l.m_radius + record->m_line.m_radius + std::max(l.m_gap, record->m_line.m_gap);
-				if (record->reject(l, d)) continue;
-				if (collide_thick_lines_2d(l.m_p1, l.m_p2, record->m_line.m_p1, record->m_line.m_p2, d)) return true;
+				if (record->hit(l, d)) return true;
 			}
 		}
 	}
