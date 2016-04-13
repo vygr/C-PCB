@@ -42,9 +42,7 @@ public:
 			, m_line(l)
 		{
 			auto pv = perp_2d(sub_2d(l.m_p2, l.m_p1));
-			auto len = length_2d(pv);
-			auto s = 1.0f / len;
-			m_lv_norm = scale_2d(pv, s);
+			m_lv_norm = scale_2d(pv, 1.0f / length_2d(pv));
 			m_lv_dist = dot_2d(m_lv_norm, l.m_p1);
 
 			// m_pv_norm = perp_2d(m_lv_norm);
