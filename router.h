@@ -128,7 +128,7 @@ public:
 	pcb(const dims &dims, const nodess &rfvs, const nodess &rpvs,
 		dfunc_t dfunc, int res, int verb, int quant, int viascost);
 	~pcb();
-	int get_node(const node &n);
+	auto get_node(const node &n);
 	void add_track(track &t);
 	bool route(float timeout);
 	int cost();
@@ -153,7 +153,7 @@ public:
 	dfunc_t m_dfunc;
 
 private:
-	void set_node(const node &n, int value);
+	void set_node(const node &n, unsigned int value);
 	sort_nodes &all_marked(const nodess &vec, const node &n);
 	nodes &all_not_marked(const nodess &vec, const node &n);
 	void reset_areas();
@@ -167,7 +167,7 @@ private:
 	int m_verbosity;
 	int m_viascost;
 	nets m_netlist;
-	std::vector<int> m_nodes;
+	std::vector<unsigned int> m_nodes;
 };
 
 #endif

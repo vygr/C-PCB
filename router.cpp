@@ -166,13 +166,13 @@ point_3d pcb::grid_to_space_point(const node &n)
 }
 
 //set grid node to value
-inline void pcb::set_node(const node &n, int value)
+inline void pcb::set_node(const node &n, unsigned int value)
 {
 	m_nodes[(m_stride*n.m_z)+(n.m_y*m_width)+n.m_x] = value;
 }
 
 //get grid node value
-inline int pcb::get_node(const node &n)
+inline auto pcb::get_node(const node &n)
 {
 	return m_nodes[(m_stride*n.m_z)+(n.m_y*m_width)+n.m_x];
 }
@@ -268,7 +268,7 @@ void pcb::mark_distances(const nodess &vec, float radius, float via, float gap,
 	static auto via_vectors = nodess{
 		nodes{node{0, 0, -1}, node{0, 0, 1}},
 		nodes{node{0, 0, -1}, node{0, 0, 1}}};
-	auto distance = 1;
+	auto distance = 1U;
 	auto frontier = starts;
 	auto vias_nodes = std::map<int, node_set>{};
 	while (!frontier.empty() || !vias_nodes.empty())
@@ -603,23 +603,17 @@ bool net::route()
 	for (auto index = 1; index < static_cast<int>(m_terminals.size()); ++index)
 	{
 		auto ends = nodes{}; ends.reserve(m_pcb->m_depth);
-		for (auto z = 0; z < m_pcb->m_depth; ++z)
-		{
-			auto x = int(m_terminals[index].m_term.m_x+0.5);
-			auto y = int(m_terminals[index].m_term.m_y+0.5);
-			ends.push_back(node{x, y, z});
-		}
+		auto x = int(m_terminals[index].m_term.m_x+0.5);
+		auto y = int(m_terminals[index].m_term.m_y+0.5);
+		for (auto z = 0; z < m_pcb->m_depth; ++z) ends.push_back(node{x, y, z});
 		auto search = std::find_if(begin(ends), end(ends), [&] (auto &node)
 		{
 			return visited.find(node) != end(visited);
 		});
 		if (search != end(ends)) continue;
-		for (auto z = 0; z < m_pcb->m_depth; ++z)
-		{
-			auto x = int(m_terminals[index-1].m_term.m_x+0.5);
-			auto y = int(m_terminals[index-1].m_term.m_y+0.5);
-			visited.insert(node{x, y, z});
-		}
+		x = int(m_terminals[index-1].m_term.m_x+0.5);
+		y = int(m_terminals[index-1].m_term.m_y+0.5);
+		for (auto z = 0; z < m_pcb->m_depth; ++z) visited.insert(node{x, y, z});
 		m_pcb->mark_distances(m_pcb->m_routing_flood_vectors, m_radius, m_via, m_gap, visited, ends);
 		auto sorted_ends = sort_nodes{}; sorted_ends.reserve(ends.size());
 		for (auto &node : ends) sorted_ends.push_back(sort_node{float(m_pcb->get_node(node)), node});
