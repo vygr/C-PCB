@@ -234,7 +234,7 @@ nodes &pcb::all_nearer_sorted(const nodess &vec, const node &n, dfunc_t dfunc)
 	auto marked_nodes_end = std::remove_if(begin(marked_nodes), end(marked_nodes), [=, &gp] (auto &mn)
 	{
 		if ((distance - mn.m_mark) <= 0) return true;
-		mn.m_mark = dfunc(this->grid_to_space_point(mn.m_node), gp);
+		mn.m_mark = dfunc(grid_to_space_point(mn.m_node), gp);
 		return false;
 	});
 	std::sort(begin(marked_nodes), marked_nodes_end, [&] (auto &s1, auto &s2)
@@ -276,7 +276,7 @@ void pcb::mark_distances(const nodess &vec, float radius, float via, float gap,
 		for (auto &node : frontier) set_node(node, distance);
 		auto itr = std::find_if(begin(ends), end(ends), [&] (auto &node)
 		{
-			return (this->get_node(node) == 0);
+			return (get_node(node) == 0);
 		});
 		if (itr == end(ends)) break;
 		auto new_nodes = node_set{};
