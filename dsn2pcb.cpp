@@ -342,7 +342,7 @@ int main(int argc, char *argv[])
 						ss >> the_rule.m_radius;
 						the_rule.m_radius /= 2000.0;
 					}
-					if (padstack_node->m_branches[0].m_value == "path")
+					else if (padstack_node->m_branches[0].m_value == "path")
 					{
 						ss_reset(ss, padstack_node->m_branches[0].m_branches[1].m_value);
 						ss >> the_rule.m_radius;
@@ -369,7 +369,7 @@ int main(int argc, char *argv[])
 							points.push_back(point_2d{x2, y2});
 						}
 					}
-					if (library_node.m_branches[1].m_branches[0].m_value == "rect")
+					else if (padstack_node->m_branches[0].m_value == "rect")
 					{
 						the_rule.m_radius = 0.0;
 						float x1, y1, x2, y2;
@@ -390,6 +390,22 @@ int main(int argc, char *argv[])
 						points.push_back(point_2d{x2, y2});
 						points.push_back(point_2d{x1, y2});
 						points.push_back(point_2d{x1, y1});
+					}
+					else if (padstack_node->m_branches[0].m_value == "polygon")
+					{
+						the_rule.m_radius = 0.0;
+						for (auto poly_node = begin(padstack_node->m_branches[0].m_branches) + 2;
+							 poly_node != end(padstack_node->m_branches[0].m_branches); poly_node += 2)
+						{
+							float x1, y1;
+							ss_reset(ss, poly_node[0].m_value);
+							ss >> x1;
+							ss_reset(ss, poly_node[1].m_value);
+							ss >> y1;
+							x1 /= 1000.0;
+							y1 /= -1000.0;
+							points.push_back(point_2d{x1, y1});
+						}
 					}
 					the_rule.m_shape = points;
 					rule_map[library_node.m_branches[0].m_value] = the_rule;
