@@ -213,7 +213,7 @@ int main(int argc, char *argv[])
 	//process comand args
 	auto use_file = false;
 	std::ifstream arg_infile;
-	auto arg_b = 0;
+	auto arg_b = 1;
 
 	std::stringstream ss;
 	for (auto i = 1; i < argc; ++i)
@@ -231,7 +231,7 @@ int main(int argc, char *argv[])
 			help:
 				std::cout << "dsn2pcb [switches] [filename]\neg. dsn2pcb -b 6 test1.dsn\n";
 				std::cout << "reads from stdin if no filename.\n";
-				std::cout << "-b: border gap, default 0\n";
+				std::cout << "-b: border gap, default 1\n";
 				exit(0);
 			}
 		}
