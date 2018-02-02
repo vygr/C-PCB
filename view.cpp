@@ -232,6 +232,19 @@ auto draw_filled_polygon(const point_2d &offset, const points_2d &data)
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, int(vertex_buffer_data.size()));
 }
 
+//draw a triangle strip polygon
+auto draw_filled_polygon_fan(const point_2d &offset, const points_2d &data)
+{
+	auto vertex_buffer_data = points_2d{};
+	vertex_buffer_data.reserve(data.size());
+	for (auto &p : data)
+	{
+		vertex_buffer_data.push_back(add_2d(p, offset));
+	}
+	glBufferData(GL_ARRAY_BUFFER, vertex_buffer_data.size()*8, &vertex_buffer_data[0], GL_STATIC_DRAW);
+	glDrawArrays(GL_TRIANGLE_FAN, 0, int(vertex_buffer_data.size()));
+}
+
 //create circle polygon
 auto create_filled_circle(float radius)
 {
@@ -609,7 +622,7 @@ int main(int argc, char *argv[])
 						}
 						else
 						{
-							draw_filled_polygon(point_2d{0.0, 0.0}, points);
+							draw_filled_polygon_fan(point_2d{0.0, 0.0}, points);
 						}
 					}
 				}
