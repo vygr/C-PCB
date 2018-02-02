@@ -406,6 +406,7 @@ int main(int argc, char *argv[])
 							y1 /= -1000.0;
 							points.push_back(point_2d{x1, y1});
 						}
+						points.push_back(points.front());
 					}
 					the_rule.m_shape = points;
 					rule_map[library_node.m_branches[0].m_value] = the_rule;
@@ -492,7 +493,7 @@ int main(int argc, char *argv[])
 							ss >> net_rule.m_radius;
 							net_rule.m_radius /= 2000.0;
 						}
-						if (dims.m_value == "clearance")
+						else if (dims.m_value == "clearance")
 						{
 							ss_reset(ss, dims.m_branches[0].m_value);
 							ss >> net_rule.m_gap;
@@ -500,7 +501,7 @@ int main(int argc, char *argv[])
 						}
 					}
 				}
-				if (class_node.m_value == "circuit")
+				else if (class_node.m_value == "circuit")
 				{
 					for (auto &circuit_node : class_node.m_branches)
 					{
@@ -524,33 +525,39 @@ int main(int argc, char *argv[])
 	{
 		if (network_node.m_value == "net")
 		{
-			auto the_terminals = terminals{};
-			for (auto &p : network_node.m_branches[1].m_branches)
+			for (auto &net_node : network_node.m_branches)
 			{
-				auto pin_info = split(p.m_value, '-');
-				auto instance_name = pin_info[0];
-				auto pin_name = pin_info[1];
-				auto instance = instance_map[instance_name];
-				auto component = component_map[instance.m_comp];
-				auto pin = component.m_pin_map[pin_name];
-				auto m_x = pin.m_x;
-				auto m_y = pin.m_y;
-				if (instance.m_side != "front") m_x = -m_x;
-				auto s = sin(instance.m_angle);
-				auto c = cos(instance.m_angle);
-				auto px = float((c*m_x - s*m_y) + instance.m_x);
-				auto py = float((s*m_x + c*m_y) + instance.m_y);
-				auto pin_rule = rule_map[pin.m_form];
-				auto tp = point_3d{px, py, 0.0};
-				auto cords = shape_to_cords(pin_rule.m_shape, pin.m_angle, instance.m_angle);
-				auto term = terminal{pin_rule.m_radius, pin_rule.m_gap, tp, cords};
-				the_terminals.push_back(term);
-				all_terminals.erase(std::find(begin(all_terminals), end(all_terminals), term));
+				if (net_node.m_value == "pins")
+				{
+					auto the_terminals = terminals{};
+					for (auto &p : net_node.m_branches)
+					{
+						auto pin_info = split(p.m_value, '-');
+						auto instance_name = pin_info[0];
+						auto pin_name = pin_info[1];
+						auto instance = instance_map[instance_name];
+						auto component = component_map[instance.m_comp];
+						auto pin = component.m_pin_map[pin_name];
+						auto m_x = pin.m_x;
+						auto m_y = pin.m_y;
+						if (instance.m_side != "front") m_x = -m_x;
+						auto s = sin(instance.m_angle);
+						auto c = cos(instance.m_angle);
+						auto px = float((c*m_x - s*m_y) + instance.m_x);
+						auto py = float((s*m_x + c*m_y) + instance.m_y);
+						auto pin_rule = rule_map[pin.m_form];
+						auto tp = point_3d{px, py, 0.0};
+						auto cords = shape_to_cords(pin_rule.m_shape, pin.m_angle, instance.m_angle);
+						auto term = terminal{pin_rule.m_radius, pin_rule.m_gap, tp, cords};
+						the_terminals.push_back(term);
+						all_terminals.erase(std::find(begin(all_terminals), end(all_terminals), term));
+					}
+					auto circuit = circuit_map[network_node.m_branches[0].m_value];
+					auto net_rule = circuit.m_rule;
+					auto via_rule = rule_map[circuit.m_via];
+					the_tracks.push_back(track{net_rule.m_radius, via_rule.m_radius, net_rule.m_gap, the_terminals});
+				}
 			}
-			auto circuit = circuit_map[network_node.m_branches[0].m_value];
-			auto net_rule = circuit.m_rule;
-			auto via_rule = rule_map[circuit.m_via];
-			the_tracks.push_back(track{net_rule.m_radius, via_rule.m_radius, net_rule.m_gap, the_terminals});
 		}
 	}
 	the_tracks.push_back(track{0.0, 0.0, 0.0, all_terminals});
