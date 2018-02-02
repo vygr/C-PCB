@@ -343,7 +343,7 @@ auto draw_layers(const outputs &tracks, int pcb_height, int pcb_depth, float arg
 					}
 					else
 					{
-						draw_filled_polygon_strip(point_2d{0.0, yoffset}, points);
+						draw_filled_polygon_fan(point_2d{0.0, yoffset}, points);
 					}
 				}
 			}
