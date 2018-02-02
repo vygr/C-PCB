@@ -10,7 +10,8 @@
 #include <sstream>
 
 extern point_2d add_2d(const point_2d &p1, const point_2d &p2);
-extern points_2d circle_as_tristrip(const point_2d &p, float radius1, float radius2, int resolution);
+extern points_2d torus_as_tristrip(const point_2d &p, float radius1, float radius2, int resolution);
+extern points_2d circle_as_trifan(const point_2d &p, float radius, int resolution);
 extern points_2d thicken_path_as_tristrip(const points_2d &path, float radius, int capstyle, int joinstyle, int resolution);
 
 //read input till given byte appears
@@ -207,7 +208,7 @@ auto make_program(std::string vert_file_name, std::string frag_file_name)
 }
 
 //draw a line strip polygon
-auto draw_polygon(const point_2d &offset, const points_2d &data)
+auto draw_polygon_strip(const point_2d &offset, const points_2d &data)
 {
 	auto vertex_buffer_data = points_2d{};
 	vertex_buffer_data.reserve(data.size());
@@ -220,7 +221,7 @@ auto draw_polygon(const point_2d &offset, const points_2d &data)
 }
 
 //draw a triangle strip polygon
-auto draw_filled_polygon(const point_2d &offset, const points_2d &data)
+auto draw_filled_polygon_strip(const point_2d &offset, const points_2d &data)
 {
 	auto vertex_buffer_data = points_2d{};
 	vertex_buffer_data.reserve(data.size());
@@ -251,7 +252,7 @@ auto create_filled_circle(float radius)
 	static auto circle_map = std::map<float, points_2d>{};
 	auto circle_itr = circle_map.find(radius);
 	if (circle_itr != end(circle_map)) return &circle_itr->second;
-	circle_map[radius] = circle_as_tristrip(point_2d{0.0, 0.0}, radius, 0, 32);
+	circle_map[radius] = circle_as_trifan(point_2d{0.0, 0.0}, radius, 32);
 	return &circle_map[radius];
 }
 
@@ -283,7 +284,7 @@ auto draw_layers(const outputs &tracks, int pcb_height, int pcb_depth, float arg
 								{
 									points.push_back(point_2d{i->m_x, i->m_y});
 								}
-								draw_filled_polygon(point_2d{0.0, yoffset},
+								draw_filled_polygon_strip(point_2d{0.0, yoffset},
 									thicken_path_as_tristrip(points, track.m_radius + (track.m_gap * s), 3, 2, 16));
 							}
 						}
@@ -300,7 +301,7 @@ auto draw_layers(const outputs &tracks, int pcb_height, int pcb_depth, float arg
 						{
 							points.push_back(point_2d{i->m_x, i->m_y});
 						}
-						draw_filled_polygon(point_2d{0.0, yoffset},
+						draw_filled_polygon_strip(point_2d{0.0, yoffset},
 							thicken_path_as_tristrip(points, track.m_radius + (track.m_gap * s), 3, 2, 16));
 					}
 				}
@@ -315,7 +316,7 @@ auto draw_layers(const outputs &tracks, int pcb_height, int pcb_depth, float arg
 				{
 					if (path[i].m_z != path[i+1].m_z)
 					{
-						draw_filled_polygon(point_2d{path[i].m_x, path[i].m_y + yoffset},
+						draw_filled_polygon_fan(point_2d{path[i].m_x, path[i].m_y + yoffset},
 							*create_filled_circle(track.m_via + (track.m_gap * s)));
 					}
 				}
@@ -324,7 +325,7 @@ auto draw_layers(const outputs &tracks, int pcb_height, int pcb_depth, float arg
 			{
 				if (term.m_shape.empty())
 				{
-					draw_filled_polygon(point_2d{term.m_term.m_x, term.m_term.m_y + yoffset},
+					draw_filled_polygon_fan(point_2d{term.m_term.m_x, term.m_term.m_y + yoffset},
 						*create_filled_circle(term.m_radius + (term.m_gap * s)));
 				}
 				else
@@ -337,12 +338,12 @@ auto draw_layers(const outputs &tracks, int pcb_height, int pcb_depth, float arg
 					}
 					if ((s != 0) || (term.m_radius != 0))
 					{
-						draw_filled_polygon(point_2d{0.0, yoffset},
+						draw_filled_polygon_strip(point_2d{0.0, yoffset},
 							thicken_path_as_tristrip(points, term.m_radius + (term.m_gap * s), 3, 2, 16));
 					}
 					else
 					{
-						draw_filled_polygon(point_2d{0.0, yoffset}, points);
+						draw_filled_polygon_strip(point_2d{0.0, yoffset}, points);
 					}
 				}
 			}
@@ -561,7 +562,7 @@ int main(int argc, char *argv[])
 										{
 											points.push_back(point_2d{i->m_x, i->m_y});
 										}
-										draw_filled_polygon(point_2d{0.0, 0.0},
+										draw_filled_polygon_strip(point_2d{0.0, 0.0},
 											thicken_path_as_tristrip(points, track.m_radius, 3, 2, 16));
 									}
 								}
@@ -578,7 +579,7 @@ int main(int argc, char *argv[])
 								{
 									points.push_back(point_2d{i->m_x, i->m_y});
 								}
-								draw_filled_polygon(point_2d{0.0, 0.0},
+								draw_filled_polygon_strip(point_2d{0.0, 0.0},
 									thicken_path_as_tristrip(points, track.m_radius, 3, 2, 16));
 							}
 						}
@@ -595,7 +596,7 @@ int main(int argc, char *argv[])
 					{
 						if (path[i].m_z != path[i+1].m_z)
 						{
-							draw_filled_polygon(point_2d{path[i].m_x, path[i].m_y},
+							draw_filled_polygon_fan(point_2d{path[i].m_x, path[i].m_y},
 								*create_filled_circle(track.m_via));
 						}
 					}
@@ -604,7 +605,7 @@ int main(int argc, char *argv[])
 				{
 					if (term.m_shape.empty())
 					{
-						draw_filled_polygon(point_2d{term.m_term.m_x, term.m_term.m_y},
+						draw_filled_polygon_fan(point_2d{term.m_term.m_x, term.m_term.m_y},
 							*create_filled_circle(term.m_radius));
 					}
 					else
@@ -617,7 +618,7 @@ int main(int argc, char *argv[])
 						}
 						if (term.m_radius != 0)
 						{
-							draw_filled_polygon(point_2d{0.0, 0.0},
+							draw_filled_polygon_strip(point_2d{0.0, 0.0},
 								thicken_path_as_tristrip(points, term.m_radius, 3, 2, 16));
 						}
 						else

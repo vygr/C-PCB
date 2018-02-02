@@ -241,7 +241,7 @@ auto circle_as_lines(const point_2d &p, float radius, int resolution)
 	return out_points;
 }
 
-auto circle_as_tristrip(const point_2d &p, float radius1, float radius2, int resolution)
+auto torus_as_tristrip(const point_2d &p, float radius1, float radius2, int resolution)
 {
 	auto out_points = points_2d{}; out_points.reserve(resolution*2+2);
 	auto rvx1 = 0.0f;
@@ -260,6 +260,24 @@ auto circle_as_tristrip(const point_2d &p, float radius1, float radius2, int res
 	}
 	out_points.push_back(out_points[0]);
 	out_points.push_back(out_points[1]);
+	return out_points;
+}
+
+auto circle_as_trifan(const point_2d &p, float radius, int resolution)
+{
+	auto out_points = points_2d{}; out_points.reserve(resolution*2+2);
+	auto rvx1 = 0.0f;
+	auto rvy1 = radius;
+	out_points.push_back(p);
+	for (auto i = 0; i <= resolution; ++i)
+	{
+		auto angle = (i * M_PI * 2.0f) / resolution;
+		auto s = float(sin(angle));
+		auto c = float(cos(angle));
+		auto rv1 = point_2d(rvx1*c - rvy1*s, rvx1*s + rvy1*c);
+		out_points.push_back(sub_2d(p, rv1));
+	}
+	out_points.push_back(out_points[0]);
 	return out_points;
 }
 
