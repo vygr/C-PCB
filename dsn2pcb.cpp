@@ -256,9 +256,17 @@ int main(int argc, char *argv[])
 	auto maxx = float(-1000000.0);
 	auto maxy = float(-1000000.0);
 	auto default_rule = rule{0.25, 0.25, {}};
+	auto default_via = std::string{"Via[0-1]_600:400_um"};
 	for (auto &&structure_node : structure_root->m_branches)
 	{
 		if (structure_node.m_value == "layer") num_layers++;
+		else if (structure_node.m_value == "via")
+		{
+			for (auto &&via_node : structure_node.m_branches)
+			{
+				default_via = via_node.m_value;
+			}
+		}
 		else if (structure_node.m_value == "rule")
 		{
 			for (auto &&rule_node : structure_node.m_branches)
@@ -524,8 +532,7 @@ int main(int argc, char *argv[])
 	{
 		if (network_node.m_value == "class")
 		{
-			auto net_rule = default_rule;
-			auto the_circuit = circuit{};
+			auto the_circuit = circuit{default_via, default_rule};
 			for (auto &&class_node : network_node.m_branches)
 			{
 				if (class_node.m_value == "rule")
@@ -535,16 +542,16 @@ int main(int argc, char *argv[])
 						if (dims.m_value == "width")
 						{
 							ss_reset(ss, dims.m_branches[0].m_value);
-							ss >> net_rule.m_radius;
-							net_rule.m_radius /= 2000.0;
+							ss >> the_circuit.m_rule.m_radius;
+							the_circuit.m_rule.m_radius /= 2000.0;
 						}
 						else if ((dims.m_value == "clearance"
 								|| dims.m_value == "clear")
 								&& dims.m_branches.size() == 1)
 						{
 							ss_reset(ss, dims.m_branches[0].m_value);
-							ss >> net_rule.m_gap;
-							net_rule.m_gap /= 2000.0;
+							ss >> the_circuit.m_rule.m_gap;
+							the_circuit.m_rule.m_gap /= 2000.0;
 						}
 					}
 				}
@@ -559,7 +566,6 @@ int main(int argc, char *argv[])
 					}
 				}
 			}
-			the_circuit.m_rule = net_rule;
 			for (auto &&netname : network_node.m_branches)
 			{
 				if (netname.m_branches.empty()) circuit_map[netname.m_value] = the_circuit;
