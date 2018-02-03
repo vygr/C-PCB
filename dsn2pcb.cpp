@@ -255,12 +255,33 @@ int main(int argc, char *argv[])
 	auto miny = float(1000000.0);
 	auto maxx = float(-1000000.0);
 	auto maxy = float(-1000000.0);
-	for (auto &structure_node : structure_root->m_branches)
+	auto default_rule = rule{0.25, 0.25, {}};
+	for (auto &&structure_node : structure_root->m_branches)
 	{
 		if (structure_node.m_value == "layer") num_layers++;
-		if (structure_node.m_value == "boundary")
+		else if (structure_node.m_value == "rule")
 		{
-			for (auto boundary_node : structure_node.m_branches)
+			for (auto &&rule_node : structure_node.m_branches)
+			{
+				if (rule_node.m_value == "width")
+				{
+					ss_reset(ss, rule_node.m_branches[0].m_value);
+					ss >> default_rule.m_radius;
+					default_rule.m_radius /= 2000.0;
+				}
+				else if ((rule_node.m_value == "clear"
+						|| rule_node.m_value == "clearance")
+						&& rule_node.m_branches.size() == 1)
+				{
+					ss_reset(ss, rule_node.m_branches[0].m_value);
+					ss >> default_rule.m_gap;
+					default_rule.m_gap /= 2000.0;
+				}
+			}
+		}
+		else if (structure_node.m_value == "boundary")
+		{
+			for (auto &&boundary_node : structure_node.m_branches)
 			{
 				if (boundary_node.m_value == "path")
 				{
@@ -280,6 +301,30 @@ int main(int argc, char *argv[])
 						maxy = std::max(py, maxy);
 					}
 				}
+				else if (boundary_node.m_value == "rect")
+				{
+					float x1, y1, x2, y2;
+					ss_reset(ss, boundary_node.m_branches[1].m_value);
+					ss >> x1;
+					ss_reset(ss, boundary_node.m_branches[2].m_value);
+					ss >> y1;
+					ss_reset(ss, boundary_node.m_branches[3].m_value);
+					ss >> x2;
+					ss_reset(ss, boundary_node.m_branches[4].m_value);
+					ss >> y2;
+					x1 /= 1000.0;
+					y1 /= -1000.0;
+					x2 /= 1000.0;
+					y2 /= -1000.0;
+					minx = std::min(x1, minx);
+					maxx = std::max(x1, maxx);
+					miny = std::min(y1, miny);
+					maxy = std::max(y1, maxy);
+					minx = std::min(x2, minx);
+					maxx = std::max(x2, maxx);
+					miny = std::min(y2, miny);
+					maxy = std::max(y2, maxy);
+				}
 			}
 		}
 	}
@@ -287,7 +332,7 @@ int main(int argc, char *argv[])
 	auto library_root = search_tree(tree, "library");
 	auto component_map = std::map<std::string, component>{};
 	auto rule_map = std::map<std::string, rule>{};
-	for (auto &library_node : library_root->m_branches)
+	for (auto &&library_node : library_root->m_branches)
 	{
 		if (library_node.m_value == "image")
 		{
@@ -417,7 +462,7 @@ int main(int argc, char *argv[])
 
 	auto placement_root = search_tree(tree, "placement");
 	auto instance_map = std::map<std::string, instance>{};
-	for (auto &placement_node : placement_root->m_branches)
+	for (auto &&placement_node : placement_root->m_branches)
 	{
 		if (placement_node.m_value == "component")
 		{
@@ -448,11 +493,11 @@ int main(int argc, char *argv[])
 	}
 
 	auto all_terminals = terminals{};
-	for (auto &inst : instance_map)
+	for (auto &&inst : instance_map)
 	{
 		auto instance = inst.second;
 		auto component = component_map[instance.m_comp];
-		for (auto &p : component.m_pin_map)
+		for (auto &&p : component.m_pin_map)
 		{
 			auto pin = p.second;
 			auto m_x = pin.m_x;
@@ -475,17 +520,17 @@ int main(int argc, char *argv[])
 
 	auto network_root = search_tree(tree, "network");
 	auto circuit_map = std::map<std::string, circuit>{};
-	for (auto &network_node : network_root->m_branches)
+	for (auto &&network_node : network_root->m_branches)
 	{
 		if (network_node.m_value == "class")
 		{
-			auto net_rule = rule{0.125, 0.125, {}};
+			auto net_rule = default_rule;
 			auto the_circuit = circuit{};
-			for (auto &class_node : network_node.m_branches)
+			for (auto &&class_node : network_node.m_branches)
 			{
 				if (class_node.m_value == "rule")
 				{
-					for (auto &dims : class_node.m_branches)
+					for (auto &&dims : class_node.m_branches)
 					{
 						if (dims.m_value == "width")
 						{
@@ -493,7 +538,9 @@ int main(int argc, char *argv[])
 							ss >> net_rule.m_radius;
 							net_rule.m_radius /= 2000.0;
 						}
-						else if (dims.m_value == "clearance")
+						else if ((dims.m_value == "clearance"
+								|| dims.m_value == "clear")
+								&& dims.m_branches.size() == 1)
 						{
 							ss_reset(ss, dims.m_branches[0].m_value);
 							ss >> net_rule.m_gap;
@@ -503,7 +550,7 @@ int main(int argc, char *argv[])
 				}
 				else if (class_node.m_value == "circuit")
 				{
-					for (auto &circuit_node : class_node.m_branches)
+					for (auto &&circuit_node : class_node.m_branches)
 					{
 						if (circuit_node.m_value == "use_via")
 						{
@@ -513,7 +560,7 @@ int main(int argc, char *argv[])
 				}
 			}
 			the_circuit.m_rule = net_rule;
-			for (auto &netname : network_node.m_branches)
+			for (auto &&netname : network_node.m_branches)
 			{
 				if (netname.m_branches.empty()) circuit_map[netname.m_value] = the_circuit;
 			}
@@ -521,7 +568,7 @@ int main(int argc, char *argv[])
 	}
 
 	auto the_tracks = tracks{};
-	for (auto &network_node : network_root->m_branches)
+	for (auto &&network_node : network_root->m_branches)
 	{
 		if (network_node.m_value == "net")
 		{
@@ -530,7 +577,7 @@ int main(int argc, char *argv[])
 				if (net_node.m_value == "pins")
 				{
 					auto the_terminals = terminals{};
-					for (auto &p : net_node.m_branches)
+					for (auto &&p : net_node.m_branches)
 					{
 						auto pin_info = split(p.m_value, '-');
 						auto instance_name = pin_info[0];
