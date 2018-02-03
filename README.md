@@ -1,7 +1,8 @@
-C-PCB By Chris Hinsley 2015
-===========================
+# C-PCB
 
-C++14 PCB router and solver.
+![](./test3.png)
+
+## C++14 PCB router and solver.
 
 Requires the glfw3 libs to be installed.
 
@@ -43,3 +44,7 @@ Format of the viewer input is similar but has the track paths appended and the g
 
 [width, height, depth]
 [track_radius, via_radius, track_gap, [(terminal_radius, terminal_gap, (x, y, z), [(x, y), ...]), ...]...], [(x, y, z), ...]]
+
+## More screenshots
+![](./test5.png)
+![](./test1.png)
