@@ -250,6 +250,7 @@ int main(int argc, char *argv[])
 	auto tree = read_tree(in);
 
 	auto structure_root = search_tree(tree, "structure");
+	const auto units = 1000.0f;
 	auto num_layers = 0;
 	auto minx = float(1000000.0);
 	auto miny = float(1000000.0);
@@ -275,7 +276,7 @@ int main(int argc, char *argv[])
 				{
 					ss_reset(ss, rule_node.m_branches[0].m_value);
 					ss >> default_rule.m_radius;
-					default_rule.m_radius /= 2000.0;
+					default_rule.m_radius /= (2 * units);
 				}
 				else if ((rule_node.m_value == "clear"
 						|| rule_node.m_value == "clearance")
@@ -283,7 +284,7 @@ int main(int argc, char *argv[])
 				{
 					ss_reset(ss, rule_node.m_branches[0].m_value);
 					ss >> default_rule.m_gap;
-					default_rule.m_gap /= 2000.0;
+					default_rule.m_gap /= (2 * units);
 				}
 			}
 		}
@@ -301,8 +302,8 @@ int main(int argc, char *argv[])
 						ss >> px;
 						ss_reset(ss, (cords+1)->m_value);
 						ss >> py;
-						px /= 1000.0;
-						py /= -1000.0;
+						px /= units;
+						py /= -units;
 						minx = std::min(px, minx);
 						maxx = std::max(px, maxx);
 						miny = std::min(py, miny);
@@ -320,10 +321,10 @@ int main(int argc, char *argv[])
 					ss >> x2;
 					ss_reset(ss, boundary_node.m_branches[4].m_value);
 					ss >> y2;
-					x1 /= 1000.0;
-					y1 /= -1000.0;
-					x2 /= 1000.0;
-					y2 /= -1000.0;
+					x1 /= units;
+					y1 /= -units;
+					x2 /= units;
+					y2 /= -units;
 					minx = std::min(x1, minx);
 					maxx = std::max(x1, maxx);
 					miny = std::min(y1, miny);
@@ -373,8 +374,8 @@ int main(int argc, char *argv[])
 						ss_reset(ss, image_node->m_branches[3].m_value);
 						ss >> the_pin.m_y;
 					}
-					the_pin.m_x /= 1000.0;
-					the_pin.m_y /= -1000.0;
+					the_pin.m_x /= units;
+					the_pin.m_y /= -units;
 					the_comp.m_pin_map[the_pin.m_name] = the_pin;
 				}
 			}
@@ -393,13 +394,13 @@ int main(int argc, char *argv[])
 					{
 						ss_reset(ss, padstack_node->m_branches[0].m_branches[1].m_value);
 						ss >> the_rule.m_radius;
-						the_rule.m_radius /= 2000.0;
+						the_rule.m_radius /= (2 * units);
 					}
 					else if (padstack_node->m_branches[0].m_value == "path")
 					{
 						ss_reset(ss, padstack_node->m_branches[0].m_branches[1].m_value);
 						ss >> the_rule.m_radius;
-						the_rule.m_radius /= 2000.0;
+						the_rule.m_radius /= (2 * units);
 						float x1, y1, x2, y2;
 						ss_reset(ss, padstack_node->m_branches[0].m_branches[2].m_value);
 						ss >> x1;
@@ -414,10 +415,10 @@ int main(int argc, char *argv[])
 							|| y1 != 0.0
 							|| y2 != 0.0)
 						{
-							x1 /= 1000.0;
-							y1 /= -1000.0;
-							x2 /= 1000.0;
-							y2 /= -1000.0;
+							x1 /= units;
+							y1 /= -units;
+							x2 /= units;
+							y2 /= -units;
 							points.push_back(point_2d{x1, y1});
 							points.push_back(point_2d{x2, y2});
 						}
@@ -434,10 +435,10 @@ int main(int argc, char *argv[])
 						ss >> x2;
 						ss_reset(ss, padstack_node->m_branches[0].m_branches[4].m_value);
 						ss >> y2;
-						x1 /= 1000.0;
-						y1 /= -1000.0;
-						x2 /= 1000.0;
-						y2 /= -1000.0;
+						x1 /= units;
+						y1 /= -units;
+						x2 /= units;
+						y2 /= -units;
 						points.push_back(point_2d{x1, y1});
 						points.push_back(point_2d{x2, y1});
 						points.push_back(point_2d{x2, y2});
@@ -455,8 +456,8 @@ int main(int argc, char *argv[])
 							ss >> x1;
 							ss_reset(ss, poly_node[1].m_value);
 							ss >> y1;
-							x1 /= 1000.0;
-							y1 /= -1000.0;
+							x1 /= units;
+							y1 /= -units;
 							points.push_back(point_2d{x1, y1});
 						}
 						points.push_back(points.front());
@@ -492,8 +493,8 @@ int main(int argc, char *argv[])
 					ss_reset(ss, component_node->m_branches[4].m_value);
 					ss >> the_instance.m_angle;
 					the_instance.m_angle *= -(M_PI / 180.0);
-					the_instance.m_x /= 1000.0;
-					the_instance.m_y /= -1000.0;
+					the_instance.m_x /= units;
+					the_instance.m_y /= -units;
 					instance_map[instance_name] = the_instance;
 				}
 			}
@@ -543,7 +544,7 @@ int main(int argc, char *argv[])
 						{
 							ss_reset(ss, dims.m_branches[0].m_value);
 							ss >> the_circuit.m_rule.m_radius;
-							the_circuit.m_rule.m_radius /= 2000.0;
+							the_circuit.m_rule.m_radius /= (2 * units);
 						}
 						else if ((dims.m_value == "clearance"
 								|| dims.m_value == "clear")
@@ -551,7 +552,7 @@ int main(int argc, char *argv[])
 						{
 							ss_reset(ss, dims.m_branches[0].m_value);
 							ss >> the_circuit.m_rule.m_gap;
-							the_circuit.m_rule.m_gap /= 2000.0;
+							the_circuit.m_rule.m_gap /= (2 * units);
 						}
 					}
 				}
