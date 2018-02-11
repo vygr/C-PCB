@@ -381,7 +381,7 @@ int main(int argc, char *argv[])
 			}
 			component_map[component_name] = the_comp;
 		}
-		if (library_node.m_value == "padstack")
+		else if (library_node.m_value == "padstack")
 		{
 			for (auto padstack_node = begin(library_node.m_branches) + 1;
 					padstack_node != end(library_node.m_branches); ++padstack_node)
@@ -389,7 +389,7 @@ int main(int argc, char *argv[])
 				if (padstack_node->m_value == "shape")
 				{
 					auto points = points_2d{};
-					auto the_rule = rule{0.5, 0.125, {}};
+					auto the_rule = default_rule;
 					if (padstack_node->m_branches[0].m_value == "circle")
 					{
 						ss_reset(ss, padstack_node->m_branches[0].m_branches[1].m_value);
