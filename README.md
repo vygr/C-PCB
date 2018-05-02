@@ -4,12 +4,19 @@
 
 ## C++14 PCB router and solver.
 
-Requires the glfw3 libs to be installed.
+Requires the glfw3 libs to be installed if you wish to build the viewer
+application.
 
-Build with:
+Build everything with:
 
 ```
 make -j
+```
+
+Build just the parts you need with:
+
+```
+make -j [pcb dsn2pcb view]
 ```
 
 Example command lines would be:
