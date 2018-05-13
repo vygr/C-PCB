@@ -79,7 +79,7 @@ bool pcb::route(float timeout)
 	auto hoisted_nets = std::set<net*>{};
 	auto index = 0;
 	auto start_time = std::chrono::high_resolution_clock::now();
-	while (index < m_netlist.size())
+	while (index < (int)m_netlist.size())
 	{
 		if (m_netlist[index].route()) index++;
 		else
@@ -155,12 +155,11 @@ void pcb::print_netlist()
 //output stats to screen
 void pcb::print_stats()
 {
-	auto num_vias = 0;
-	auto num_terminals = 0;
+	auto vias_set = std::set<node>{};
+	auto num_pads = 0;
 	auto num_nets = m_netlist.size();
 	for (auto &net : m_netlist)
 	{
-		num_terminals += net.m_terminals.size();
 		for (auto &path : net.m_paths)
 		{
 			auto p1 = path[0];
@@ -168,13 +167,23 @@ void pcb::print_stats()
 			{
 				auto p0 = p1;
 				p1 = *itr;
-				if (p0.m_z != p1.m_z) num_vias++;
+				if (p0.m_z != p1.m_z) vias_set.insert(node{p0.m_x, p0.m_y, 0});
 			}
 		}
 	}
-	std::cerr << "Number of terminals: " << num_terminals << '\n';
+	for (auto &net : m_netlist)
+	{
+		num_pads += net.m_terminals.size();
+		for (auto &term : net.m_terminals)
+		{
+			auto x = int(term.m_term.m_x+0.5);
+			auto y = int(term.m_term.m_y+0.5);
+			vias_set.erase(node{x, y, 0});
+		}
+	}
+	std::cerr << "Number of Pads: " << num_pads << '\n';
 	std::cerr << "Number of Nets: " << num_nets << '\n';
-	std::cerr << "Number of Vias: " << num_vias << std::endl;
+	std::cerr << "Number of Vias: " << vias_set.size() << std::endl;
 }
 
 //convert grid node to space node
@@ -283,7 +292,7 @@ nodes &pcb::all_not_shorting(const nodes &gather, const node &n, float radius, f
 
 //flood fill distances from starts till ends covered
 void pcb::mark_distances(const nodess &vec, float radius, float via, float gap,
-						const node_set &starts, const nodes &ends)
+						const node_set &starts, const node &ends)
 {
 	static auto via_vectors = nodess{
 		nodes{node{0, 0, -1}, node{0, 0, 1}},
@@ -294,11 +303,7 @@ void pcb::mark_distances(const nodess &vec, float radius, float via, float gap,
 	while (!frontier.empty() || !vias_nodes.empty())
 	{
 		for (auto &node : frontier) set_node(node, distance);
-		auto itr = std::find_if(begin(ends), end(ends), [&] (auto &node)
-		{
-			return (get_node(node) == 0);
-		});
-		if (itr == end(ends)) break;
+		if (get_node(ends) != 0) break;
 		auto new_nodes = node_set{};
 		for (auto &node : frontier)
 		{
@@ -342,7 +347,7 @@ auto aabb_terminals(const terminals &terms, int quantization)
 	auto miny = (int(terms[0].m_term.m_y) / quantization) * quantization;
 	auto maxx = ((int(terms[0].m_term.m_x) + (quantization - 1)) / quantization) * quantization;
 	auto maxy = ((int(terms[0].m_term.m_y) + (quantization - 1)) / quantization) * quantization;
-	for (auto i = 1; i < terms.size(); ++i)
+	for (auto i = 1; i < (int)terms.size(); ++i)
 	{
 		auto tminx = (int(terms[i].m_term.m_x) / quantization) * quantization;
 		auto tminy = (int(terms[i].m_term.m_y) / quantization) * quantization;
@@ -408,7 +413,6 @@ auto scale_terminals(terminals &terms, int res)
 		term.m_gap *= res;
 		term.m_term.m_x *= res;
 		term.m_term.m_y *= res;
-		term.m_term.m_z *= res;
 		for (auto &p : term.m_shape)
 		{
 			p.m_x *= res;
@@ -457,20 +461,18 @@ void net::add_terminal_collision_lines()
 		auto g = node.m_gap;
 		auto x = node.m_term.m_x;
 		auto y = node.m_term.m_y;
+		auto z = node.m_term.m_z;
 		auto shape = node.m_shape;
 		if (shape.empty())
-			m_pcb->m_layers.add_line(point_3d{x, y, 0}, point_3d{x, y, float(m_pcb->m_depth - 1)}, r, g);
+			m_pcb->m_layers.add_line(point_3d{x, y, z}, point_3d{x, y, z}, r, g);
 		else
 		{
-			for (auto z = 0; z < m_pcb->m_depth; ++z)
+			auto p1 = point_3d{x + shape[0].m_x, y + shape[0].m_y, z};
+			for (auto i = 1; i < (int)shape.size(); ++i)
 			{
-				auto p1 = point_3d{x + shape[0].m_x, y + shape[0].m_y, float(z)};
-				for (auto i = 1; i < shape.size(); ++i)
-				{
-					auto p0 = p1;
-					p1 = point_3d{x + shape[i].m_x, y + shape[i].m_y, float(z)};
-					m_pcb->m_layers.add_line(p0, p1, r, g);
-				}
+				auto p0 = p1;
+				p1 = point_3d{x + shape[i].m_x, y + shape[i].m_y, z};
+				m_pcb->m_layers.add_line(p0, p1, r, g);
 			}
 		}
 	}
@@ -485,20 +487,18 @@ void net::sub_terminal_collision_lines()
 		auto g = node.m_gap;
 		auto x = node.m_term.m_x;
 		auto y = node.m_term.m_y;
+		auto z = node.m_term.m_z;
 		auto shape = node.m_shape;
 		if (shape.empty())
-			m_pcb->m_layers.sub_line(point_3d{x, y, 0}, point_3d{x, y, float(m_pcb->m_depth - 1)}, r, g);
+			m_pcb->m_layers.sub_line(point_3d{x, y, z}, point_3d{x, y, z}, r, g);
 		else
 		{
-			for (auto z = 0; z < m_pcb->m_depth; ++z)
+			auto p1 = point_3d{x + shape[0].m_x, y + shape[0].m_y, z};
+			for (auto i = 1; i < static_cast<int>(shape.size()); ++i)
 			{
-				auto p1 = point_3d{x + shape[0].m_x, y + shape[0].m_y, float(z)};
-				for (auto i = 1; i < static_cast<int>(shape.size()); ++i)
-				{
-					auto p0 = p1;
-					p1 = point_3d{x + shape[i].m_x, y + shape[i].m_y, float(z)};
-					m_pcb->m_layers.sub_line(p0, p1, r, g);
-				}
+				auto p0 = p1;
+				p1 = point_3d{x + shape[i].m_x, y + shape[i].m_y, z};
+				m_pcb->m_layers.sub_line(p0, p1, r, g);
 			}
 		}
 	}
@@ -526,7 +526,7 @@ void net::sub_paths_collision_lines()
 	for (auto &path : m_paths)
 	{
 		auto p1 = m_pcb->grid_to_space_point(path[0]);
-		for (auto i = 1; i < path.size(); ++i)
+		for (auto i = 1; i < (int)path.size(); ++i)
 		{
 			auto p0 = p1;
 			p1 = m_pcb->grid_to_space_point(path[i]);
@@ -554,7 +554,7 @@ nodess net::optimise_paths(const nodess &paths)
 		auto opt_path = nodes{};
 		auto d = point_3d{0.0, 0.0, 0.0};
 		auto p1 = m_pcb->grid_to_space_point(path[0]);
-		for (auto i = 1; i < path.size(); ++i)
+		for (auto i = 1; i < (int)path.size(); ++i)
 		{
 			auto p0 = p1;
 			p1 = m_pcb->grid_to_space_point(path[i]);
@@ -622,26 +622,17 @@ bool net::route()
 	auto visited = node_set{};
 	for (auto index = 1; index < static_cast<int>(m_terminals.size()); ++index)
 	{
-		auto ends = nodes{}; ends.reserve(m_pcb->m_depth);
 		auto x = int(m_terminals[index].m_term.m_x+0.5);
 		auto y = int(m_terminals[index].m_term.m_y+0.5);
-		for (auto z = 0; z < m_pcb->m_depth; ++z) ends.push_back(node{x, y, z});
-		auto search = std::find_if(begin(ends), end(ends), [&] (auto &node)
-		{
-			return visited.find(node) != end(visited);
-		});
-		if (search != end(ends)) continue;
+		auto z = int(m_terminals[index].m_term.m_z);
+		auto ends = node{x, y, z};
+		if (visited.find(ends) != end(visited)) continue;
 		x = int(m_terminals[index-1].m_term.m_x+0.5);
 		y = int(m_terminals[index-1].m_term.m_y+0.5);
-		for (auto z = 0; z < m_pcb->m_depth; ++z) visited.insert(node{x, y, z});
+		z = int(m_terminals[index-1].m_term.m_z);
+		visited.insert(node{x, y, z});
 		m_pcb->mark_distances(m_pcb->m_routing_flood_vectors, m_radius, m_via, m_gap, visited, ends);
-		auto sorted_ends = sort_nodes{}; sorted_ends.reserve(ends.size());
-		for (auto &node : ends) sorted_ends.push_back(sort_node{float(m_pcb->get_node(node)), node});
-		std::sort(begin(sorted_ends), end(sorted_ends), [&] (auto &s1, auto &s2)
-		{
-			return s1.m_mark < s2.m_mark;
-		});
-		auto result = backtrack_path(visited, sorted_ends[0].m_node, m_radius, m_via, m_gap);
+		auto result = backtrack_path(visited, ends, m_radius, m_via, m_gap);
 		m_pcb->unmark_distances();
 		if (!result.second)
 		{
