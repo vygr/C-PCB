@@ -16,21 +16,21 @@ make -j
 Build just the parts you need with:
 
 ```
-make -j [pcb dsn2pcb view]
+make -j [c_pcb c_pcb_dsn c_pcb_view]
 ```
 
 Example command lines would be:
 
 ```
-./pcb --v 1 netlist.pcb | ./view --o 1 --s 7
-./dsn2pcb test1.dsn | ./pcb --v 1 --z 8 --q 10 --r 2 | ./view
+./c_pcb --v 1 netlist.pcb | ./c_pcb_view --o 1 --s 7
+./c_pcb_dsn test1.dsn | ./c_pcb --v 1 --z 8 --q 10 --r 2 | ./c_pcb_view
 ```
 
 You can drop the output to a file and view it as an animation with:
 
 ```
-./pcb --v 1 netlist.pcb > anim
-./view anim
+./c_pcb --v 1 netlist.pcb > anim
+./c_pcb_view anim
 ```
 
 `-h` or `--help` for help on either app.
