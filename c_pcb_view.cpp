@@ -343,6 +343,7 @@ auto draw_layers(const outputs &tracks, int pcb_height, int pcb_depth, float arg
 			}
 			for (auto &term : track.m_terms)
 			{
+				if (term.m_term.m_z != float(depth)) continue;
 				if (term.m_shape.empty())
 				{
 					draw_filled_polygon_fan(point_2d{term.m_term.m_x, term.m_term.m_y + yoffset},

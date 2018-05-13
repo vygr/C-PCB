@@ -61,12 +61,17 @@ struct rule
 {
 	float m_radius;
 	float m_gap;
-	points_2d m_shape;
 };
 
 struct circuit
 {
 	std::string m_via;
+	rule m_rule;
+};
+
+struct padstack
+{
+	points_2d m_shape;
 	rule m_rule;
 };
 
@@ -270,17 +275,38 @@ int main(int argc, char *argv[])
 	auto tree = read_tree(in);
 
 	auto structure_root = search_tree(tree, "structure");
+	auto layers = std::map<std::string, int>{};
 	const auto units = 1000.0f;
 	auto num_layers = 0;
 	auto minx = float(1000000.0);
 	auto miny = float(1000000.0);
 	auto maxx = float(-1000000.0);
 	auto maxy = float(-1000000.0);
-	auto default_rule = rule{0.25, 0.25, {}};
+	auto default_rule = rule{0.25, 0.25};
 	auto default_via = std::string{"Via[0-1]_600:400_um"};
 	for (auto &&structure_node : structure_root->m_branches)
 	{
-		if (structure_node.m_value == "layer") num_layers++;
+		if (structure_node.m_value == "layer")
+		{
+			num_layers++;
+			auto layer_index = 0;
+			auto layer_name = structure_node.m_branches[0].m_value;
+			for (auto &&layer_node : structure_node.m_branches)
+			{
+				if (layer_node.m_value == "property")
+				{
+					for (auto &&property_node : layer_node.m_branches)
+					{
+						if (property_node.m_value == "index")
+						{
+							ss_reset(ss, property_node.m_branches[0].m_value);
+							ss >> layer_index;
+						}
+					}
+				}
+			}
+			layers[layer_name] = layer_index;
+		}
 		else if (structure_node.m_value == "via")
 		{
 			for (auto &&via_node : structure_node.m_branches)
@@ -360,7 +386,7 @@ int main(int argc, char *argv[])
 
 	auto library_root = search_tree(tree, "library");
 	auto component_map = std::map<std::string, component>{};
-	auto rule_map = std::map<std::string, rule>{};
+	auto padstack_map = std::map<std::string, std::map<int, padstack>>{};
 	for (auto &&library_node : library_root->m_branches)
 	{
 		if (library_node.m_value == "image")
@@ -482,8 +508,8 @@ int main(int argc, char *argv[])
 						}
 						points.push_back(points.front());
 					}
-					the_rule.m_shape = points;
-					rule_map[library_node.m_branches[0].m_value] = the_rule;
+					auto layer_index = layers[padstack_node->m_branches[0].m_branches[0].m_value];
+					padstack_map[library_node.m_branches[0].m_value][layer_index] = padstack{points, the_rule};
 				}
 			}
 		}
@@ -536,10 +562,12 @@ int main(int argc, char *argv[])
 			auto c = cos(instance.m_angle);
 			auto px = float((c*m_x - s*m_y) + instance.m_x);
 			auto py = float((s*m_x + c*m_y) + instance.m_y);
-			auto pin_rule = rule_map[pin.m_form];
-			auto tp = point_3d{px, py, 0.0};
-			auto cords = shape_to_cords(pin_rule.m_shape, pin.m_angle, instance.m_angle);
-			all_terminals.push_back(terminal{pin_rule.m_radius, pin_rule.m_gap, tp, cords});
+			for (auto &&pad : padstack_map[pin.m_form])
+			{
+				auto tp = point_3d{px, py, (float)pad.first};
+				auto cords = shape_to_cords(pad.second.m_shape, pin.m_angle, instance.m_angle);
+				all_terminals.push_back(terminal{pad.second.m_rule.m_radius, pad.second.m_rule.m_gap, tp, cords});
+			}
 			minx = std::min(px, minx);
 			maxx = std::max(px, maxx);
 			miny = std::min(py, miny);
@@ -548,7 +576,7 @@ int main(int argc, char *argv[])
 	}
 
 	auto network_root = search_tree(tree, "network");
-	auto circuit_map = std::map<std::string, circuit>{};
+	auto net_map = std::map<std::string, circuit>{};
 	for (auto &&network_node : network_root->m_branches)
 	{
 		if (network_node.m_value == "class")
@@ -589,7 +617,7 @@ int main(int argc, char *argv[])
 			}
 			for (auto &&netname : network_node.m_branches)
 			{
-				if (netname.m_branches.empty()) circuit_map[netname.m_value] = the_circuit;
+				if (netname.m_branches.empty()) net_map[netname.m_value] = the_circuit;
 			}
 		}
 	}
@@ -619,17 +647,19 @@ int main(int argc, char *argv[])
 						auto c = cos(instance.m_angle);
 						auto px = float((c*m_x - s*m_y) + instance.m_x);
 						auto py = float((s*m_x + c*m_y) + instance.m_y);
-						auto pin_rule = rule_map[pin.m_form];
-						auto tp = point_3d{px, py, 0.0};
-						auto cords = shape_to_cords(pin_rule.m_shape, pin.m_angle, instance.m_angle);
-						auto term = terminal{pin_rule.m_radius, pin_rule.m_gap, tp, cords};
-						the_terminals.push_back(term);
-						all_terminals.erase(std::find(begin(all_terminals), end(all_terminals), term));
+						for (auto &&pad : padstack_map[pin.m_form])
+						{
+							auto tp = point_3d{px, py, (float)pad.first};
+							auto cords = shape_to_cords(pad.second.m_shape, pin.m_angle, instance.m_angle);
+							auto term = terminal{pad.second.m_rule.m_radius, pad.second.m_rule.m_gap, tp, cords};
+							the_terminals.push_back(term);
+							all_terminals.erase(std::find(begin(all_terminals), end(all_terminals), term));
+						}
 					}
-					auto circuit = circuit_map[network_node.m_branches[0].m_value];
-					auto net_rule = circuit.m_rule;
-					auto via_rule = rule_map[circuit.m_via];
-					the_tracks.push_back(track{net_rule.m_radius, via_rule.m_radius, net_rule.m_gap, the_terminals});
+					auto &&net = net_map[network_node.m_branches[0].m_value];
+					auto track_rule = net.m_rule;
+					auto via_rule = padstack_map[net.m_via][0].m_rule;
+					the_tracks.push_back(track{track_rule.m_radius, via_rule.m_radius, track_rule.m_gap, the_terminals});
 				}
 			}
 		}
