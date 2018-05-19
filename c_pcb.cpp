@@ -196,7 +196,7 @@ int main(int argc, char *argv[])
 			else
 			{
 			help:
-				std::cout << "pcb [switches] [filename]\neg. pcb -t 600 -s 1 netlist.pcb\n";
+				std::cout << "c_pcb [switches] [filename]\neg. c_pcb -t 600 -s 1 netlist.pcb\n";
 				std::cout << "reads from stdin if no filename.\n";
 				std::cout << "-t:  timeout in seconds, default 600\n";
 				std::cout << "-v:  verbosity level 0..1, default 0\n";

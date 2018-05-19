@@ -414,7 +414,7 @@ int main(int argc, char *argv[])
 			else
 			{
 			help:
-				std::cout << "view [switches] [filename]\neg. view -s 9 -o 1 anim\n";
+				std::cout << "c_pcb_view [switches] [filename]\neg. c_pcb_view -s 9 -o 1 anim\n";
 				std::cout << "reads from stdin if no filename.\n";
 				std::cout << "-s:  scale factor, default 9\n";
 				std::cout << "-o:  overlay modes 0..1, default 0\n";

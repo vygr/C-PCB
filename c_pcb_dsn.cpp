@@ -254,7 +254,7 @@ int main(int argc, char *argv[])
 			else
 			{
 			help:
-				std::cout << "dsn2pcb [switches] [filename]\neg. dsn2pcb -b 6 test1.dsn\n";
+				std::cout << "c_pcb_dsn [switches] [filename]\neg. c_pcb_dsn -b 6 test1.dsn\n";
 				std::cout << "reads from stdin if no filename.\n";
 				std::cout << "-b: border gap, default 1\n";
 				exit(0);
