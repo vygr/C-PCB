@@ -224,7 +224,7 @@ sort_nodes &pcb::all_marked(const nodess &vec, const node &n)
 		{
 			auto n = node{nx, ny, nz};
 			auto mark = get_node(n);
-			if (mark != 0) yield.push_back(sort_node{float(mark), n});
+			if (mark) yield.emplace_back(sort_node{float(mark), n});
 		}
 	}
 	return yield;
@@ -247,7 +247,7 @@ nodes &pcb::all_not_marked(const nodess &vec, const node &n)
 			&& (0 <= nz) && (nz < m_depth))
 		{
 			auto n = node{nx, ny, nz};
-			if (get_node(n) == 0) yield.push_back(n);
+			if (!get_node(n)) yield.emplace_back(n);
 		}
 	}
 	return yield;
@@ -266,14 +266,8 @@ nodes &pcb::all_nearer_sorted(const nodess &vec, const node &n, dfunc_t dfunc)
 		mn.m_mark = dfunc(grid_to_space_point(mn.m_node), gp);
 		return false;
 	});
-	std::sort(begin(marked_nodes), marked_nodes_end, [&] (auto &s1, auto &s2)
-	{
-		return s1.m_mark < s2.m_mark;
-	});
-	std::for_each(begin(marked_nodes), marked_nodes_end, [&] (auto &sn)
-	{
-		yield.push_back(sn.m_node);
-	});
+	std::sort(begin(marked_nodes), marked_nodes_end, [&] (auto &s1, auto &s2) { return s1.m_mark < s2.m_mark; });
+	std::for_each(begin(marked_nodes), marked_nodes_end, [&] (auto &sn) { yield.emplace_back(sn.m_node); });
 	return yield;
 }
 
@@ -285,7 +279,7 @@ nodes &pcb::all_not_shorting(const nodes &gather, const node &n, float radius, f
 	for (auto &new_node : gather)
 	{
 		auto nnp = grid_to_space_point(new_node);
-		if (!m_layers.hit_line(np, nnp, radius, gap)) yield.push_back(new_node);
+		if (!m_layers.hit_line(np, nnp, radius, gap)) yield.emplace_back(new_node);
 	}
 	return yield;
 }
@@ -300,7 +294,7 @@ nodes &pcb::all_not_shorting_via(const nodes &gather, const node &n, float radiu
 	{
 		auto nnp = grid_to_space_point(new_node);
 		nnp.m_z = 0.0f;
-		if (!m_layers.hit_line(np, nnp, radius, gap)) yield.push_back(new_node);
+		if (!m_layers.hit_line(np, nnp, radius, gap)) yield.emplace_back(new_node);
 	}
 	return yield;
 }
@@ -318,15 +312,11 @@ void pcb::mark_distances(const nodess &vec, float radius, float via, float gap,
 	while (!frontier.empty() || !vias_nodes.empty())
 	{
 		for (auto &node : frontier) set_node(node, distance);
-		if (std::all_of(begin(ends), end(ends), [&] (auto &&n)
-		{
-			return get_node(n) != 0;
-		})) break;
+		if (std::all_of(begin(ends), end(ends), [&] (auto &&n) { return get_node(n); })) break;
 		auto new_nodes = node_set{};
 		for (auto &node : frontier)
 		{
-			for (auto &new_node : all_not_shorting(
-				all_not_marked(vec, node), node, radius, gap))
+			for (auto &new_node : all_not_shorting(all_not_marked(vec, node), node, radius, gap))
 			{
 				new_nodes.insert(new_node);
 			}
@@ -334,8 +324,7 @@ void pcb::mark_distances(const nodess &vec, float radius, float via, float gap,
 		auto new_vias_nodes = node_set{};
 		for (auto &node : frontier)
 		{
-			for (auto &new_node : all_not_shorting_via(
-				all_not_marked(via_vectors, node), node, via, gap))
+			for (auto &new_node : all_not_shorting_via(all_not_marked(via_vectors, node), node, via, gap))
 			{
 				new_vias_nodes.insert(new_node);
 			}
@@ -344,7 +333,7 @@ void pcb::mark_distances(const nodess &vec, float radius, float via, float gap,
 		auto delay_nodes = vias_nodes.find(distance);
 		if (delay_nodes != end(vias_nodes))
 		{
-			for (auto &node : delay_nodes->second) if (get_node(node) == 0) new_nodes.insert(node);
+			for (auto &node : delay_nodes->second) if (!get_node(node)) new_nodes.insert(node);
 			vias_nodes.erase(delay_nodes);
 		}
 		frontier = std::move(new_nodes);
@@ -578,12 +567,12 @@ nodess net::optimise_paths(const nodess &paths)
 			auto d1 = norm_3d(sub_3d(p1, p0));
 			if (d1 != d)
 			{
-				opt_path.push_back(path[i-1]);
+				opt_path.emplace_back(path[i-1]);
 				d = d1;
 			}
 		}
-		opt_path.push_back(path[path.size()-1]);
-		opt_paths.push_back(opt_path);
+		opt_path.emplace_back(path[path.size()-1]);
+		opt_paths.emplace_back(opt_path);
 	}
 	return opt_paths;
 }
@@ -606,13 +595,13 @@ std::pair<nodes, bool> net::backtrack_path(const node_set &visited, const node &
 			m_pcb->all_nearer_sorted(m_pcb->m_routing_path_vectors, path_node, m_pcb->m_dfunc),
 			path_node, radius, gap))
 		{
-			nearer_nodes.push_back(node);
+			nearer_nodes.emplace_back(node);
 		}
 		for (auto &node : m_pcb->all_not_shorting_via(
 			m_pcb->all_nearer_sorted(via_vectors, path_node, m_pcb->m_dfunc),
 			path_node, via, gap))
 		{
-			nearer_nodes.push_back(node);
+			nearer_nodes.emplace_back(node);
 		}
 		if (nearer_nodes.empty()) return std::pair<nodes, bool>(nodes{}, false);
 		auto search = std::find_if(begin(nearer_nodes), end(nearer_nodes), [&] (auto &node)
@@ -658,7 +647,7 @@ bool net::route()
 			return false;
 		}
 		for (auto &node : result.first) visited.insert(node);
-		m_paths.push_back(std::move(result.first));
+		m_paths.emplace_back(std::move(result.first));
 	}
 	m_paths = optimise_paths(m_paths);
 	add_paths_collision_lines();
