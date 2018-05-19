@@ -290,6 +290,21 @@ nodes &pcb::all_not_shorting(const nodes &gather, const node &n, float radius, f
 	return yield;
 }
 
+//generate all grid points surrounding node that are not shorting with an existing track
+nodes &pcb::all_not_shorting_via(const nodes &gather, const node &n, float radius, float gap)
+{
+	static auto yield = nodes{}; yield.clear();
+	auto np = grid_to_space_point(n);
+	np.m_z = m_depth - 1;
+	for (auto &new_node : gather)
+	{
+		auto nnp = grid_to_space_point(new_node);
+		nnp.m_z = 0.0f;
+		if (!m_layers.hit_line(np, nnp, radius, gap)) yield.push_back(new_node);
+	}
+	return yield;
+}
+
 //flood fill distances from starts till ends covered
 void pcb::mark_distances(const nodess &vec, float radius, float via, float gap,
 						const node_set &starts, const nodes &ends)
@@ -319,7 +334,7 @@ void pcb::mark_distances(const nodess &vec, float radius, float via, float gap,
 		auto new_vias_nodes = node_set{};
 		for (auto &node : frontier)
 		{
-			for (auto &new_node : all_not_shorting(
+			for (auto &new_node : all_not_shorting_via(
 				all_not_marked(via_vectors, node), node, via, gap))
 			{
 				new_vias_nodes.insert(new_node);
@@ -420,13 +435,6 @@ net::net(const terminals &terms, float radius, float via, float gap, pcb *pcb)
 	auto result = aabb_terminals(m_terminals, pcb->m_quantization);
 	m_area = result.first;
 	m_bbox = result.second;
-	remove();
-	for (auto &term : m_terminals)
-	{
-		auto p = node{int(term.m_term.m_x + 0.5), int(term.m_term.m_y + 0.5), (int)term.m_term.m_z};
-		auto sp = point_3d{term.m_term.m_x, term.m_term.m_y, term.m_term.m_z};
-		pcb->m_deform[p] = sp;
-	}
 }
 
 //terminal collision lines
@@ -478,9 +486,14 @@ void net::process_terminals()
 			}
 		}
 
+		//ends and deformations
 		m_terminal_end_nodes.emplace_back(nodes{});
 		auto &&ends = m_terminal_end_nodes.back();
-		for (auto z = z1; z <= z2; ++z) ends.emplace_back(node{int(x+0.5), int(y+0.5), int(z)});
+		for (auto z = z1; z <= z2; ++z)
+		{
+			ends.emplace_back(node{int(x + 0.5), int(y + 0.5), int(z)});
+			m_pcb->m_deform[ends.back()] = point_3d(x, y, z);
+		}
 	}
 }
 
@@ -516,7 +529,10 @@ std::vector<layers::line> net::paths_collision_lines() const
 		{
 			auto p0 = p1;
 			p1 = m_pcb->grid_to_space_point(path[i]);
-			if (path[i-1].m_z != path[i].m_z) paths_lines.emplace_back(layers::line{p0, p1, m_via, m_gap});
+			if (p0.m_z != p1.m_z) paths_lines.emplace_back(layers::line{
+				point_3d(p0.m_x, p0.m_y, 0),
+				point_3d(p0.m_x, p0.m_y, float(m_pcb->m_depth - 1)),
+				m_via, m_gap});
 			else paths_lines.emplace_back(layers::line{p0, p1, m_radius, m_gap});
 		}
 	}
@@ -534,6 +550,7 @@ void net::add_paths_collision_lines()
 void net::sub_paths_collision_lines()
 {
 	for (auto &&l : m_paths_collision_lines) m_pcb->m_layers.sub_line(l);
+	m_paths_collision_lines.clear();
 }
 
 //remove net entries from spacial grid
@@ -541,8 +558,8 @@ void net::remove()
 {
 	sub_paths_collision_lines();
 	sub_terminal_collision_lines();
-	m_paths.clear();
 	add_terminal_collision_lines();
+	m_paths.clear();
 }
 
 //remove redundant points from paths
