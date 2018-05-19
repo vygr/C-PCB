@@ -129,7 +129,7 @@ private:
 	void process_terminals();
 	void add_terminal_collision_lines();
 	void sub_terminal_collision_lines();
-	std::vector<layers::line> paths_collision_lines();
+	std::vector<layers::line> paths_collision_lines() const;
 	void add_paths_collision_lines();
 	void sub_paths_collision_lines();
 	nodess optimise_paths(const nodess &paths);

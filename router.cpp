@@ -503,10 +503,13 @@ void net::sub_terminal_collision_lines()
 }
 
 //paths collision lines
-std::vector<layers::line> net::paths_collision_lines()
+std::vector<layers::line> net::paths_collision_lines() const
 {
+	auto max_lines = std::accumulate(cbegin(m_paths), cend(m_paths), 0u,
+		[&] (auto acc, auto &&p) { return acc + p.size(); });
 	auto paths_lines = std::vector<layers::line>{};
-	for (auto &path : m_paths)
+	paths_lines.reserve(max_lines);
+	for (auto const &path : m_paths)
 	{
 		auto p1 = m_pcb->grid_to_space_point(path[0]);
 		for (auto i = 1; i < static_cast<int>(path.size()); ++i)
