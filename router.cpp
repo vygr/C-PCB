@@ -608,7 +608,7 @@ std::pair<nodes, bool> net::backtrack_path(const node_set &visited, const node &
 		{
 			nearer_nodes.push_back(node);
 		}
-		for (auto &node : m_pcb->all_not_shorting(
+		for (auto &node : m_pcb->all_not_shorting_via(
 			m_pcb->all_nearer_sorted(via_vectors, path_node, m_pcb->m_dfunc),
 			path_node, via, gap))
 		{
