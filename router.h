@@ -120,6 +120,7 @@ public:
 	int m_area;
 	float m_radius;
 	nodess m_paths;
+	std::vector<layers::line> m_paths_collision_lines;
 	terminals m_terminals;
 	std::vector<layers::line> m_terminal_collision_lines;
 	std::vector<nodes> m_terminal_end_nodes;

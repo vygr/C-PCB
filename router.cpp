@@ -526,13 +526,14 @@ std::vector<layers::line> net::paths_collision_lines() const
 //add paths entries to spacial cache
 void net::add_paths_collision_lines()
 {
-	for (auto &&l : paths_collision_lines()) m_pcb->m_layers.add_line(l);
+	m_paths_collision_lines = paths_collision_lines();
+	for (auto &&l : m_paths_collision_lines) m_pcb->m_layers.add_line(l);
 }
 
 //remove paths entries from spacial cache
 void net::sub_paths_collision_lines()
 {
-	for (auto &&l : paths_collision_lines()) m_pcb->m_layers.sub_line(l);
+	for (auto &&l : m_paths_collision_lines) m_pcb->m_layers.sub_line(l);
 }
 
 //remove net entries from spacial grid
