@@ -300,8 +300,7 @@ nodes &pcb::all_not_shorting_via(const nodes &gather, const node &n, float radiu
 }
 
 //flood fill distances from starts till ends covered
-void pcb::mark_distances(const nodess &vec, float radius, float via, float gap,
-						const node_set &starts, const nodes &ends)
+void pcb::mark_distances(float radius, float via, float gap, const node_set &starts, const nodes &ends)
 {
 	static auto via_vectors = nodess{
 		nodes{node{0, 0, -1}, node{0, 0, 1}},
@@ -316,7 +315,7 @@ void pcb::mark_distances(const nodess &vec, float radius, float via, float gap,
 		auto new_nodes = node_set{};
 		for (auto &node : frontier)
 		{
-			for (auto &new_node : all_not_shorting(all_not_marked(vec, node), node, radius, gap))
+			for (auto &new_node : all_not_shorting(all_not_marked(m_routing_flood_vectors, node), node, radius, gap))
 			{
 				new_nodes.insert(new_node);
 			}
@@ -589,29 +588,23 @@ std::pair<nodes, bool> net::backtrack_path(const node_set &visited, const node &
 	auto path_node = end_node;
 	for (;;)
 	{
-		path.push_back(path_node);
+		path.emplace_back(path_node);
 		nearer_nodes.clear();
 		for (auto &node : m_pcb->all_not_shorting(
 			m_pcb->all_nearer_sorted(m_pcb->m_routing_path_vectors, path_node, m_pcb->m_dfunc),
-			path_node, radius, gap))
-		{
-			nearer_nodes.emplace_back(node);
-		}
+			path_node, radius, gap)) nearer_nodes.emplace_back(node);
 		for (auto &node : m_pcb->all_not_shorting_via(
 			m_pcb->all_nearer_sorted(via_vectors, path_node, m_pcb->m_dfunc),
-			path_node, via, gap))
-		{
-			nearer_nodes.emplace_back(node);
-		}
+			path_node, via, gap)) nearer_nodes.emplace_back(node);
 		if (nearer_nodes.empty()) return std::pair<nodes, bool>(nodes{}, false);
-		auto search = std::find_if(begin(nearer_nodes), end(nearer_nodes), [&] (auto &node)
+		auto search = std::find_if(cbegin(nearer_nodes), cend(nearer_nodes), [&] (auto &node)
 		{
 			return visited.find(node) != end(visited);
 		});
 		if (search != end(nearer_nodes))
 		{
 			//found existing track
-			path.push_back(*search);
+			path.emplace_back(*search);
 			return std::pair<nodes, bool>(std::move(path), true);
 		}
 		path_node = nearer_nodes[0];
@@ -629,12 +622,12 @@ bool net::route()
 	for (auto index = 1; index < static_cast<int>(m_terminal_end_nodes.size()); ++index)
 	{
 		auto &&ends = m_terminal_end_nodes[index];
-		if (std::any_of(begin(ends), end(ends), [&] (auto &&node)
+		if (std::any_of(cbegin(ends), cend(ends), [&] (auto &&node)
 		{
 			return visited.find(node) != end(visited);
 		})) continue;
 		for (auto &&start : m_terminal_end_nodes[index - 1]) visited.insert(start);
-		m_pcb->mark_distances(m_pcb->m_routing_flood_vectors, m_radius, m_via, m_gap, visited, ends);
+		m_pcb->mark_distances(m_radius, m_via, m_gap, visited, ends);
 		std::sort(begin(ends), end(ends), [&] (auto &&n1, auto && n2)
 		{
 			 return m_pcb->get_node(n1) < m_pcb->get_node(n2);
