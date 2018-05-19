@@ -145,3 +145,37 @@ bool layers::hit_line(const point_3d &p1, const point_3d &p2, float r, float g)
 	for (auto z = z1; z <= z2; ++z) if (m_layers[z]->hit_line(l)) return true;
 	return false;
 }
+
+void layers::add_line(const line &l)
+{
+	auto z1 = int(l.m_p1.m_z);
+	auto z2 = int(l.m_p2.m_z);
+	if (z1 > z2) std::swap(z1, z2);
+	auto l1 = layer::line{point_2d(l.m_p1.m_x, l.m_p1.m_y),
+						point_2d(l.m_p2.m_x, l.m_p2.m_y),
+						l.m_radius, l.m_gap};
+	for (auto z = z1; z <= z2; ++z) m_layers[z]->add_line(l1);
+}
+
+void layers::sub_line(const line &l)
+{
+	auto z1 = int(l.m_p1.m_z);
+	auto z2 = int(l.m_p2.m_z);
+	if (z1 > z2) std::swap(z1, z2);
+	auto l1 = layer::line{point_2d(l.m_p1.m_x, l.m_p1.m_y),
+						point_2d(l.m_p2.m_x, l.m_p2.m_y),
+						l.m_radius, l.m_gap};
+	for (auto z = z1; z <= z2; ++z) m_layers[z]->sub_line(l1);
+}
+
+bool layers::hit_line(const line &l)
+{
+	auto z1 = int(l.m_p1.m_z);
+	auto z2 = int(l.m_p2.m_z);
+	if (z1 > z2) std::swap(z1, z2);
+	auto l1 = layer::line{point_2d(l.m_p1.m_x, l.m_p1.m_y),
+						point_2d(l.m_p2.m_x, l.m_p2.m_y),
+						l.m_radius, l.m_gap};
+	for (auto z = z1; z <= z2; ++z) if (m_layers[z]->hit_line(l1)) return true;
+	return false;
+}

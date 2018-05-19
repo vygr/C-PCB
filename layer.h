@@ -47,7 +47,7 @@ public:
 	{
 		bool operator==(const line &l) const
 		{
-			return std::tie(l.m_p1, l.m_p2, l.m_radius, l.m_gap) == std::tie(m_p1, m_p2, m_radius, m_gap);
+			return std::tie(m_p1, m_p2, m_radius, m_gap) == std::tie(l.m_p1, l.m_p2, l.m_radius, l.m_gap);
 		}
 		point_2d m_p1;
 		point_2d m_p2;
@@ -130,11 +130,22 @@ public:
 		int m_depth;
 	};
 
+	struct line
+	{
+		point_3d m_p1;
+		point_3d m_p2;
+		float m_radius;
+		float m_gap;
+	};
+
 	layers(const dims &dims, float s);
 	~layers();
 	void add_line(const point_3d &p1, const point_3d &p2, float r, float g);
 	void sub_line(const point_3d &p1, const point_3d &p2, float r, float g);
 	bool hit_line(const point_3d &p1, const point_3d &p2, float r, float g);
+	void add_line(const line &l);
+	void sub_line(const line &l);
+	bool hit_line(const line &l);
 
 private:
 	int m_depth;
