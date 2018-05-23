@@ -168,7 +168,6 @@ int main(int argc, char *argv[])
 	auto arg_z = 0;
 	auto arg_r = 1;
 	auto arg_q = 1;
-	auto arg_d = 0;
 	auto arg_fr = 2;
 	auto arg_xr = 1;
 	auto arg_yr = 1;
@@ -188,7 +187,6 @@ int main(int argc, char *argv[])
 			else if (opt == "z") ss >> arg_z;
 			else if (opt == "s") ss >> arg_s;
 			else if (opt == "r") ss >> arg_r;
-			else if (opt == "d") ss >> arg_d;
 			else if (opt == "q") ss >> arg_q;
 			else if (opt == "fr") ss >> arg_fr;
 			else if (opt == "xr") ss >> arg_xr;
@@ -203,12 +201,6 @@ int main(int argc, char *argv[])
 				std::cout << "-z:  vias cost, 0..100, default 0\n";
 				std::cout << "-s:  number of samples, default 1\n";
 				std::cout << "-r:  grid resolution 1..4, default 1\n";
-				std::cout << "-d:  distance metric 0..4, default 0.\n"
-								"\t0 -> manhattan\n"
-								"\t1 -> squared_euclidean\n"
-								"\t2 -> euclidean\n"
-								"\t3 -> chebyshev\n"
-								"\t4 -> reciprocal\n";
 				std::cout << "-q:  area quantization, default 1\n";
 				std::cout << "-fr: flood range 1..5, default 2\n";
 				std::cout << "-xr: even layer x range 0..5, default 1\n";
@@ -243,14 +235,9 @@ int main(int argc, char *argv[])
 			gen_vectors(path_range, path_range_x_even_layer, path_range),
 			gen_vectors(path_range, path_range, path_range_y_odd_layer)};
 
-	//choose distance metric function
-	auto dfuncs = std::vector<dfunc_t>{
-		manhattan_distance_3d, squared_euclidean_distance_3d, euclidean_distance_3d,
-		chebyshev_distance_3d, reciprical_distance_3d};
-
 	//create pcb object and populate with tracks from input
 	auto current_pcb = pcb(read_dimentions(in), routing_flood_vectorss, routing_path_vectorss,
-					dfuncs[arg_d], arg_r, arg_v, arg_q, arg_z);
+					arg_r, arg_v, arg_q, arg_z);
 	for (;;)
 	{
 		auto result = read_track(in);

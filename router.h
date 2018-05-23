@@ -52,6 +52,24 @@ struct node
 		return std::tie(m_x, m_y, m_z) < std::tie(n.m_x, n.m_y, n.m_z); }
 	bool operator==(const node &n) const {
 		return std::tie(m_x, m_y, m_z) == std::tie(n.m_x, n.m_y, n.m_z); }
+	int manhattan_distance(const node &n) const
+	{
+		auto dx = m_x - n.m_x;
+		auto dy = m_y - n.m_y;
+		auto dz = m_z - n.m_z;
+		return std::abs(dx) + std::abs(dy) + std::abs(dz);
+	}
+	int euclidian_distance(const node &n) const
+	{
+		auto dx = m_x - n.m_x;
+		auto dy = m_y - n.m_y;
+		auto dz = m_z - n.m_z;
+		return int(sqrt(dx * dx + dy * dy + dz * dz));
+	}
+	node mid(const node &n) const
+	{
+		return node{(m_x + n.m_x)/2, (m_y + n.m_y)/2, (m_z + n.m_z)/2};
+	}
 	int m_x;
 	int m_y;
 	int m_z;
@@ -99,7 +117,7 @@ typedef std::vector<output> outputs;
 //sortable node
 struct sort_node
 {
-	float m_mark;
+	int m_mark;
 	node m_node;
 };
 typedef std::vector<sort_node> sort_nodes;
@@ -155,7 +173,7 @@ public:
 	};
 
 	pcb(const dims &dims, const nodess &rfvs, const nodess &rpvs,
-		dfunc_t dfunc, int res, int verb, int quant, int viascost);
+		int res, int verb, int quant, int viascost);
 	~pcb();
 	auto get_node(const node &n);
 	void add_track(track &t);
@@ -168,18 +186,19 @@ public:
 	point_3d grid_to_space_point(const node &n);
 	nodes &all_not_shorting(const nodes &gather, const node &n, float radius, float gap);
 	nodes &all_not_shorting_via(const nodes &gather, const node &n, float radius, float gap);
-	nodes &all_nearer_sorted(const nodess &vec, const node &n, dfunc_t dfunc);
-	void mark_distances(float radius, float via, float gap, const node_set &starts, const nodes &ends);
+	nodes &all_nearer_sorted(const nodess &vec, const node &n);
+	void mark_distances(float radius, float via, float gap,
+		const node_set &starts, const nodes &ends, const node &mid, float mid_scale);
 	void unmark_distances();
 
 	int m_resolution;
 	int m_quantization;
 	int m_depth;
+	int m_viascost;
 	std::map<node, point_3d> m_deform;
 	layers m_layers;
 	nodess m_routing_flood_vectors;
 	nodess m_routing_path_vectors;
-	dfunc_t m_dfunc;
 
 private:
 	void set_node(const node &n, unsigned int value);
@@ -194,9 +213,8 @@ private:
 	int m_height;
 	int m_stride;
 	int m_verbosity;
-	int m_viascost;
 	nets m_netlist;
-	std::vector<unsigned int> m_nodes;
+	std::vector<int> m_nodes;
 };
 
 #endif

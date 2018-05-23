@@ -34,13 +34,12 @@ std::default_random_engine rand_gen(0);
 //pcb methods
 
 pcb::pcb(const dims &dims, const nodess &rfvs, const nodess &rpvs,
-		dfunc_t dfunc, int res, int verb, int quant, int viascost)
+		int res, int verb, int quant, int viascost)
 	: m_width(dims.m_width)
 	, m_height(dims.m_height)
 	, m_depth(dims.m_depth)
 	, m_routing_flood_vectors(rfvs)
 	, m_routing_path_vectors(rpvs)
-	, m_dfunc(dfunc)
 	, m_resolution(res)
 	, m_verbosity(verb)
 	, m_quantization(quant * res)
@@ -224,7 +223,7 @@ sort_nodes &pcb::all_marked(const nodess &vec, const node &n)
 		{
 			auto n = node{nx, ny, nz};
 			auto mark = get_node(n);
-			if (mark) yield.emplace_back(sort_node{float(mark), n});
+			if (mark) yield.emplace_back(sort_node{mark, n});
 		}
 	}
 	return yield;
@@ -254,16 +253,15 @@ nodes &pcb::all_not_marked(const nodess &vec, const node &n)
 }
 
 //generate all grid points surrounding node sorted
-nodes &pcb::all_nearer_sorted(const nodess &vec, const node &n, dfunc_t dfunc)
+nodes &pcb::all_nearer_sorted(const nodess &vec, const node &n)
 {
 	static auto yield = nodes{}; yield.clear();
-	auto gp = grid_to_space_point(n);
-	auto distance = float(get_node(n));
+	auto distance = get_node(n);
 	auto &marked_nodes = all_marked(vec, n);
-	auto marked_nodes_end = std::remove_if(begin(marked_nodes), end(marked_nodes), [=, &gp] (auto &mn)
+	auto marked_nodes_end = std::remove_if(begin(marked_nodes), end(marked_nodes), [=] (auto &mn)
 	{
 		if ((distance - mn.m_mark) <= 0) return true;
-		mn.m_mark = dfunc(grid_to_space_point(mn.m_node), gp);
+		mn.m_mark = n.manhattan_distance(mn.m_node);
 		return false;
 	});
 	std::sort(begin(marked_nodes), marked_nodes_end, [&] (auto &s1, auto &s2) { return s1.m_mark < s2.m_mark; });
@@ -300,7 +298,7 @@ nodes &pcb::all_not_shorting_via(const nodes &gather, const node &n, float radiu
 }
 
 //flood fill distances from starts till ends covered
-void pcb::mark_distances(float radius, float via, float gap, const node_set &starts, const nodes &ends)
+void pcb::mark_distances(float radius, float via, float gap, const node_set &starts, const nodes &ends, const node &mid, float mid_scale)
 {
 	static auto via_vectors = nodess{
 		nodes{node{0, 0, -1}, node{0, 0, 1}},
@@ -320,15 +318,14 @@ void pcb::mark_distances(float radius, float via, float gap, const node_set &sta
 				new_nodes.insert(new_node);
 			}
 		}
-		auto new_vias_nodes = node_set{};
 		for (auto &node : frontier)
 		{
+			auto via_start = distance + m_viascost + std::min(m_viascost, int(node.euclidian_distance(mid) * mid_scale));
 			for (auto &new_node : all_not_shorting_via(all_not_marked(via_vectors, node), node, via, gap))
 			{
-				new_vias_nodes.insert(new_node);
+				vias_nodes[via_start].insert(new_node);
 			}
 		}
-		if (!new_vias_nodes.empty()) vias_nodes[distance+m_viascost] = std::move(new_vias_nodes);
 		auto delay_nodes = vias_nodes.find(distance);
 		if (delay_nodes != end(vias_nodes))
 		{
@@ -591,10 +588,10 @@ std::pair<nodes, bool> net::backtrack_path(const node_set &visited, const node &
 		path.emplace_back(path_node);
 		nearer_nodes.clear();
 		for (auto &node : m_pcb->all_not_shorting(
-			m_pcb->all_nearer_sorted(m_pcb->m_routing_path_vectors, path_node, m_pcb->m_dfunc),
+			m_pcb->all_nearer_sorted(m_pcb->m_routing_path_vectors, path_node),
 			path_node, radius, gap)) nearer_nodes.emplace_back(node);
 		for (auto &node : m_pcb->all_not_shorting_via(
-			m_pcb->all_nearer_sorted(via_vectors, path_node, m_pcb->m_dfunc),
+			m_pcb->all_nearer_sorted(via_vectors, path_node),
 			path_node, via, gap)) nearer_nodes.emplace_back(node);
 		if (nearer_nodes.empty()) return std::pair<nodes, bool>(nodes{}, false);
 		auto search = std::find_if(cbegin(nearer_nodes), cend(nearer_nodes), [&] (auto &node)
@@ -627,7 +624,11 @@ bool net::route()
 			return visited.find(node) != end(visited);
 		})) continue;
 		for (auto &&start : m_terminal_end_nodes[index - 1]) visited.insert(start);
-		m_pcb->mark_distances(m_radius, m_via, m_gap, visited, ends);
+		auto &&n_s = m_terminal_end_nodes[index - 1][0];
+		auto &&n_e = ends[0];
+		auto mid = n_s.mid(n_e);
+		auto mid_scale = m_pcb->m_viascost ? n_s.manhattan_distance(n_e) / float(m_pcb->m_viascost * 2) : 0.0f;
+		m_pcb->mark_distances(m_radius, m_via, m_gap, visited, ends, mid, mid_scale);
 		std::sort(begin(ends), end(ends), [&] (auto &&n1, auto && n2)
 		{
 			 return m_pcb->get_node(n1) < m_pcb->get_node(n2);
