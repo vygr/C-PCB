@@ -77,12 +77,14 @@ void layer::sub_line(const line &l)
 	{
 		for (auto x = bb.m_minx; x <= bb.m_maxx; ++x)
 		{
-			auto b = &m_buckets[y*m_width + x];
-			auto itr = std::find_if(b->begin(), b->end(), [&] (auto &e)
+			auto &&b = m_buckets[y*m_width + x];
+			auto itr = std::find_if(begin(b), end(b), [&] (auto &e)
 			{
 				return e->m_line == l;
 			});
-			if (itr != b->end()) b->erase(itr);
+			if (itr == end(b)) continue;
+			std::iter_swap(itr, end(b) - 1);
+			b.pop_back();
 		}
 	}
 }
