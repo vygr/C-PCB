@@ -101,18 +101,9 @@ struct track
 	float m_via;
 	float m_gap;
 	terminals m_terms;
-};
-typedef std::vector<track> tracks;
-
-struct output
-{
-	float m_radius;
-	float m_via;
-	float m_gap;
-	terminals m_terms;
 	paths m_paths;
 };
-typedef std::vector<output> outputs;
+typedef std::vector<track> tracks;
 
 //sortable node
 struct sort_node
@@ -129,7 +120,7 @@ typedef float (*dfunc_t)(const point_3d &, const point_3d &);
 class net
 {
 public:
-	net(const terminals &terms, float radius, float via, float gap, pcb *pcb);
+	net(const track &t, pcb *pcb);
 	bool route();
 	void print_net();
 	void remove();
@@ -137,17 +128,20 @@ public:
 
 	int m_area;
 	float m_radius;
+	paths m_wires;
 	nodess m_paths;
 	std::vector<layers::line> m_paths_collision_lines;
-	terminals m_terminals;
-	std::vector<layers::line> m_terminal_collision_lines;
-	std::vector<nodes> m_terminal_end_nodes;
+	terminals m_pads;
+	std::vector<layers::line> m_pad_collision_lines;
+	std::vector<nodes> m_pad_end_nodes;
+	std::vector<layers::line> m_wire_collision_lines;
 	layer::aabb m_bbox;
 
 private:
-	void process_terminals();
-	void add_terminal_collision_lines();
-	void sub_terminal_collision_lines();
+	void add_pad_collision_lines();
+	void sub_pad_collision_lines();
+	void add_wire_collision_lines();
+	void sub_wire_collision_lines();
 	std::vector<layers::line> paths_collision_lines() const;
 	void add_paths_collision_lines();
 	void sub_paths_collision_lines();

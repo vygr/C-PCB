@@ -164,9 +164,9 @@ auto read_terminals(std::istream &in)
 //read one track
 auto read_track(std::istream &in)
 {
-	if (read_until(in, '[')) return std::pair<output, bool>(output{}, true);
-	if (in.peek() == ']') return std::pair<output, bool>(output{}, true);
-	auto t = output{};
+	if (read_until(in, '[')) return std::pair<track, bool>(track{}, true);
+	if (in.peek() == ']') return std::pair<track, bool>(track{}, true);
+	auto t = track{};
 	in >> t.m_radius;
 	in.ignore(std::numeric_limits<std::streamsize>::max(), ',');
 	in >> t.m_via;
@@ -176,7 +176,7 @@ auto read_track(std::istream &in)
 	t.m_terms = read_terminals(in);
 	t.m_paths = read_paths(in);
 	if (read_until(in, ']')) exit(1);
-	return std::pair<output, bool>(t, false);
+	return std::pair<track, bool>(t, false);
 }
 
 //compile gl shader
@@ -277,16 +277,16 @@ auto create_filled_circle(float radius)
 }
 
 //draw layers
-auto draw_layers(const outputs &tracks, int pcb_height, int pcb_depth, float arg_m, float arg_s, float s)
+auto draw_layers(const tracks &ts, int pcb_height, int pcb_depth, float arg_m, float arg_s, float s)
 {
 	for (auto depth = pcb_depth - 1; depth > -1; --depth)
 	{
 		//draw track
 		auto yoffset = float((pcb_height + (arg_m * 2)) * arg_s * depth);
-		for (auto &track : tracks)
+		for (auto &t : ts)
 		{
 			//draw paths
-			for (auto &path : track.m_paths)
+			for (auto &path : t.m_paths)
 			{
 				auto start = 0;
 				auto end = 0;
@@ -305,7 +305,7 @@ auto draw_layers(const outputs &tracks, int pcb_height, int pcb_depth, float arg
 									points.push_back(point_2d{i->m_x, i->m_y});
 								}
 								draw_filled_polygon_strip(point_2d{0.0, yoffset},
-									thicken_path_as_tristrip(points, track.m_radius + (track.m_gap * s), 3, 2, 16));
+									thicken_path_as_tristrip(points, t.m_radius + (t.m_gap * s), 3, 2, 16));
 							}
 						}
 						start = end;
@@ -322,26 +322,26 @@ auto draw_layers(const outputs &tracks, int pcb_height, int pcb_depth, float arg
 							points.push_back(point_2d{i->m_x, i->m_y});
 						}
 						draw_filled_polygon_strip(point_2d{0.0, yoffset},
-							thicken_path_as_tristrip(points, track.m_radius + (track.m_gap * s), 3, 2, 16));
+							thicken_path_as_tristrip(points, t.m_radius + (t.m_gap * s), 3, 2, 16));
 					}
 				}
 			}
 		}
 		//draw terminals and vias
-		for (auto &track : tracks)
+		for (auto &t : ts)
 		{
-			for (auto &path : track.m_paths)
+			for (auto &path : t.m_paths)
 			{
 				for (auto i = 0; i < (static_cast<int>(path.size()) - 1); ++i)
 				{
 					if (path[i].m_z != path[i+1].m_z)
 					{
 						draw_filled_polygon_fan(point_2d{path[i].m_x, path[i].m_y + yoffset},
-							*create_filled_circle(track.m_via + (track.m_gap * s)));
+							*create_filled_circle(t.m_via + (t.m_gap * s)));
 					}
 				}
 			}
-			for (auto &term : track.m_terms)
+			for (auto &term : t.m_terms)
 			{
 				if (term.m_term.m_z != float(depth)) continue;
 				if (term.m_shape.empty())
@@ -500,24 +500,24 @@ int main(int argc, char *argv[])
 		if ((glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) || glfwWindowShouldClose(window)) break;
 
 		//load track and exit if no track loaded
-		auto tracks = outputs{};
+		auto ts = tracks{};
 		for (;;)
 		{
 			auto result = read_track(in);
 			if (result.second == true) break;
-			tracks.push_back(result.first);
+			ts.push_back(result.first);
 		}
-		if (tracks.empty()) break;
+		if (ts.empty()) break;
 
 		//scale tracks acording to window size
 		auto scale = float(arg_s);
 		auto border = float(arg_m * arg_s);
-		for (auto &track : tracks)
+		for (auto &t : ts)
 		{
-			track.m_radius *= scale;
-			track.m_via *= scale;
-			track.m_gap *= scale;
-			for (auto &term : track.m_terms)
+			t.m_radius *= scale;
+			t.m_via *= scale;
+			t.m_gap *= scale;
+			for (auto &term : t.m_terms)
 			{
 				term.m_radius *= scale;
 				term.m_gap *= scale;
@@ -533,7 +533,7 @@ int main(int argc, char *argv[])
 					cord.m_y += term.m_term.m_y;
 				}
 			}
-			for (auto &path : track.m_paths)
+			for (auto &path : t.m_paths)
 			{
 				for (auto &node : path)
 				{
@@ -563,9 +563,9 @@ int main(int argc, char *argv[])
 			{
 				auto color = (depth % (colors.size() / 3)) * 3;
 				glUniform4f(vert_color_id, colors[color], colors[color+1], colors[color+2], 0.5);
-				for (auto &track : tracks)
+				for (auto &t : ts)
 				{
-					for (auto &path : track.m_paths)
+					for (auto &path : t.m_paths)
 					{
 						auto start = 0;
 						auto end = 0;
@@ -584,7 +584,7 @@ int main(int argc, char *argv[])
 											points.push_back(point_2d{i->m_x, i->m_y});
 										}
 										draw_filled_polygon_strip(point_2d{0.0, 0.0},
-											thicken_path_as_tristrip(points, track.m_radius, 3, 2, 16));
+											thicken_path_as_tristrip(points, t.m_radius, 3, 2, 16));
 									}
 								}
 								start = end;
@@ -601,7 +601,7 @@ int main(int argc, char *argv[])
 									points.push_back(point_2d{i->m_x, i->m_y});
 								}
 								draw_filled_polygon_strip(point_2d{0.0, 0.0},
-									thicken_path_as_tristrip(points, track.m_radius, 3, 2, 16));
+									thicken_path_as_tristrip(points, t.m_radius, 3, 2, 16));
 							}
 						}
 					}
@@ -609,20 +609,20 @@ int main(int argc, char *argv[])
 			}
 			//draw terminals and vias
 			glUniform4f(vert_color_id, 1.0, 1.0, 1.0, 1.0);
-			for (auto &track : tracks)
+			for (auto &t : ts)
 			{
-				for (auto &path : track.m_paths)
+				for (auto &path : t.m_paths)
 				{
 					for (auto i = 0; i < (static_cast<int>(path.size()) - 1); ++i)
 					{
 						if (path[i].m_z != path[i+1].m_z)
 						{
 							draw_filled_polygon_fan(point_2d{path[i].m_x, path[i].m_y},
-								*create_filled_circle(track.m_via));
+								*create_filled_circle(t.m_via));
 						}
 					}
 				}
-				for (auto &term : track.m_terms)
+				for (auto &term : t.m_terms)
 				{
 					if (term.m_shape.empty())
 					{
@@ -654,10 +654,10 @@ int main(int argc, char *argv[])
 		{
 			//draw each layer in white
 			glUniform4f(vert_color_id, 1.0, 1.0, 1.0, 1.0);
-			draw_layers(tracks, pcb_height, pcb_depth, arg_m, arg_s, 1);
+			draw_layers(ts, pcb_height, pcb_depth, arg_m, arg_s, 1);
 			//draw each layer in black
 			glUniform4f(vert_color_id, 0.0, 0.0, 0.0, 1.0);
-			draw_layers(tracks, pcb_height, pcb_depth, arg_m, arg_s, 0);
+			draw_layers(ts, pcb_height, pcb_depth, arg_m, arg_s, 0);
 		}
 
 		//show window just drawn

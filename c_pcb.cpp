@@ -86,6 +86,20 @@ auto read_point_2d(std::istream &in)
 	return p;
 }
 
+//read, (x, y, z)
+auto read_point_3d(std::istream &in)
+{
+	if (read_until(in, '(')) exit(1);
+	auto p = point_3d{};
+	in >> p.m_x;
+	in.ignore(std::numeric_limits<std::streamsize>::max(), ',');
+	in >> p.m_y;
+	in.ignore(std::numeric_limits<std::streamsize>::max(), ',');
+	in >> p.m_z;
+	if (read_until(in, ')')) exit(1);
+	return p;
+}
+
 //read, [(x, y), ...]
 auto read_shape(std::istream &in)
 {
@@ -134,6 +148,34 @@ auto read_terminals(std::istream &in)
 	return t;
 }
 
+//read, [(x, y, z), ...]
+auto read_path(std::istream &in)
+{
+	if (read_until(in, '[')) exit(1);
+	auto cords = path{};
+	for (;;)
+	{
+		if (in.peek() == ']') break;
+		cords.push_back(read_point_3d(in));
+	}
+	if (read_until(in, ']')) exit(1);
+	return cords;
+}
+
+//read, [[(x, y, z), ...], ...]
+auto read_paths(std::istream &in)
+{
+	if (read_until(in, '[')) exit(1);
+	auto t = paths{};
+	for (;;)
+	{
+		if (in.peek() == ']') break;
+		t.push_back(read_path(in));
+	}
+	if (read_until(in, ']')) exit(1);
+	return t;
+}
+
 //read one track
 auto read_track(std::istream &in)
 {
@@ -147,6 +189,7 @@ auto read_track(std::istream &in)
 	in >> t.m_gap;
 	in.ignore(std::numeric_limits<std::streamsize>::max(), ',');
 	t.m_terms = read_terminals(in);
+	t.m_paths = read_paths(in);
 	if (read_until(in, ']')) exit(1);
 	return std::pair<track, bool>(t, false);
 }

@@ -60,7 +60,7 @@ pcb::~pcb()
 //add net
 void pcb::add_track(track &t)
 {
-	m_netlist.push_back(net(t.m_terms, t.m_radius, t.m_via, t.m_gap, this));
+	m_netlist.push_back(net(t, this));
 }
 
 //attempt to route board within time
@@ -172,8 +172,8 @@ void pcb::print_stats()
 	}
 	for (auto &net : m_netlist)
 	{
-		num_pads += net.m_terminals.size();
-		for (auto &term : net.m_terminals)
+		num_pads += net.m_pads.size();
+		for (auto &term : net.m_pads)
 		{
 			auto x = int(term.m_term.m_x+0.5);
 			auto y = int(term.m_term.m_y+0.5);
@@ -344,7 +344,7 @@ void pcb::unmark_distances()
 }
 
 //aabb of terminals
-auto aabb_terminals(const terminals &terms, int quantization)
+auto aabb_pads(const terminals &terms, int quantization)
 {
 	auto minx = (int(terms[0].m_term.m_x) / quantization) * quantization;
 	auto miny = (int(terms[0].m_term.m_y) / quantization) * quantization;
@@ -370,7 +370,7 @@ void pcb::reset_areas()
 {
 	for (auto &net : m_netlist)
 	{
-		auto result = aabb_terminals(net.m_terminals, m_quantization);
+		auto result = aabb_pads(net.m_pads, m_quantization);
 		net.m_area = result.first;
 		net.m_bbox = result.second;
 	}
@@ -409,24 +409,16 @@ void pcb::remove_netlist()
 
 //net methods
 
-net::net(const terminals &terms, float radius, float via, float gap, pcb *pcb)
+net::net(const track &t, pcb *pcb)
 	: m_pcb(pcb)
-	, m_radius(radius * pcb->m_resolution)
-	, m_via(via * pcb->m_resolution)
-	, m_gap(gap * pcb->m_resolution)
-	, m_terminals(terms)
-{
-	process_terminals();
-	auto result = aabb_terminals(m_terminals, pcb->m_quantization);
-	m_area = result.first;
-	m_bbox = result.second;
-}
-
-//terminal collision lines
-void net::process_terminals()
+	, m_radius(t.m_radius * pcb->m_resolution)
+	, m_via(t.m_via * pcb->m_resolution)
+	, m_gap(t.m_gap * pcb->m_resolution)
+	, m_pads(t.m_terms)
+	, m_wires(t.m_paths)
 {
 	//scale terminals for resolution of grid
-	for (auto &term : m_terminals)
+	for (auto &term : m_pads)
 	{
 		term.m_radius *= m_pcb->m_resolution;
 		term.m_gap *= m_pcb->m_resolution;
@@ -440,8 +432,8 @@ void net::process_terminals()
 	}
 
 	//build terminal collision lines and endpoint nodes
-	std::sort(begin(m_terminals), end(m_terminals));
-	for (auto i = begin(m_terminals); i != end(m_terminals);)
+	std::sort(begin(m_pads), end(m_pads));
+	for (auto i = begin(m_pads); i != end(m_pads);)
 	{
 		auto r = i->m_radius;
 		auto g = i->m_gap;
@@ -450,13 +442,13 @@ void net::process_terminals()
 		auto z1 = i->m_term.m_z;
 		auto &&shape = i->m_shape;
 		auto z2 = z1;
-		while ((++i != end(m_terminals)) && std::tie(x, y, r, g, shape)
+		while ((++i != end(m_pads)) && std::tie(x, y, r, g, shape)
 				== std::tie(i->m_term.m_x, i->m_term.m_y, i->m_radius, i->m_gap, i->m_shape))
 		{
 			z2 = i->m_term.m_z;
 		}
 		if (shape.empty())
-			m_terminal_collision_lines.emplace_back(layers::line{point_3d{x, y, z1}, point_3d{x, y, z2}, r, g});
+			m_pad_collision_lines.emplace_back(layers::line{point_3d{x, y, z1}, point_3d{x, y, z2}, r, g});
 		else
 		{
 			for (auto z = z1; z <= z2; ++z)
@@ -466,38 +458,71 @@ void net::process_terminals()
 				{
 					auto p0 = p1;
 					p1 = point_3d{x + shape[i].m_x, y + shape[i].m_y, z};
-					m_terminal_collision_lines.emplace_back(layers::line{p0, p1, r, g});
+					m_pad_collision_lines.emplace_back(layers::line{p0, p1, r, g});
 				}
 			}
 		}
 
 		//ends and deformations
-		m_terminal_end_nodes.emplace_back(nodes{});
-		auto &&ends = m_terminal_end_nodes.back();
+		m_pad_end_nodes.emplace_back(nodes{});
+		auto &&ends = m_pad_end_nodes.back();
 		for (auto z = z1; z <= z2; ++z)
 		{
 			ends.emplace_back(node{int(x + 0.5), int(y + 0.5), int(z)});
 			m_pcb->m_deform[ends.back()] = point_3d(x, y, z);
 		}
 	}
+
+	//build wires collision lines
+	for (auto const &path : m_wires)
+	{
+		auto p1 = path[0];
+		for (auto i = 1; i < static_cast<int>(path.size()); ++i)
+		{
+			auto p0 = p1;
+			p1 = path[i];
+			if (p0.m_z != p1.m_z) m_wire_collision_lines.emplace_back(layers::line{
+				point_3d(p0.m_x, p0.m_y, 0),
+				point_3d(p0.m_x, p0.m_y, float(m_pcb->m_depth - 1)),
+				m_via, m_gap});
+			else m_wire_collision_lines.emplace_back(layers::line{p0, p1, m_radius, m_gap});
+		}
+	}
+
+	//bounds
+	auto result = aabb_pads(m_pads, pcb->m_quantization);
+	m_area = result.first;
+	m_bbox = result.second;
 }
 
 //randomize order of terminals
 void net::shuffle_topology()
 {
-	std::shuffle(begin(m_terminal_end_nodes), end(m_terminal_end_nodes), rand_gen);
+	std::shuffle(begin(m_pad_end_nodes), end(m_pad_end_nodes), rand_gen);
 }
 
-//add terminal entries to spacial cache
-void net::add_terminal_collision_lines()
+//add pad entries to spacial cache
+void net::add_pad_collision_lines()
 {
-	for (auto &&l : m_terminal_collision_lines) m_pcb->m_layers.add_line(l);
+	for (auto &&l : m_pad_collision_lines) m_pcb->m_layers.add_line(l);
 }
 
-//remove terminal entries from spacial cache
-void net::sub_terminal_collision_lines()
+//remove pad entries from spacial cache
+void net::sub_pad_collision_lines()
 {
-	for (auto &&l : m_terminal_collision_lines) m_pcb->m_layers.sub_line(l);
+	for (auto &&l : m_pad_collision_lines) m_pcb->m_layers.sub_line(l);
+}
+
+//add wire entries to spacial cache
+void net::add_wire_collision_lines()
+{
+	for (auto &&l : m_wire_collision_lines) m_pcb->m_layers.add_line(l);
+}
+
+//remove wire entries from spacial cache
+void net::sub_wire_collision_lines()
+{
+	for (auto &&l : m_wire_collision_lines) m_pcb->m_layers.sub_line(l);
 }
 
 //paths collision lines
@@ -542,8 +567,10 @@ void net::sub_paths_collision_lines()
 void net::remove()
 {
 	sub_paths_collision_lines();
-	sub_terminal_collision_lines();
-	add_terminal_collision_lines();
+	sub_wire_collision_lines();
+	sub_pad_collision_lines();
+	add_pad_collision_lines();
+	add_wire_collision_lines();
 	m_paths.clear();
 }
 
@@ -614,17 +641,18 @@ bool net::route()
 	//check for unused terminals track
 	if (m_radius == 0.0) return true;
 	m_paths = nodess{};
-	sub_terminal_collision_lines();
+	sub_pad_collision_lines();
+	sub_wire_collision_lines();
 	auto visited = node_set{};
-	for (auto index = 1; index < static_cast<int>(m_terminal_end_nodes.size()); ++index)
+	for (auto index = 1; index < static_cast<int>(m_pad_end_nodes.size()); ++index)
 	{
-		auto &&ends = m_terminal_end_nodes[index];
+		auto &&ends = m_pad_end_nodes[index];
 		if (std::any_of(cbegin(ends), cend(ends), [&] (auto &&node)
 		{
 			return visited.find(node) != end(visited);
 		})) continue;
-		for (auto &&start : m_terminal_end_nodes[index - 1]) visited.insert(start);
-		auto &&n_s = m_terminal_end_nodes[index - 1][0];
+		for (auto &&start : m_pad_end_nodes[index - 1]) visited.insert(start);
+		auto &&n_s = m_pad_end_nodes[index - 1][0];
 		auto &&n_e = ends[0];
 		auto mid = n_s.mid(n_e);
 		auto mid_scale = m_pcb->m_viascost ? n_s.manhattan_distance(n_e) / float(m_pcb->m_viascost * 2) : 0.0f;
@@ -644,8 +672,9 @@ bool net::route()
 		m_paths.emplace_back(std::move(result.first));
 	}
 	m_paths = optimise_paths(m_paths);
+	add_pad_collision_lines();
+	add_wire_collision_lines();
 	add_paths_collision_lines();
-	add_terminal_collision_lines();
 	return true;
 }
 
@@ -654,9 +683,9 @@ void net::print_net()
 {
 	auto scale = 1.0 / m_pcb->m_resolution;
 	std::cout << "[" << m_radius*scale << "," << m_via*scale << "," << m_gap*scale << ",[";
-	for (auto i = 0; i < static_cast<int>(m_terminals.size()); ++i)
+	for (auto i = 0; i < static_cast<int>(m_pads.size()); ++i)
 	{
-		auto t = m_terminals[i];
+		auto t = m_pads[i];
 		std::cout << "(" << t.m_radius*scale << "," << t.m_gap*scale << ",("
 		 	<< t.m_term.m_x*scale << "," << t.m_term.m_y*scale << "," << t.m_term.m_z << "),[";
 		for (auto j = 0; j < static_cast<int>(t.m_shape.size()); ++j)
@@ -666,7 +695,7 @@ void net::print_net()
 			if (j != (static_cast<int>(t.m_shape.size()) - 1)) std::cout << ",";
 		}
 		std::cout << "])";
-		if (i != (static_cast<int>(m_terminals.size())) - 1) std::cout << ",";
+		if (i != (static_cast<int>(m_pads.size())) - 1) std::cout << ",";
 	}
 	std::cout << "],[";
 	for (auto i = 0; i < static_cast<int>(m_paths.size()); ++i)

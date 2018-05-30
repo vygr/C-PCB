@@ -38,11 +38,19 @@ You can drop the output to a file and view it as an animation with:
 Format of .pcb input file or stdin is:
 
 ```
-[width, height, depth]
-[track_radius, via_radius, track_gap, [(terminal_radius, terminal_gap, (x, y, z), [(x, y), ...]), ...]...]
+DIMS : [width, height, depth]
+POINT2D : (x, y)
+POINT3D : (x, y, z)
+SHAPE : [POINT2D, ...]
+PATH : [POINT3D, ...]
+PATHS : [PATH, ...]
+PAD : (pad_radius, pad_gap, POINT3D, SHAPE)
+PADS : [PAD, ...]
+TRACK : [track_radius, via_radius, track_gap, PADS, PATHS]
+PCB : DIMS TRACK ...
 ```
 
-You can stop a netlist early by just putting:
+You can stop a netlist early by just putting and empty track:
 
 ```
 []
@@ -51,19 +59,12 @@ You can stop a netlist early by just putting:
 For example:
 
 ```
-[width, height, depth]
-[track_radius, via_radius, track_gap, [(terminal_radius, terminal_gap, (x, y, z), [(x, y), ...]), ...]...]
-[track_radius, via_radius, track_gap, [(terminal_radius, terminal_gap, (x, y, z), [(x, y), ...]), ...]...]
+DIMS
+TRACK
+TRACK
 []
-[track_radius, via_radius, track_gap, [(terminal_radius, terminal_gap, (x, y, z), [(x, y), ...]), ...]...]
-[track_radius, via_radius, track_gap, [(terminal_radius, terminal_gap, (x, y, z), [(x, y), ...]), ...]...]
-```
-
-Format of the viewer input is similar but has the track paths appended and the gaps removed:
-
-```
-[width, height, depth]
-[track_radius, via_radius, track_gap, [(terminal_radius, terminal_gap, (x, y, z), [(x, y), ...]), ...]...], [(x, y, z), ...]]
+TRACK
+TRACK
 ```
 
 ## More screenshots

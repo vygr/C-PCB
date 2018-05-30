@@ -690,6 +690,7 @@ int main(int argc, char *argv[])
 			std::cout << "])";
 			if (i != (static_cast<int>(track.m_terms.size()) - 1)) std::cout << ",";
 		}
-		std::cout << "]]\n";
+		std::cout << "],";
+		std::cout << "[]]\n";
 	}
 }
