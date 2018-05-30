@@ -115,10 +115,10 @@ auto read_shape(std::istream &in)
 }
 
 //read, (radius, gap, (x, y, z), [(x, y), ...])
-auto read_terminal(std::istream &in)
+auto read_pad(std::istream &in)
 {
 	if (read_until(in, '(')) exit(1);
-	auto t = terminal{};
+	auto t = pad{};
 	in >> t.m_radius;
 	in.ignore(std::numeric_limits<std::streamsize>::max(), ',');
 	in >> t.m_gap;
@@ -134,15 +134,15 @@ auto read_terminal(std::istream &in)
 	return t;
 }
 
-//read all terminals for one track
-auto read_terminals(std::istream &in)
+//read all pads for one track
+auto read_pads(std::istream &in)
 {
 	if (read_until(in, '[')) exit(1);
-	auto t = terminals{};
+	auto t = pads{};
 	for (;;)
 	{
 		if (in.peek() == ']') break;
-		t.push_back(read_terminal(in));
+		t.push_back(read_pad(in));
 	}
 	if (read_until(in, ']')) exit(1);
 	return t;
@@ -188,7 +188,7 @@ auto read_track(std::istream &in)
 	in.ignore(std::numeric_limits<std::streamsize>::max(), ',');
 	in >> t.m_gap;
 	in.ignore(std::numeric_limits<std::streamsize>::max(), ',');
-	t.m_terms = read_terminals(in);
+	t.m_pads = read_pads(in);
 	t.m_paths = read_paths(in);
 	if (read_until(in, ']')) exit(1);
 	return std::pair<track, bool>(t, false);

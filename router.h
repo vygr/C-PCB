@@ -30,12 +30,12 @@
 class pcb;
 class net;
 
-struct terminal
+struct pad
 {
-	bool operator==(const terminal &t) const {
+	bool operator==(const pad &t) const {
 		return std::tie(m_radius, m_gap, m_term, m_shape)
 				== std::tie(t.m_radius, t.m_gap, t.m_term, t.m_shape); }
-	bool operator<(const terminal &t) const {
+	bool operator<(const pad &t) const {
 		return std::tie(m_term.m_x, m_term.m_y, m_term.m_z)
 				< std::tie(t.m_term.m_x, t.m_term.m_y, t.m_term.m_z); }
 	float m_radius;
@@ -43,7 +43,7 @@ struct terminal
 	point_3d m_term;
 	points_2d m_shape;
 };
-typedef std::vector<terminal> terminals;
+typedef std::vector<pad> pads;
 
 //grid node and collections
 struct node
@@ -100,7 +100,7 @@ struct track
 	float m_radius;
 	float m_via;
 	float m_gap;
-	terminals m_terms;
+	pads m_pads;
 	paths m_paths;
 };
 typedef std::vector<track> tracks;
@@ -131,10 +131,11 @@ public:
 	paths m_wires;
 	nodess m_paths;
 	std::vector<layers::line> m_paths_collision_lines;
-	terminals m_pads;
+	pads m_pads;
 	std::vector<layers::line> m_pad_collision_lines;
 	std::vector<nodes> m_pad_end_nodes;
 	std::vector<layers::line> m_wire_collision_lines;
+	node_set m_wire_nodes;
 	layer::aabb m_bbox;
 
 private:

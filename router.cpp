@@ -28,6 +28,11 @@ const double spacial_hash_res = 0.75;
 
 extern point_3d norm_3d(const point_3d &p);
 extern point_3d sub_3d(const point_3d &p1, const point_3d &p2);
+extern float length_2d(const point_2d &p);
+extern point_2d norm_2d(const point_2d &p);
+extern point_2d sub_2d(const point_2d &p1, const point_2d &p2);
+extern point_2d add_2d(const point_2d &p1, const point_2d &p2);
+extern point_2d scale_2d(const point_2d &p, float s);
 
 std::default_random_engine rand_gen(0);
 
@@ -38,11 +43,11 @@ pcb::pcb(const dims &dims, const nodess &rfvs, const nodess &rpvs,
 	: m_width(dims.m_width)
 	, m_height(dims.m_height)
 	, m_depth(dims.m_depth)
+	, m_resolution(res)
 	, m_routing_flood_vectors(rfvs)
 	, m_routing_path_vectors(rpvs)
-	, m_resolution(res)
-	, m_verbosity(verb)
 	, m_quantization(quant * res)
+	, m_verbosity(verb)
 	, m_viascost(viascost * res)
 	, m_layers(layers(layers::dims{static_cast<int>(dims.m_width * spacial_hash_res),
 		 							static_cast<int>(dims.m_height * spacial_hash_res),
@@ -343,8 +348,8 @@ void pcb::unmark_distances()
 	std::fill(begin(m_nodes), end(m_nodes), 0);
 }
 
-//aabb of terminals
-auto aabb_pads(const terminals &terms, int quantization)
+//aabb of pads
+auto aabb_pads(const pads &terms, int quantization)
 {
 	auto minx = (int(terms[0].m_term.m_x) / quantization) * quantization;
 	auto miny = (int(terms[0].m_term.m_y) / quantization) * quantization;
@@ -414,24 +419,34 @@ net::net(const track &t, pcb *pcb)
 	, m_radius(t.m_radius * pcb->m_resolution)
 	, m_via(t.m_via * pcb->m_resolution)
 	, m_gap(t.m_gap * pcb->m_resolution)
-	, m_pads(t.m_terms)
+	, m_pads(t.m_pads)
 	, m_wires(t.m_paths)
 {
-	//scale terminals for resolution of grid
-	for (auto &term : m_pads)
+	//scale pads for resolution of grid
+	for (auto &t : m_pads)
 	{
-		term.m_radius *= m_pcb->m_resolution;
-		term.m_gap *= m_pcb->m_resolution;
-		term.m_term.m_x *= m_pcb->m_resolution;
-		term.m_term.m_y *= m_pcb->m_resolution;
-		for (auto &p : term.m_shape)
+		t.m_radius *= m_pcb->m_resolution;
+		t.m_gap *= m_pcb->m_resolution;
+		t.m_term.m_x *= m_pcb->m_resolution;
+		t.m_term.m_y *= m_pcb->m_resolution;
+		for (auto &p : t.m_shape)
 		{
 			p.m_x *= m_pcb->m_resolution;
 			p.m_y *= m_pcb->m_resolution;
 		}
 	}
 
-	//build terminal collision lines and endpoint nodes
+	//scale wires for resolution of grid
+	for (auto &p : m_wires)
+	{
+		for (auto &t : p)
+		{
+			t.m_x *= m_pcb->m_resolution;
+			t.m_y *= m_pcb->m_resolution;
+		}
+	}
+
+	//build pad collision lines and endpoint nodes
 	std::sort(begin(m_pads), end(m_pads));
 	for (auto i = begin(m_pads); i != end(m_pads);)
 	{
@@ -473,7 +488,7 @@ net::net(const track &t, pcb *pcb)
 		}
 	}
 
-	//build wires collision lines
+	//build wires collision lines and visited
 	for (auto const &path : m_wires)
 	{
 		auto p1 = path[0];
@@ -481,11 +496,37 @@ net::net(const track &t, pcb *pcb)
 		{
 			auto p0 = p1;
 			p1 = path[i];
-			if (p0.m_z != p1.m_z) m_wire_collision_lines.emplace_back(layers::line{
+			if (p0.m_z != p1.m_z)
+			{
+				m_wire_collision_lines.emplace_back(layers::line{
 				point_3d(p0.m_x, p0.m_y, 0),
 				point_3d(p0.m_x, p0.m_y, float(m_pcb->m_depth - 1)),
 				m_via, m_gap});
-			else m_wire_collision_lines.emplace_back(layers::line{p0, p1, m_radius, m_gap});
+				for (auto z = 0; z < m_pcb->m_depth; ++z)
+				{
+					auto n = node{int(p0.m_x + 0.5), int(p0.m_y + 0.5), z};
+					m_wire_nodes.insert(n);
+					m_pcb->m_deform[n] = point_3d(p0.m_x, p0.m_y, z);
+				}
+			}
+			else
+			{
+				m_wire_collision_lines.emplace_back(layers::line{p0, p1, m_radius, m_gap});
+				auto p = point_2d(p0.m_x, p0.m_y);
+				auto v = sub_2d(p, point_2d(p1.m_x, p1.m_y));
+				auto l = length_2d(v);
+				auto norm = scale_2d(v, 1.0f / l);
+				for (auto i = 0.0f; i < l; i += 0.25f)
+				{
+					auto pn = add_2d(p, scale_2d(norm, i));
+					auto n = node{int(pn.m_x + 0.5), int(pn.m_y + 0.5), int(p0.m_z)};
+					m_wire_nodes.insert(n);
+					m_pcb->m_deform[n] = point_3d(pn.m_x, pn.m_y, p0.m_z);
+				}
+				auto n = node{int(p1.m_x + 0.5), int(p1.m_y + 0.5), int(p1.m_z)};
+				m_wire_nodes.insert(n);
+				m_pcb->m_deform[n] = p1;
+			}
 		}
 	}
 
@@ -495,7 +536,7 @@ net::net(const track &t, pcb *pcb)
 	m_bbox = result.second;
 }
 
-//randomize order of terminals
+//randomize order of pads
 void net::shuffle_topology()
 {
 	std::shuffle(begin(m_pad_end_nodes), end(m_pad_end_nodes), rand_gen);
@@ -638,20 +679,20 @@ std::pair<nodes, bool> net::backtrack_path(const node_set &visited, const node &
 //attempt to route this net on the current boards state
 bool net::route()
 {
-	//check for unused terminals track
+	//check for unused pads track
 	if (m_radius == 0.0) return true;
 	m_paths = nodess{};
 	sub_pad_collision_lines();
 	sub_wire_collision_lines();
-	auto visited = node_set{};
+	auto visited = m_wire_nodes;
 	for (auto index = 1; index < static_cast<int>(m_pad_end_nodes.size()); ++index)
 	{
+		for (auto &&start : m_pad_end_nodes[index - 1]) visited.insert(start);
 		auto &&ends = m_pad_end_nodes[index];
 		if (std::any_of(cbegin(ends), cend(ends), [&] (auto &&node)
 		{
 			return visited.find(node) != end(visited);
 		})) continue;
-		for (auto &&start : m_pad_end_nodes[index - 1]) visited.insert(start);
 		auto &&n_s = m_pad_end_nodes[index - 1][0];
 		auto &&n_e = ends[0];
 		auto mid = n_s.mid(n_e);
@@ -678,7 +719,7 @@ bool net::route()
 	return true;
 }
 
-//output net, terminals and paths, for viewer app
+//output net, pads, wires and paths, for viewer app
 void net::print_net()
 {
 	auto scale = 1.0 / m_pcb->m_resolution;
@@ -698,14 +739,26 @@ void net::print_net()
 		if (i != (static_cast<int>(m_pads.size())) - 1) std::cout << ",";
 	}
 	std::cout << "],[";
+	for (auto i = 0; i < static_cast<int>(m_wires.size()); ++i)
+	{
+		auto &&wire = m_wires[i];
+		std::cout << "[";
+		for (auto j = 0; j < static_cast<int>(wire.size()); ++j)
+		{
+			auto &&sp = wire[j];
+			std::cout << "(" << sp.m_x*scale << "," << sp.m_y*scale << "," << sp.m_z << ")";
+			if (j != (static_cast<int>(wire.size()) - 1)) std::cout << ",";
+		}
+		std::cout << "]";
+		if (i != (static_cast<int>(m_wires.size())) - 1 || !m_paths.empty()) std::cout << ",";
+	}
 	for (auto i = 0; i < static_cast<int>(m_paths.size()); ++i)
 	{
-		auto path = m_paths[i];
+		auto &&path = m_paths[i];
 		std::cout << "[";
 		for (auto j = 0; j < static_cast<int>(path.size()); ++j)
 		{
-			auto p = path[j];
-			auto sp = m_pcb->grid_to_space_point(p);
+			auto sp = m_pcb->grid_to_space_point(path[j]);
 			std::cout << "(" << sp.m_x*scale << "," << sp.m_y*scale << "," << sp.m_z << ")";
 			if (j != (static_cast<int>(path.size()) - 1)) std::cout << ",";
 		}

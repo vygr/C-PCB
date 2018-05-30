@@ -275,7 +275,7 @@ int main(int argc, char *argv[])
 	auto tree = read_tree(in);
 
 	auto structure_root = search_tree(tree, "structure");
-	auto layers = std::map<std::string, int>{};
+	auto layer_to_index_map = std::map<std::string, int>{};
 	const auto units = 1000.0f;
 	auto num_layers = 0;
 	auto minx = float(1000000.0);
@@ -305,7 +305,7 @@ int main(int argc, char *argv[])
 					}
 				}
 			}
-			layers[layer_name] = layer_index;
+			layer_to_index_map[layer_name] = layer_index;
 		}
 		else if (structure_node.m_value == "via")
 		{
@@ -385,8 +385,8 @@ int main(int argc, char *argv[])
 	}
 
 	auto library_root = search_tree(tree, "library");
-	auto component_map = std::map<std::string, component>{};
-	auto padstack_map = std::map<std::string, std::map<int, padstack>>{};
+	auto name_to_component_map = std::map<std::string, component>{};
+	auto name_to_padstack_map = std::map<std::string, std::map<int, padstack>>{};
 	for (auto &&library_node : library_root->m_branches)
 	{
 		if (library_node.m_value == "image")
@@ -425,7 +425,7 @@ int main(int argc, char *argv[])
 					the_comp.m_pin_map[the_pin.m_name] = the_pin;
 				}
 			}
-			component_map[component_name] = the_comp;
+			name_to_component_map[component_name] = the_comp;
 		}
 		else if (library_node.m_value == "padstack")
 		{
@@ -508,15 +508,15 @@ int main(int argc, char *argv[])
 						}
 						points.push_back(points.front());
 					}
-					auto layer_index = layers[padstack_node->m_branches[0].m_branches[0].m_value];
-					padstack_map[library_node.m_branches[0].m_value][layer_index] = padstack{points, the_rule};
+					auto layer_index = layer_to_index_map[padstack_node->m_branches[0].m_branches[0].m_value];
+					name_to_padstack_map[library_node.m_branches[0].m_value][layer_index] = padstack{points, the_rule};
 				}
 			}
 		}
 	}
 
 	auto placement_root = search_tree(tree, "placement");
-	auto instance_map = std::map<std::string, instance>{};
+	auto name_to_instance_map = std::map<std::string, instance>{};
 	for (auto &&placement_node : placement_root->m_branches)
 	{
 		if (placement_node.m_value == "component")
@@ -541,17 +541,17 @@ int main(int argc, char *argv[])
 					the_instance.m_angle *= -(M_PI / 180.0);
 					the_instance.m_x /= units;
 					the_instance.m_y /= -units;
-					instance_map[instance_name] = the_instance;
+					name_to_instance_map[instance_name] = the_instance;
 				}
 			}
 		}
 	}
 
-	auto all_terminals = terminals{};
-	for (auto &&inst : instance_map)
+	auto all_pads = pads{};
+	for (auto &&inst : name_to_instance_map)
 	{
 		auto instance = inst.second;
-		auto component = component_map[instance.m_comp];
+		auto component = name_to_component_map[instance.m_comp];
 		for (auto &&p : component.m_pin_map)
 		{
 			auto pin = p.second;
@@ -562,11 +562,11 @@ int main(int argc, char *argv[])
 			auto c = cos(instance.m_angle);
 			auto px = float((c*m_x - s*m_y) + instance.m_x);
 			auto py = float((s*m_x + c*m_y) + instance.m_y);
-			for (auto &&pad : padstack_map[pin.m_form])
+			for (auto &&p : name_to_padstack_map[pin.m_form])
 			{
-				auto tp = point_3d{px, py, (float)pad.first};
-				auto cords = shape_to_cords(pad.second.m_shape, pin.m_angle, instance.m_angle);
-				all_terminals.push_back(terminal{pad.second.m_rule.m_radius, pad.second.m_rule.m_gap, tp, cords});
+				auto tp = point_3d{px, py, (float)p.first};
+				auto cords = shape_to_cords(p.second.m_shape, pin.m_angle, instance.m_angle);
+				all_pads.push_back(pad{p.second.m_rule.m_radius, p.second.m_rule.m_gap, tp, cords});
 			}
 			minx = std::min(px, minx);
 			maxx = std::max(px, maxx);
@@ -576,7 +576,7 @@ int main(int argc, char *argv[])
 	}
 
 	auto network_root = search_tree(tree, "network");
-	auto net_map = std::map<std::string, circuit>{};
+	auto name_to_circuit_map = std::map<std::string, circuit>{};
 	for (auto &&network_node : network_root->m_branches)
 	{
 		if (network_node.m_value == "class")
@@ -617,7 +617,67 @@ int main(int argc, char *argv[])
 			}
 			for (auto &&netname : network_node.m_branches)
 			{
-				if (netname.m_branches.empty()) net_map[netname.m_value] = the_circuit;
+				if (netname.m_branches.empty()) name_to_circuit_map[netname.m_value] = the_circuit;
+			}
+		}
+	}
+
+	auto wiring_root = search_tree(tree, "wiring");
+	auto net_to_wires_map = std::map<std::string, paths>{};
+	for (auto &&wiring_node : wiring_root->m_branches)
+	{
+		if (wiring_node.m_value == "wire")
+		{
+			auto z = 0.0f;
+			auto radius = 0.0f;
+			auto wire = path{};
+			for (auto &&wire_node : wiring_node.m_branches)
+			{
+				if (wire_node.m_value == "path"
+					|| wire_node.m_value == "polyline_path")
+				{
+					z = layer_to_index_map[wire_node.m_branches[0].m_value];
+					ss_reset(ss, wire_node.m_branches[1].m_value);
+					ss >> radius;
+					radius /= (2 * units);
+
+					for (auto poly_node = begin(wire_node.m_branches) + 2;
+							poly_node != end(wire_node.m_branches); poly_node += 2)
+					{
+						float x, y;
+						ss_reset(ss, poly_node[0].m_value);
+						ss >> x;
+						ss_reset(ss, poly_node[1].m_value);
+						ss >> y;
+						x /= units;
+						y /= -units;
+						wire.push_back(point_3d(x, y, z));
+					}
+				}
+				else if (wire_node.m_value == "net")
+				{
+					net_to_wires_map[wire_node.m_branches[0].m_value].emplace_back(std::move(wire));
+				}
+			}
+		}
+		else if (wiring_node.m_value == "via")
+		{
+			float x, y;
+			ss_reset(ss, wiring_node.m_branches[1].m_value);
+			ss >> x;
+			ss_reset(ss, wiring_node.m_branches[2].m_value);
+			ss >> y;
+			x /= units;
+			y /= -units;
+
+			for (auto wire_node = begin(wiring_node.m_branches) + 3;
+					wire_node != end(wiring_node.m_branches); ++wire_node)
+			{
+				if (wire_node->m_value == "net")
+				{
+					net_to_wires_map[wire_node->m_branches[0].m_value].emplace_back(
+						path{point_3d{x, y, 0}, point_3d{x, y, float(num_layers - 1)}});
+				}
 			}
 		}
 	}
@@ -631,14 +691,14 @@ int main(int argc, char *argv[])
 			{
 				if (net_node.m_value == "pins")
 				{
-					auto the_terminals = terminals{};
+					auto the_pads = pads{};
 					for (auto &&p : net_node.m_branches)
 					{
 						auto pin_info = split(p.m_value, '-');
 						auto instance_name = pin_info[0];
 						auto pin_name = pin_info[1];
-						auto instance = instance_map[instance_name];
-						auto component = component_map[instance.m_comp];
+						auto instance = name_to_instance_map[instance_name];
+						auto component = name_to_component_map[instance.m_comp];
 						auto pin = component.m_pin_map[pin_name];
 						auto m_x = pin.m_x;
 						auto m_y = pin.m_y;
@@ -647,40 +707,42 @@ int main(int argc, char *argv[])
 						auto c = cos(instance.m_angle);
 						auto px = float((c*m_x - s*m_y) + instance.m_x);
 						auto py = float((s*m_x + c*m_y) + instance.m_y);
-						for (auto &&pad : padstack_map[pin.m_form])
+						for (auto &&p : name_to_padstack_map[pin.m_form])
 						{
-							auto tp = point_3d{px, py, (float)pad.first};
-							auto cords = shape_to_cords(pad.second.m_shape, pin.m_angle, instance.m_angle);
-							auto term = terminal{pad.second.m_rule.m_radius, pad.second.m_rule.m_gap, tp, cords};
-							the_terminals.push_back(term);
-							all_terminals.erase(std::find(begin(all_terminals), end(all_terminals), term));
+							auto tp = point_3d{px, py, (float)p.first};
+							auto cords = shape_to_cords(p.second.m_shape, pin.m_angle, instance.m_angle);
+							auto term = pad{p.second.m_rule.m_radius, p.second.m_rule.m_gap, tp, cords};
+							the_pads.push_back(term);
+							all_pads.erase(std::find(begin(all_pads), end(all_pads), term));
 						}
 					}
-					auto &&net = net_map[network_node.m_branches[0].m_value];
+					auto &&net_name = network_node.m_branches[0].m_value;
+					auto &&net = name_to_circuit_map[net_name];
 					auto track_rule = net.m_rule;
-					auto via_rule = padstack_map[net.m_via][0].m_rule;
-					the_tracks.push_back(track{track_rule.m_radius, via_rule.m_radius, track_rule.m_gap, the_terminals});
+					auto via_rule = name_to_padstack_map[net.m_via][0].m_rule;
+					the_tracks.push_back(track{track_rule.m_radius, via_rule.m_radius, track_rule.m_gap,
+												the_pads, net_to_wires_map[net_name]});
 				}
 			}
 		}
 	}
-	the_tracks.push_back(track{0.0, 0.0, 0.0, all_terminals});
+	the_tracks.push_back(track{0.0, 0.0, 0.0, all_pads, {}});
 
 	//output pcb format
 	auto border = double(arg_b);
 	std::cout << "[" << int(maxx-minx+(border*2)+0.5)
 	 			<< "," << int(maxy-miny+(border*2)+0.5)
 				<< "," << num_layers << "]\n";
-	for (auto &track : the_tracks)
+	for (auto &&track : the_tracks)
 	{
 		std::cout << "[" << track.m_radius << "," << track.m_via << "," << track.m_gap << ",[";
-		for (auto i = 0; i < static_cast<int>(track.m_terms.size()); ++i)
+		for (auto i = 0; i < static_cast<int>(track.m_pads.size()); ++i)
 		{
-			auto term = track.m_terms[i];
+			auto &&term = track.m_pads[i];
 			std::cout << "(" << term.m_radius << "," << term.m_gap
-			 			<< ",(" << term.m_term.m_x-float(minx-border)
-						<< "," << term.m_term.m_y-float(miny-border)
-						<< "," << term.m_term.m_z << "),[";
+				<< ",(" << term.m_term.m_x-float(minx-border)
+				<< "," << term.m_term.m_y-float(miny-border)
+				<< "," << term.m_term.m_z << "),[";
 			for (auto j = 0; j < static_cast<int>(term.m_shape.size()); ++j)
 			{
 				auto cord = term.m_shape[j];
@@ -688,9 +750,23 @@ int main(int argc, char *argv[])
 				if (j != (static_cast<int>(term.m_shape.size()) - 1)) std::cout << ",";
 			}
 			std::cout << "])";
-			if (i != (static_cast<int>(track.m_terms.size()) - 1)) std::cout << ",";
+			if (i != (static_cast<int>(track.m_pads.size()) - 1)) std::cout << ",";
 		}
-		std::cout << "],";
-		std::cout << "[]]\n";
+		std::cout << "],[";
+		for (auto i = 0; i < static_cast<int>(track.m_paths.size()); ++i)
+		{
+			std::cout << "[";
+			auto &&p = track.m_paths[i];
+			for (auto j = 0; j < static_cast<int>(p.size()); ++j)
+			{
+				std::cout << "(" << p[j].m_x-float(minx-border)
+					<< "," << p[j].m_y-float(miny-border)
+					<< "," << p[j].m_z << ")";
+				if (j != (static_cast<int>(p.size()) - 1)) std::cout << ",";
+			}
+			std::cout << "]";
+			if (i != (static_cast<int>(track.m_paths.size()) - 1)) std::cout << ",";
+		}
+		std::cout << "]]\n";
 	}
 }
