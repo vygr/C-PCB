@@ -128,10 +128,10 @@ auto read_paths(std::istream &in)
 }
 
 //read, (radius, gap, (x, y, z), [(x, y), ...])
-auto read_terminal(std::istream &in)
+auto read_pad(std::istream &in)
 {
 	if (read_until(in, '(')) exit(1);
-	auto t = terminal{};
+	auto t = pad{};
 	in >> t.m_radius;
 	in.ignore(std::numeric_limits<std::streamsize>::max(), ',');
 	in >> t.m_gap;
@@ -147,15 +147,15 @@ auto read_terminal(std::istream &in)
 	return t;
 }
 
-//read all terminals for one track
-auto read_terminals(std::istream &in)
+//read all pads for one track
+auto read_pads(std::istream &in)
 {
 	if (read_until(in, '[')) exit(1);
-	auto t = terminals{};
+	auto t = pads{};
 	for (;;)
 	{
 		if (in.peek() == ']') break;
-		t.push_back(read_terminal(in));
+		t.push_back(read_pad(in));
 	}
 	if (read_until(in, ']')) exit(1);
 	return t;
@@ -173,7 +173,7 @@ auto read_track(std::istream &in)
 	in.ignore(std::numeric_limits<std::streamsize>::max(), ',');
 	in >> t.m_gap;
 	in.ignore(std::numeric_limits<std::streamsize>::max(), ',');
-	t.m_terms = read_terminals(in);
+	t.m_pads = read_pads(in);
 	t.m_paths = read_paths(in);
 	if (read_until(in, ']')) exit(1);
 	return std::pair<track, bool>(t, false);
@@ -327,7 +327,7 @@ auto draw_layers(const tracks &ts, int pcb_height, int pcb_depth, float arg_m, f
 				}
 			}
 		}
-		//draw terminals and vias
+		//draw pads and vias
 		for (auto &t : ts)
 		{
 			for (auto &path : t.m_paths)
@@ -341,7 +341,7 @@ auto draw_layers(const tracks &ts, int pcb_height, int pcb_depth, float arg_m, f
 					}
 				}
 			}
-			for (auto &term : t.m_terms)
+			for (auto &term : t.m_pads)
 			{
 				if (term.m_term.m_z != float(depth)) continue;
 				if (term.m_shape.empty())
@@ -517,7 +517,7 @@ int main(int argc, char *argv[])
 			t.m_radius *= scale;
 			t.m_via *= scale;
 			t.m_gap *= scale;
-			for (auto &term : t.m_terms)
+			for (auto &term : t.m_pads)
 			{
 				term.m_radius *= scale;
 				term.m_gap *= scale;
@@ -607,7 +607,7 @@ int main(int argc, char *argv[])
 					}
 				}
 			}
-			//draw terminals and vias
+			//draw pads and vias
 			glUniform4f(vert_color_id, 1.0, 1.0, 1.0, 1.0);
 			for (auto &t : ts)
 			{
@@ -619,10 +619,14 @@ int main(int argc, char *argv[])
 						{
 							draw_filled_polygon_fan(point_2d{path[i].m_x, path[i].m_y},
 								*create_filled_circle(t.m_via));
+							glUniform4f(vert_color_id, 0.0, 0.0, 0.0, 1.0);
+							draw_filled_polygon_fan(point_2d{path[i].m_x, path[i].m_y},
+								*create_filled_circle(t.m_via * 0.5));
+							glUniform4f(vert_color_id, 1.0, 1.0, 1.0, 1.0);
 						}
 					}
 				}
-				for (auto &term : t.m_terms)
+				for (auto &term : t.m_pads)
 				{
 					if (term.m_shape.empty())
 					{
