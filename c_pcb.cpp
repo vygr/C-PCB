@@ -21,11 +21,6 @@
 #include "io.h"
 
 extern float length_2d(const point_2d &p);
-extern float manhattan_distance_3d(const point_3d &p1, const point_3d &p2);
-extern float euclidean_distance_3d(const point_3d &p1, const point_3d &p2);
-extern float squared_euclidean_distance_3d(const point_3d &p1, const point_3d &p2);
-extern float chebyshev_distance_3d(const point_3d &p1, const point_3d &p2);
-extern float reciprical_distance_3d(const point_3d &p1, const point_3d &p2);
 
 //generate range of routing vectors
 auto gen_vectors(int vec_range, int x_range, int y_range)
@@ -167,7 +162,7 @@ int main(int argc, char *argv[])
 	}
 	else
 	{
-		std::cout << "[]" << std::endl;
+		std::cout << "()" << std::endl;
 	}
 	return 0;
 }
