@@ -735,7 +735,7 @@ int main(int argc, char *argv[])
 				<< " " << num_layers << ")\n";
 	for (auto &&track : the_tracks)
 	{
-		std::cout << "(" << track.m_radius << " " << track.m_via << " " << track.m_gap << " (";
+		std::cout << "(" << track.m_track_radius << " " << track.m_via_radius << " " << track.m_gap << " (";
 		for (auto i = 0; i < static_cast<int>(track.m_pads.size()); ++i)
 		{
 			auto &&term = track.m_pads[i];
