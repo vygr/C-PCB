@@ -172,8 +172,11 @@ auto draw_layers(const tracks &ts, int pcb_height, int pcb_depth, float arg_m, f
 						{
 							points.push_back(point_2d{i->m_x, i->m_y});
 						}
-						draw_filled_polygon_strip(point_2d{0.0, yoffset},
-							thicken_path_as_tristrip(points, t.m_track_radius + (t.m_gap * s), 3, 2, 16));
+						if (t.m_track_radius)
+						{
+							draw_filled_polygon_strip(point_2d{0.0, yoffset},
+								thicken_path_as_tristrip(points, t.m_track_radius + (t.m_gap * s), 3, 2, 16));
+						}
 					}
 				}
 			}
@@ -317,7 +320,6 @@ int main(int argc, char *argv[])
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glLineWidth(1.0);
 
 	//create vertex array
 	unsigned int vertex_array;
@@ -451,8 +453,16 @@ int main(int argc, char *argv[])
 								{
 									points.push_back(point_2d{i->m_x, i->m_y});
 								}
-								draw_filled_polygon_strip(point_2d{0.0, 0.0},
-									thicken_path_as_tristrip(points, t.m_track_radius, 3, 2, 16));
+								if (t.m_track_radius)
+								{
+									draw_filled_polygon_strip(point_2d{0.0, 0.0},
+										thicken_path_as_tristrip(points, t.m_track_radius, 3, 2, 16));
+								}
+								else
+								{
+									draw_filled_polygon_strip(point_2d{0.0, 0.0},
+										thicken_path_as_tristrip(points, 0.05 * scale, 3, 2, 16));
+								}
 							}
 						}
 					}

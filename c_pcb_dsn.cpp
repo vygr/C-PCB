@@ -300,6 +300,7 @@ int main(int argc, char *argv[])
 
 	auto structure_root = search_tree(tree, "structure");
 	auto layer_to_index_map = std::map<std::string, int>{};
+	auto layer_to_keepout_map = std::map<std::string, paths>{};
 	const auto units = 1000.0f;
 	auto num_layers = 0;
 	auto minx = float(1000000.0);
@@ -390,6 +391,28 @@ int main(int argc, char *argv[])
 					maxx = std::max(x2, maxx);
 					miny = std::min(y2, miny);
 					maxy = std::max(y2, maxy);
+				}
+			}
+		}
+		else if (structure_node.m_value == "keepout")
+		{
+			for (auto &&keepout_node : structure_node.m_branches)
+			{
+				if (keepout_node.m_value == "polygon")
+				{
+					auto layer = keepout_node.m_branches[0].m_value;
+					auto p = path{};
+					for (auto cords = begin(keepout_node.m_branches) + 2;
+					 		cords != end(keepout_node.m_branches); cords += 2)
+					{
+						float px, py;
+						get_2d(ss, cords, px, py);
+						px /= units;
+						py /= -units;
+						p.emplace_back(point_3d(px, py, 0.0f));
+					}
+					p.push_back(p.front());
+					layer_to_keepout_map[layer].push_back(p);
 				}
 			}
 		}
@@ -698,7 +721,34 @@ int main(int argc, char *argv[])
 			}
 		}
 	}
-	the_tracks.push_back(track{0.0, 0.0, 0.0, all_pads, {}});
+
+	//unused pads and the keepouts
+	auto all_keepouts = paths{};
+	for (auto &&k : layer_to_keepout_map)
+	{
+		if (k.first == "signal")
+		{
+			for (auto &&l : layer_to_index_map)
+			{
+				auto z = (float)l.second;
+				for (auto &&p : k.second)
+				{
+					for (auto &&c : p) c.m_z = z;
+					all_keepouts.push_back(p);
+				}
+			}
+		}
+		else
+		{
+			auto z = (float)layer_to_index_map[k.first];
+			for (auto &&p : k.second)
+			{
+				for (auto &&c : p) c.m_z = z;
+				all_keepouts.push_back(p);
+			}
+		}
+	}
+	the_tracks.push_back(track{0.0, 0.0, 0.0, all_pads, all_keepouts});
 
 	//output pcb format
 	auto border = double(arg_b);
