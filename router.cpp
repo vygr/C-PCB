@@ -180,8 +180,8 @@ void pcb::print_stats()
 		num_pads += net.m_pads.size();
 		for (auto &term : net.m_pads)
 		{
-			auto x = int(term.m_term.m_x+0.5);
-			auto y = int(term.m_term.m_y+0.5);
+			auto x = int(term.m_pos.m_x+0.5);
+			auto y = int(term.m_pos.m_y+0.5);
 			vias_set.erase(node{x, y, 0});
 		}
 	}
@@ -351,16 +351,16 @@ void pcb::unmark_distances()
 //aabb of pads
 auto aabb_pads(const pads &terms, int quantization)
 {
-	auto minx = (int(terms[0].m_term.m_x) / quantization) * quantization;
-	auto miny = (int(terms[0].m_term.m_y) / quantization) * quantization;
-	auto maxx = ((int(terms[0].m_term.m_x) + (quantization - 1)) / quantization) * quantization;
-	auto maxy = ((int(terms[0].m_term.m_y) + (quantization - 1)) / quantization) * quantization;
+	auto minx = (int(terms[0].m_pos.m_x) / quantization) * quantization;
+	auto miny = (int(terms[0].m_pos.m_y) / quantization) * quantization;
+	auto maxx = ((int(terms[0].m_pos.m_x) + (quantization - 1)) / quantization) * quantization;
+	auto maxy = ((int(terms[0].m_pos.m_y) + (quantization - 1)) / quantization) * quantization;
 	for (auto i = 1; i < (int)terms.size(); ++i)
 	{
-		auto tminx = (int(terms[i].m_term.m_x) / quantization) * quantization;
-		auto tminy = (int(terms[i].m_term.m_y) / quantization) * quantization;
-		auto tmaxx = ((int(terms[i].m_term.m_x) + (quantization - 1)) / quantization) * quantization;
-		auto tmaxy = ((int(terms[i].m_term.m_y) + (quantization - 1)) / quantization) * quantization;
+		auto tminx = (int(terms[i].m_pos.m_x) / quantization) * quantization;
+		auto tminy = (int(terms[i].m_pos.m_y) / quantization) * quantization;
+		auto tmaxx = ((int(terms[i].m_pos.m_x) + (quantization - 1)) / quantization) * quantization;
+		auto tmaxy = ((int(terms[i].m_pos.m_y) + (quantization - 1)) / quantization) * quantization;
 		minx = std::min(tminx, minx);
 		miny = std::min(tminy, miny);
 		maxx = std::max(tmaxx, maxx);
@@ -416,8 +416,8 @@ void pcb::remove_netlist()
 
 net::net(const track &t, pcb *pcb)
 	: m_pcb(pcb)
-	, m_radius(t.m_radius * pcb->m_resolution)
-	, m_via(t.m_via * pcb->m_resolution)
+	, m_radius(t.m_track_radius * pcb->m_resolution)
+	, m_via(t.m_via_radius * pcb->m_resolution)
 	, m_gap(t.m_gap * pcb->m_resolution)
 	, m_pads(t.m_pads)
 	, m_wires(t.m_paths)
@@ -427,8 +427,8 @@ net::net(const track &t, pcb *pcb)
 	{
 		t.m_radius *= m_pcb->m_resolution;
 		t.m_gap *= m_pcb->m_resolution;
-		t.m_term.m_x *= m_pcb->m_resolution;
-		t.m_term.m_y *= m_pcb->m_resolution;
+		t.m_pos.m_x *= m_pcb->m_resolution;
+		t.m_pos.m_y *= m_pcb->m_resolution;
 		for (auto &p : t.m_shape)
 		{
 			p.m_x *= m_pcb->m_resolution;
@@ -452,15 +452,15 @@ net::net(const track &t, pcb *pcb)
 	{
 		auto r = i->m_radius;
 		auto g = i->m_gap;
-		auto x = i->m_term.m_x;
-		auto y = i->m_term.m_y;
-		auto z1 = i->m_term.m_z;
+		auto x = i->m_pos.m_x;
+		auto y = i->m_pos.m_y;
+		auto z1 = i->m_pos.m_z;
 		auto &&shape = i->m_shape;
 		auto z2 = z1;
 		while ((++i != end(m_pads)) && std::tie(x, y, r, g, shape)
-				== std::tie(i->m_term.m_x, i->m_term.m_y, i->m_radius, i->m_gap, i->m_shape))
+				== std::tie(i->m_pos.m_x, i->m_pos.m_y, i->m_radius, i->m_gap, i->m_shape))
 		{
-			z2 = i->m_term.m_z;
+			z2 = i->m_pos.m_z;
 		}
 		if (shape.empty())
 			m_pad_collision_lines.emplace_back(layers::line{point_3d{x, y, z1}, point_3d{x, y, z2}, r, g});
@@ -728,7 +728,7 @@ void net::print_net()
 	{
 		auto t = m_pads[i];
 		std::cout << "(" << t.m_radius*scale << " " << t.m_gap*scale << " ("
-		 	<< t.m_term.m_x*scale << " " << t.m_term.m_y*scale << " " << t.m_term.m_z << ") (";
+		 	<< t.m_pos.m_x*scale << " " << t.m_pos.m_y*scale << " " << t.m_pos.m_z << ") (";
 		for (auto j = 0; j < static_cast<int>(t.m_shape.size()); ++j)
 		{
 			auto c = t.m_shape[j];

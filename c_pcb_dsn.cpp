@@ -740,9 +740,9 @@ int main(int argc, char *argv[])
 		{
 			auto &&term = track.m_pads[i];
 			std::cout << "(" << term.m_radius << " " << term.m_gap
-				<< " (" << term.m_term.m_x-float(minx-border)
-				<< " " << term.m_term.m_y-float(miny-border)
-				<< " " << term.m_term.m_z << ") (";
+				<< " (" << term.m_pos.m_x-float(minx-border)
+				<< " " << term.m_pos.m_y-float(miny-border)
+				<< " " << term.m_pos.m_z << ") (";
 			for (auto j = 0; j < static_cast<int>(term.m_shape.size()); ++j)
 			{
 				auto cord = term.m_shape[j];

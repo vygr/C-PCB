@@ -33,14 +33,12 @@ class net;
 struct pad
 {
 	bool operator==(const pad &t) const {
-		return std::tie(m_radius, m_gap, m_term, m_shape)
-				== std::tie(t.m_radius, t.m_gap, t.m_term, t.m_shape); }
-	bool operator<(const pad &t) const {
-		return std::tie(m_term.m_x, m_term.m_y, m_term.m_z)
-				< std::tie(t.m_term.m_x, t.m_term.m_y, t.m_term.m_z); }
+		return std::tie(m_radius, m_gap, m_pos, m_shape)
+				== std::tie(t.m_radius, t.m_gap, t.m_pos, t.m_shape); }
+	bool operator<(const pad &t) const { return m_pos < t.m_pos; }
 	float m_radius;
 	float m_gap;
-	point_3d m_term;
+	point_3d m_pos;
 	points_2d m_shape;
 };
 typedef std::vector<pad> pads;
@@ -78,7 +76,8 @@ typedef std::vector<node> nodes;
 typedef std::vector<nodes> nodess;
 typedef std::set<node> node_set;
 
-namespace std {
+namespace std
+{
 	template <>
 	struct hash<node>
 	{
@@ -97,8 +96,8 @@ typedef std::vector<path> paths;
 
 struct track
 {
-	float m_radius;
-	float m_via;
+	float m_track_radius;
+	float m_via_radius;
 	float m_gap;
 	pads m_pads;
 	paths m_paths;

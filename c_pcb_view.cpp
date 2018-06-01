@@ -156,7 +156,7 @@ auto draw_layers(const tracks &ts, int pcb_height, int pcb_depth, float arg_m, f
 									points.push_back(point_2d{i->m_x, i->m_y});
 								}
 								draw_filled_polygon_strip(point_2d{0.0, yoffset},
-									thicken_path_as_tristrip(points, t.m_radius + (t.m_gap * s), 3, 2, 16));
+									thicken_path_as_tristrip(points, t.m_track_radius + (t.m_gap * s), 3, 2, 16));
 							}
 						}
 						start = end;
@@ -173,7 +173,7 @@ auto draw_layers(const tracks &ts, int pcb_height, int pcb_depth, float arg_m, f
 							points.push_back(point_2d{i->m_x, i->m_y});
 						}
 						draw_filled_polygon_strip(point_2d{0.0, yoffset},
-							thicken_path_as_tristrip(points, t.m_radius + (t.m_gap * s), 3, 2, 16));
+							thicken_path_as_tristrip(points, t.m_track_radius + (t.m_gap * s), 3, 2, 16));
 					}
 				}
 			}
@@ -188,16 +188,16 @@ auto draw_layers(const tracks &ts, int pcb_height, int pcb_depth, float arg_m, f
 					if (path[i].m_z != path[i+1].m_z)
 					{
 						draw_filled_polygon_fan(point_2d{path[i].m_x, path[i].m_y + yoffset},
-							*create_filled_circle(t.m_via + (t.m_gap * s)));
+							*create_filled_circle(t.m_via_radius + (t.m_gap * s)));
 					}
 				}
 			}
 			for (auto &term : t.m_pads)
 			{
-				if (term.m_term.m_z != float(depth)) continue;
+				if (term.m_pos.m_z != float(depth)) continue;
 				if (term.m_shape.empty())
 				{
-					draw_filled_polygon_fan(point_2d{term.m_term.m_x, term.m_term.m_y + yoffset},
+					draw_filled_polygon_fan(point_2d{term.m_pos.m_x, term.m_pos.m_y + yoffset},
 						*create_filled_circle(term.m_radius + (term.m_gap * s)));
 				}
 				else
@@ -365,23 +365,23 @@ int main(int argc, char *argv[])
 		auto border = float(arg_m * arg_s);
 		for (auto &t : ts)
 		{
-			t.m_radius *= scale;
-			t.m_via *= scale;
+			t.m_track_radius *= scale;
+			t.m_via_radius *= scale;
 			t.m_gap *= scale;
 			for (auto &term : t.m_pads)
 			{
 				term.m_radius *= scale;
 				term.m_gap *= scale;
-				term.m_term.m_x *= scale;
-				term.m_term.m_y *= scale;
-				term.m_term.m_x += border;
-				term.m_term.m_y += border;
+				term.m_pos.m_x *= scale;
+				term.m_pos.m_y *= scale;
+				term.m_pos.m_x += border;
+				term.m_pos.m_y += border;
 				for (auto &cord : term.m_shape)
 				{
 					cord.m_x *= scale;
 					cord.m_y *= scale;
-					cord.m_x += term.m_term.m_x;
-					cord.m_y += term.m_term.m_y;
+					cord.m_x += term.m_pos.m_x;
+					cord.m_y += term.m_pos.m_y;
 				}
 			}
 			for (auto &path : t.m_paths)
@@ -435,7 +435,7 @@ int main(int argc, char *argv[])
 											points.push_back(point_2d{i->m_x, i->m_y});
 										}
 										draw_filled_polygon_strip(point_2d{0.0, 0.0},
-											thicken_path_as_tristrip(points, t.m_radius, 3, 2, 16));
+											thicken_path_as_tristrip(points, t.m_track_radius, 3, 2, 16));
 									}
 								}
 								start = end;
@@ -452,7 +452,7 @@ int main(int argc, char *argv[])
 									points.push_back(point_2d{i->m_x, i->m_y});
 								}
 								draw_filled_polygon_strip(point_2d{0.0, 0.0},
-									thicken_path_as_tristrip(points, t.m_radius, 3, 2, 16));
+									thicken_path_as_tristrip(points, t.m_track_radius, 3, 2, 16));
 							}
 						}
 					}
@@ -469,10 +469,10 @@ int main(int argc, char *argv[])
 						if (path[i].m_z != path[i+1].m_z)
 						{
 							draw_filled_polygon_fan(point_2d{path[i].m_x, path[i].m_y},
-								*create_filled_circle(t.m_via));
+								*create_filled_circle(t.m_via_radius));
 							glUniform4f(vert_color_id, 0.0, 0.0, 0.0, 1.0);
 							draw_filled_polygon_fan(point_2d{path[i].m_x, path[i].m_y},
-								*create_filled_circle(t.m_via * 0.5));
+								*create_filled_circle(t.m_via_radius * 0.5));
 							glUniform4f(vert_color_id, 1.0, 1.0, 1.0, 1.0);
 						}
 					}
@@ -481,7 +481,7 @@ int main(int argc, char *argv[])
 				{
 					if (term.m_shape.empty())
 					{
-						draw_filled_polygon_fan(point_2d{term.m_term.m_x, term.m_term.m_y},
+						draw_filled_polygon_fan(point_2d{term.m_pos.m_x, term.m_pos.m_y},
 							*create_filled_circle(term.m_radius));
 					}
 					else

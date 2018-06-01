@@ -110,7 +110,7 @@ auto read_pad(std::istream &in)
 	auto t = pad{};
 	in >> t.m_radius;
 	in >> t.m_gap;
-	t.m_term = read_point_3d(in);
+	t.m_pos = read_point_3d(in);
 	t.m_shape = read_shape(in);
 	if (read_until(in, ')')) exit(1);
 	return t;
@@ -132,8 +132,8 @@ auto read_track(std::istream &in)
 	if (read_until(in, '(')) return std::pair<track, bool>(track{}, true);
 	if (in.peek() == ')') return std::pair<track, bool>(track{}, true);
 	auto t = track{};
-	in >> t.m_radius;
-	in >> t.m_via;
+	in >> t.m_track_radius;
+	in >> t.m_via_radius;
 	in >> t.m_gap;
 	t.m_pads = read_pads(in);
 	t.m_paths = read_paths(in);
