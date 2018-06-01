@@ -227,10 +227,34 @@ void print_tree(const tree &t, int indent)
 	for (auto &ct : t.m_branches) print_tree(ct, indent+1);
 }
 
-void ss_reset(std::stringstream &ss, std::string s)
+void ss_reset(std::stringstream &ss, const std::string &s)
 {
 	ss.str(s);
 	ss.clear();
+}
+
+void get_value(std::stringstream &ss, const std::vector<const tree>::iterator &t, int &x)
+{
+	ss_reset(ss, t->m_value);
+	ss >> x;
+}
+
+void get_value(std::stringstream &ss, const std::vector<const tree>::iterator &t, float &x)
+{
+	ss_reset(ss, t->m_value);
+	ss >> x;
+}
+
+void get_2d(std::stringstream &ss, const std::vector<const tree>::iterator &t, float &x, float &y)
+{
+	get_value(ss, t, x);
+	get_value(ss, t + 1, y);
+}
+
+void get_rect(std::stringstream &ss, const std::vector<const tree>::iterator &t, float &x1, float &y1, float &x2, float &y2)
+{
+	get_2d(ss, t, x1, y1);
+	get_2d(ss, t + 2, x2, y2);
 }
 
 int main(int argc, char *argv[])
@@ -299,8 +323,7 @@ int main(int argc, char *argv[])
 					{
 						if (property_node.m_value == "index")
 						{
-							ss_reset(ss, property_node.m_branches[0].m_value);
-							ss >> layer_index;
+							get_value(ss, begin(property_node.m_branches), layer_index);
 						}
 					}
 				}
@@ -320,16 +343,14 @@ int main(int argc, char *argv[])
 			{
 				if (rule_node.m_value == "width")
 				{
-					ss_reset(ss, rule_node.m_branches[0].m_value);
-					ss >> default_rule.m_radius;
+					get_value(ss, begin(rule_node.m_branches), default_rule.m_radius);
 					default_rule.m_radius /= (2 * units);
 				}
 				else if ((rule_node.m_value == "clear"
 						|| rule_node.m_value == "clearance")
 						&& rule_node.m_branches.size() == 1)
 				{
-					ss_reset(ss, rule_node.m_branches[0].m_value);
-					ss >> default_rule.m_gap;
+					get_value(ss, begin(rule_node.m_branches), default_rule.m_gap);
 					default_rule.m_gap /= (2 * units);
 				}
 			}
@@ -344,10 +365,7 @@ int main(int argc, char *argv[])
 					 		cords != end(boundary_node.m_branches); cords += 2)
 					{
 						float px, py;
-						ss_reset(ss, cords->m_value);
-						ss >> px;
-						ss_reset(ss, (cords+1)->m_value);
-						ss >> py;
+						get_2d(ss, cords, px, py);
 						px /= units;
 						py /= -units;
 						minx = std::min(px, minx);
@@ -359,14 +377,7 @@ int main(int argc, char *argv[])
 				else if (boundary_node.m_value == "rect")
 				{
 					float x1, y1, x2, y2;
-					ss_reset(ss, boundary_node.m_branches[1].m_value);
-					ss >> x1;
-					ss_reset(ss, boundary_node.m_branches[2].m_value);
-					ss >> y1;
-					ss_reset(ss, boundary_node.m_branches[3].m_value);
-					ss >> x2;
-					ss_reset(ss, boundary_node.m_branches[4].m_value);
-					ss >> y2;
+					get_rect(ss, begin(boundary_node.m_branches) + 1, x1, y1, x2, y2);
 					x1 /= units;
 					y1 /= -units;
 					x2 /= units;
@@ -402,23 +413,16 @@ int main(int argc, char *argv[])
 					the_pin.m_form = image_node->m_branches[0].m_value;
 					if (image_node->m_branches[1].m_value == "rotate")
 					{
-						ss_reset(ss, image_node->m_branches[1].m_branches[0].m_value);
-						ss >> the_pin.m_angle;
+						get_value(ss, begin(image_node->m_branches[1].m_branches), the_pin.m_angle);
 						the_pin.m_name = image_node->m_branches[2].m_value;
-						ss_reset(ss, image_node->m_branches[3].m_value);
-						ss >> the_pin.m_x;
-						ss_reset(ss, image_node->m_branches[4].m_value);
-						ss >> the_pin.m_y;
+						get_2d(ss, begin(image_node->m_branches) + 3, the_pin.m_x, the_pin.m_y);
 						the_pin.m_angle *= (M_PI / 180.0);
 					}
 					else
 					{
 						the_pin.m_angle = 0.0;
 						the_pin.m_name = image_node->m_branches[1].m_value;
-						ss_reset(ss, image_node->m_branches[2].m_value);
-						ss >> the_pin.m_x;
-						ss_reset(ss, image_node->m_branches[3].m_value);
-						ss >> the_pin.m_y;
+						get_2d(ss, begin(image_node->m_branches) + 2, the_pin.m_x, the_pin.m_y);
 					}
 					the_pin.m_x /= units;
 					the_pin.m_y /= -units;
@@ -438,24 +442,15 @@ int main(int argc, char *argv[])
 					auto the_rule = default_rule;
 					if (padstack_node->m_branches[0].m_value == "circle")
 					{
-						ss_reset(ss, padstack_node->m_branches[0].m_branches[1].m_value);
-						ss >> the_rule.m_radius;
+						get_value(ss, begin(padstack_node->m_branches[0].m_branches) + 1, the_rule.m_radius);
 						the_rule.m_radius /= (2 * units);
 					}
 					else if (padstack_node->m_branches[0].m_value == "path")
 					{
-						ss_reset(ss, padstack_node->m_branches[0].m_branches[1].m_value);
-						ss >> the_rule.m_radius;
+						get_value(ss, begin(padstack_node->m_branches[0].m_branches) + 1, the_rule.m_radius);
 						the_rule.m_radius /= (2 * units);
 						float x1, y1, x2, y2;
-						ss_reset(ss, padstack_node->m_branches[0].m_branches[2].m_value);
-						ss >> x1;
-						ss_reset(ss, padstack_node->m_branches[0].m_branches[3].m_value);
-						ss >> y1;
-						ss_reset(ss, padstack_node->m_branches[0].m_branches[4].m_value);
-						ss >> x2;
-						ss_reset(ss, padstack_node->m_branches[0].m_branches[5].m_value);
-						ss >> y2;
+						get_rect(ss, begin(padstack_node->m_branches[0].m_branches) + 2, x1, y1, x2, y2);
 						if (x1 != 0.0
 							|| x2 != 0.0
 							|| y1 != 0.0
@@ -473,14 +468,7 @@ int main(int argc, char *argv[])
 					{
 						the_rule.m_radius = 0.0;
 						float x1, y1, x2, y2;
-						ss_reset(ss, padstack_node->m_branches[0].m_branches[1].m_value);
-						ss >> x1;
-						ss_reset(ss, padstack_node->m_branches[0].m_branches[2].m_value);
-						ss >> y1;
-						ss_reset(ss, padstack_node->m_branches[0].m_branches[3].m_value);
-						ss >> x2;
-						ss_reset(ss, padstack_node->m_branches[0].m_branches[4].m_value);
-						ss >> y2;
+						get_rect(ss, begin(padstack_node->m_branches[0].m_branches) + 1, x1, y1, x2, y2);
 						x1 /= units;
 						y1 /= -units;
 						x2 /= units;
@@ -498,10 +486,7 @@ int main(int argc, char *argv[])
 							 poly_node != end(padstack_node->m_branches[0].m_branches); poly_node += 2)
 						{
 							float x1, y1;
-							ss_reset(ss, poly_node[0].m_value);
-							ss >> x1;
-							ss_reset(ss, poly_node[1].m_value);
-							ss >> y1;
+							get_2d(ss, poly_node, x1, y1);
 							x1 /= units;
 							y1 /= -units;
 							points.push_back(point_2d{x1, y1});
@@ -531,13 +516,9 @@ int main(int argc, char *argv[])
 					auto instance_name = component_node->m_branches[0].m_value;
 					the_instance.m_name = instance_name;
 					the_instance.m_comp = component_name;
-					ss_reset(ss, component_node->m_branches[1].m_value);
-					ss >> the_instance.m_x;
-					ss_reset(ss, component_node->m_branches[2].m_value);
-					ss >> the_instance.m_y;
+					get_2d(ss, begin(component_node->m_branches) + 1, the_instance.m_x, the_instance.m_y);
 					the_instance.m_side = component_node->m_branches[3].m_value;
-					ss_reset(ss, component_node->m_branches[4].m_value);
-					ss >> the_instance.m_angle;
+					get_value(ss, begin(component_node->m_branches) + 4, the_instance.m_angle);
 					the_instance.m_angle *= -(M_PI / 180.0);
 					the_instance.m_x /= units;
 					the_instance.m_y /= -units;
@@ -590,16 +571,14 @@ int main(int argc, char *argv[])
 					{
 						if (dims.m_value == "width")
 						{
-							ss_reset(ss, dims.m_branches[0].m_value);
-							ss >> the_circuit.m_rule.m_radius;
+							get_value(ss, begin(dims.m_branches), the_circuit.m_rule.m_radius);
 							the_circuit.m_rule.m_radius /= (2 * units);
 						}
 						else if ((dims.m_value == "clearance"
 								|| dims.m_value == "clear")
 								&& dims.m_branches.size() == 1)
 						{
-							ss_reset(ss, dims.m_branches[0].m_value);
-							ss >> the_circuit.m_rule.m_gap;
+							get_value(ss, begin(dims.m_branches), the_circuit.m_rule.m_gap);
 							the_circuit.m_rule.m_gap /= (2 * units);
 						}
 					}
@@ -637,18 +616,14 @@ int main(int argc, char *argv[])
 					|| wire_node.m_value == "polyline_path")
 				{
 					z = layer_to_index_map[wire_node.m_branches[0].m_value];
-					ss_reset(ss, wire_node.m_branches[1].m_value);
-					ss >> radius;
+					get_value(ss, begin(wire_node.m_branches) + 1, radius);
 					radius /= (2 * units);
 
 					for (auto poly_node = begin(wire_node.m_branches) + 2;
 							poly_node != end(wire_node.m_branches); poly_node += 2)
 					{
 						float x, y;
-						ss_reset(ss, poly_node[0].m_value);
-						ss >> x;
-						ss_reset(ss, poly_node[1].m_value);
-						ss >> y;
+						get_2d(ss, poly_node, x, y);
 						x /= units;
 						y /= -units;
 						wire.push_back(point_3d(x, y, z));
@@ -663,10 +638,7 @@ int main(int argc, char *argv[])
 		else if (wiring_node.m_value == "via")
 		{
 			float x, y;
-			ss_reset(ss, wiring_node.m_branches[1].m_value);
-			ss >> x;
-			ss_reset(ss, wiring_node.m_branches[2].m_value);
-			ss >> y;
+			get_2d(ss, begin(wiring_node.m_branches) + 1, x, y);
 			x /= units;
 			y /= -units;
 
