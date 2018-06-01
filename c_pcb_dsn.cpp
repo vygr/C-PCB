@@ -730,43 +730,39 @@ int main(int argc, char *argv[])
 
 	//output pcb format
 	auto border = double(arg_b);
-	std::cout << "[" << int(maxx-minx+(border*2)+0.5)
-	 			<< "," << int(maxy-miny+(border*2)+0.5)
-				<< "," << num_layers << "]\n";
+	std::cout << "(" << int(maxx-minx+(border*2)+0.5)
+	 			<< " " << int(maxy-miny+(border*2)+0.5)
+				<< " " << num_layers << ")\n";
 	for (auto &&track : the_tracks)
 	{
-		std::cout << "[" << track.m_radius << "," << track.m_via << "," << track.m_gap << ",[";
+		std::cout << "(" << track.m_radius << " " << track.m_via << " " << track.m_gap << " (";
 		for (auto i = 0; i < static_cast<int>(track.m_pads.size()); ++i)
 		{
 			auto &&term = track.m_pads[i];
-			std::cout << "(" << term.m_radius << "," << term.m_gap
-				<< ",(" << term.m_term.m_x-float(minx-border)
-				<< "," << term.m_term.m_y-float(miny-border)
-				<< "," << term.m_term.m_z << "),[";
+			std::cout << "(" << term.m_radius << " " << term.m_gap
+				<< " (" << term.m_term.m_x-float(minx-border)
+				<< " " << term.m_term.m_y-float(miny-border)
+				<< " " << term.m_term.m_z << ") (";
 			for (auto j = 0; j < static_cast<int>(term.m_shape.size()); ++j)
 			{
 				auto cord = term.m_shape[j];
-				std::cout << "(" << cord.m_x << "," << cord.m_y << ")";
-				if (j != (static_cast<int>(term.m_shape.size()) - 1)) std::cout << ",";
+				std::cout << "(" << cord.m_x << " " << cord.m_y << ")";
 			}
-			std::cout << "])";
-			if (i != (static_cast<int>(track.m_pads.size()) - 1)) std::cout << ",";
+			std::cout << "))";
 		}
-		std::cout << "],[";
+		std::cout << ") (";
 		for (auto i = 0; i < static_cast<int>(track.m_paths.size()); ++i)
 		{
-			std::cout << "[";
+			std::cout << "(";
 			auto &&p = track.m_paths[i];
 			for (auto j = 0; j < static_cast<int>(p.size()); ++j)
 			{
 				std::cout << "(" << p[j].m_x-float(minx-border)
-					<< "," << p[j].m_y-float(miny-border)
-					<< "," << p[j].m_z << ")";
-				if (j != (static_cast<int>(p.size()) - 1)) std::cout << ",";
+					<< " " << p[j].m_y-float(miny-border)
+					<< " " << p[j].m_z << ")";
 			}
-			std::cout << "]";
-			if (i != (static_cast<int>(track.m_paths.size()) - 1)) std::cout << ",";
+			std::cout << ")";
 		}
-		std::cout << "]]\n";
+		std::cout << "))\n";
 	}
 }

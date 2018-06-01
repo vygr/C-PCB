@@ -146,14 +146,14 @@ void pcb::increase_quantization()
 void pcb::print_pcb()
 {
 	auto scale = 1.0 / m_resolution;
-	std::cout << '[' << m_width*scale << ',' << m_height*scale << ',' << m_depth << ']' << std::endl;
+	std::cout << '(' << m_width*scale << ' ' << m_height*scale << ' ' << m_depth << ')' << std::endl;
 }
 
 //output netlist and paths of board for viewer app
 void pcb::print_netlist()
 {
 	for (auto &net : m_netlist) net.print_net();
-	std::cout << "[]" << std::endl;
+	std::cout << "()" << std::endl;
 }
 
 //output stats to screen
@@ -723,48 +723,42 @@ bool net::route()
 void net::print_net()
 {
 	auto scale = 1.0 / m_pcb->m_resolution;
-	std::cout << "[" << m_radius*scale << "," << m_via*scale << "," << m_gap*scale << ",[";
+	std::cout << "(" << m_radius*scale << " " << m_via*scale << " " << m_gap*scale << " (";
 	for (auto i = 0; i < static_cast<int>(m_pads.size()); ++i)
 	{
 		auto t = m_pads[i];
-		std::cout << "(" << t.m_radius*scale << "," << t.m_gap*scale << ",("
-		 	<< t.m_term.m_x*scale << "," << t.m_term.m_y*scale << "," << t.m_term.m_z << "),[";
+		std::cout << "(" << t.m_radius*scale << " " << t.m_gap*scale << " ("
+		 	<< t.m_term.m_x*scale << " " << t.m_term.m_y*scale << " " << t.m_term.m_z << ") (";
 		for (auto j = 0; j < static_cast<int>(t.m_shape.size()); ++j)
 		{
 			auto c = t.m_shape[j];
-			std::cout << "(" << c.m_x*scale << "," << c.m_y*scale << ")";
-			if (j != (static_cast<int>(t.m_shape.size()) - 1)) std::cout << ",";
+			std::cout << "(" << c.m_x*scale << " " << c.m_y*scale << ")";
 		}
-		std::cout << "])";
-		if (i != (static_cast<int>(m_pads.size())) - 1) std::cout << ",";
+		std::cout << "))";
 	}
-	std::cout << "],[";
+	std::cout << ") (";
 	for (auto i = 0; i < static_cast<int>(m_wires.size()); ++i)
 	{
 		auto &&wire = m_wires[i];
-		std::cout << "[";
+		std::cout << "(";
 		for (auto j = 0; j < static_cast<int>(wire.size()); ++j)
 		{
 			auto &&sp = wire[j];
-			std::cout << "(" << sp.m_x*scale << "," << sp.m_y*scale << "," << sp.m_z << ")";
-			if (j != (static_cast<int>(wire.size()) - 1)) std::cout << ",";
+			std::cout << "(" << sp.m_x*scale << " " << sp.m_y*scale << " " << sp.m_z << ")";
 		}
-		std::cout << "]";
-		if (i != (static_cast<int>(m_wires.size())) - 1 || !m_paths.empty()) std::cout << ",";
+		std::cout << ")";
 	}
 	for (auto i = 0; i < static_cast<int>(m_paths.size()); ++i)
 	{
 		auto &&path = m_paths[i];
-		std::cout << "[";
+		std::cout << "(";
 		for (auto j = 0; j < static_cast<int>(path.size()); ++j)
 		{
 			auto sp = m_pcb->grid_to_space_point(path[j]);
-			std::cout << "(" << sp.m_x*scale << "," << sp.m_y*scale << "," << sp.m_z << ")";
-			if (j != (static_cast<int>(path.size()) - 1)) std::cout << ",";
+			std::cout << "(" << sp.m_x*scale << " " << sp.m_y*scale << " " << sp.m_z << ")";
 		}
-		std::cout << "]";
-		if (i != (static_cast<int>(m_paths.size())) - 1) std::cout << ",";
+		std::cout << ")";
 	}
-	std::cout << "]]\n";
+	std::cout << "))\n";
 	return;
 }

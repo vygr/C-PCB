@@ -38,22 +38,22 @@ You can drop the output to a file and view it as an animation with:
 Format of .pcb input file or stdin is:
 
 ```
-DIMS : [width, height, depth]
-POINT2D : (x, y)
-POINT3D : (x, y, z)
-SHAPE : [POINT2D, ...]
-PATH : [POINT3D, ...]
-PATHS : [PATH, ...]
-PAD : (pad_radius, pad_gap, POINT3D, SHAPE)
-PADS : [PAD, ...]
-TRACK : [track_radius, via_radius, track_gap, PADS, PATHS]
+DIMS : (width height depth)
+POINT2D : (x y)
+POINT3D : (x y z)
+SHAPE : (POINT2D ...)
+PATH : (POINT3D ...)
+PATHS : (PATH ...)
+PAD : (pad_radius pad_gap POINT3D SHAPE)
+PADS : (PAD ...)
+TRACK : (track_radius via_radius track_gap PADS PATHS)
 PCB : DIMS TRACK ...
 ```
 
 You can stop a netlist early by just putting and empty track:
 
 ```
-[]
+()
 ```
 
 For example:
@@ -62,7 +62,7 @@ For example:
 DIMS
 TRACK
 TRACK
-[]
+()
 TRACK
 TRACK
 ```
