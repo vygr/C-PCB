@@ -42,63 +42,55 @@ auto read_until(std::istream &in, char c)
 auto read_dimentions(std::istream &in)
 {
 	if (read_until(in, '(')) exit(1);
-	auto dims = pcb::dims{};
-	in >> dims.m_width;
-	in >> dims.m_height;
-	in >> dims.m_depth;
+	auto t = pcb::dims{};
+	in >> t.m_width;
+	in >> t.m_height;
+	in >> t.m_depth;
 	if (read_until(in, ')')) exit(1);
-	return dims;
+	return t;
 }
 
 //read, (x y)
 auto read_point_2d(std::istream &in)
 {
 	if (read_until(in, '(')) exit(1);
-	auto p = point_2d{};
-	in >> p.m_x;
-	in >> p.m_y;
+	auto t = point_2d{};
+	in >> t.m_x;
+	in >> t.m_y;
 	if (read_until(in, ')')) exit(1);
-	return p;
+	return t;
 }
 
 //read, (x y z)
 auto read_point_3d(std::istream &in)
 {
 	if (read_until(in, '(')) exit(1);
-	auto p = point_3d{};
-	in >> p.m_x;
-	in >> p.m_y;
-	in >> p.m_z;
+	auto t = point_3d{};
+	in >> t.m_x;
+	in >> t.m_y;
+	in >> t.m_z;
 	if (read_until(in, ')')) exit(1);
-	return p;
+	return t;
 }
 
 //read, ((x  y) ...)
 auto read_shape(std::istream &in)
 {
 	if (read_until(in, '(')) exit(1);
-	auto cords = points_2d{};
-	for (;;)
-	{
-		if (in.peek() == ')') break;
-		cords.push_back(read_point_2d(in));
-	}
+	auto t = points_2d{};
+	for (;(in.peek() != ')');) t.push_back(read_point_2d(in));
 	if (read_until(in, ')')) exit(1);
-	return cords;
+	return t;
 }
 
 //read, ((x y z) ...)
 auto read_path(std::istream &in)
 {
 	if (read_until(in, '(')) exit(1);
-	auto cords = path{};
-	for (;;)
-	{
-		if (in.peek() == ')') break;
-		cords.push_back(read_point_3d(in));
-	}
+	auto t = path{};
+	for (;(in.peek() != ')');) t.push_back(read_point_3d(in));
 	if (read_until(in, ')')) exit(1);
-	return cords;
+	return t;
 }
 
 //read, (((x y z) ...) ...)
@@ -106,11 +98,7 @@ auto read_paths(std::istream &in)
 {
 	if (read_until(in, '(')) exit(1);
 	auto t = paths{};
-	for (;;)
-	{
-		if (in.peek() == ')') break;
-		t.push_back(read_path(in));
-	}
+	for (;(in.peek() != ')');) t.push_back(read_path(in));
 	if (read_until(in, ')')) exit(1);
 	return t;
 }
@@ -133,11 +121,7 @@ auto read_pads(std::istream &in)
 {
 	if (read_until(in, '(')) exit(1);
 	auto t = pads{};
-	for (;;)
-	{
-		if (in.peek() == ')') break;
-		t.push_back(read_pad(in));
-	}
+	for (;(in.peek() != ')');) t.push_back(read_pad(in));
 	if (read_until(in, ')')) exit(1);
 	return t;
 }
