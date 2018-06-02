@@ -47,25 +47,16 @@ PATHS : (PATH ...)
 PAD : (pad_radius pad_gap POINT3D SHAPE)
 PADS : (PAD ...)
 TRACK : (track_radius via_radius track_gap PADS PATHS)
-PCB : DIMS TRACK ...
+PCB : DIMS TRACK ... ... ()
 ```
 
-You can stop a netlist early by just putting and empty track:
+Special treatment is given to tracks with a track_radius of 0.0, they are used
+to hold unused pads and keepout paths. No attempt is made to route them, they
+are just added to the collision hash for all other routing.
 
-```
-()
-```
-
-For example:
-
-```
-DIMS
-TRACK
-TRACK
-()
-TRACK
-TRACK
-```
+Tracks containing paths as input to the router are treated as pre existing
+wireing and are preserved as is in the output. Only pads of tracks with no
+existing wiring to them are routed.
 
 ## More screenshots
 ![](./test5.png)
