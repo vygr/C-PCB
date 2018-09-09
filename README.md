@@ -136,6 +136,7 @@ track_radius of 0.0 specifies unused pads and or keepouts.
 
 ## C_PCB options
 
+```
 -t:  timeout in seconds, default 600
 -v:  verbosity level 0..1, default 0
 -z:  vias cost, 0..100, default 0
@@ -145,6 +146,7 @@ track_radius of 0.0 specifies unused pads and or keepouts.
 -fr: flood range 1..5, default 2
 -xr: even layer x range 0..5, default 1
 -yr: odd layer y range 0..5, default 1
+```
 
 ## More screenshots
 ![](./test5.png)
