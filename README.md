@@ -64,7 +64,9 @@ Dimensions of the board in units and layers.
 
 eg.
 
+```
 (100 50 2)
+```
 
 ### POINT2D : (x y)
 
@@ -72,7 +74,9 @@ eg.
 
 eg.
 
+```
 (56.7 24.3)
+```
 
 ### POINT3D : (x y z)
 
@@ -80,22 +84,26 @@ eg.
 
 eg.
 
+```
 (56.7 24.3 0.0)
 (50.7 25.3 1.0)
+```
 
 ### SHAPE : (POINT2D ...)
 
 2D shape specified in relative units. These shapes are used to represent pad
-polygons, and are specified as as closed polygons, the viewer fills these with
-a fan fill. An empty shape is used to signify a circular pad with radius of
+polygons, and are specified as closed polygons, the viewer fills these with a
+fan fill. An empty shape is used to signify a circular pad with radius of
 pad_radius. Two points are used to indicate an oval pad using the two points
 and the pad_radius. 3 or more points are a polygon shape for the pad.
 
 eg.
 
-circle, ()
-oval, ((-20.0 0.0) (20.0 0.0))
-square, ((-5.0 -5.0) (-5.0 5.0) (5.0 5.0) (5.0 -5.0) (-5.0 -5.0))
+```
+circle -> ()
+oval -> ((-20.0 0.0) (20.0 0.0))
+square -> ((-5.0 -5.0) (-5.0 5.0) (5.0 5.0) (5.0 -5.0) (-5.0 -5.0))
+```
 
 ### PATH : (POINT3D ...)
 
@@ -105,7 +113,9 @@ and signify a via in that position.
 
 eg.
 
+```
 ((10.0 10.0 0.0) (20.0 5.0 0.0) (20.0 5.0 1.0) (30.0 10.0 1.0) (40.0 10.0 1.0))
+```
 
 ### PATHS : (PATH ...)
 
@@ -124,7 +134,7 @@ that position.
 
 ### PADS : (PAD ...)
 
-Represents all the electrically connected together component pads of a track.
+Represents all the electrically connected component pads of a track.
 
 ### TRACK : (track_radius via_radius track_gap PADS PATHS)
 
