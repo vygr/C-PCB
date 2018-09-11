@@ -26,6 +26,7 @@
 #include <map>
 #include <unordered_map>
 #include <set>
+#include <cmath>
 
 class pcb;
 class net;
