@@ -35,18 +35,18 @@ You can drop the output to a file and view it as an animation with:
 
 `-h` or `--help` for help on either app.
 
-Format of .pcb input file or stdin is:
+Format of .pcb input file or stdin follows, stdout format is identical:
 
 ```
-DIMS : (width height depth)
-POINT2D : (x y)
-POINT3D : (x y z)
+DIMS : (int width int height int depth)
+POINT2D : (float x float y)
+POINT3D : (float x float y float z)
 SHAPE : (POINT2D ...)
 PATH : (POINT3D ...)
 PATHS : (PATH ...)
-PAD : (pad_radius pad_gap POINT3D SHAPE)
+PAD : (float pad_radius float pad_gap POINT3D SHAPE)
 PADS : (PAD ...)
-TRACK : (track_radius via_radius track_gap PADS PATHS)
+TRACK : (float track_radius float via_radius float track_gap PADS PATHS)
 PCB : DIMS TRACK ... ... ()
 ```
 
@@ -58,7 +58,7 @@ Tracks containing paths as input to the router are treated as pre existing
 wiring and are preserved as is in the output. Only pads of tracks with no
 existing wiring to them are routed.
 
-### DIMS : (width height depth)
+### DIMS : (int width int height int depth)
 
 Dimensions of the board in units and layers.
 
@@ -68,7 +68,7 @@ eg.
 (100 50 2)
 ```
 
-### POINT2D : (x y)
+### POINT2D : (float x float y)
 
 2D point in units.
 
@@ -78,9 +78,10 @@ eg.
 (56.7 24.3)
 ```
 
-### POINT3D : (x y z)
+### POINT3D : (float x float y float z)
 
-3D point in units and layer.
+3D point in units and layer. z layer is a float format bu allways has a
+fractional part of 0. layers are numbered from 0.
 
 eg.
 
@@ -125,7 +126,7 @@ create the collision hash for that track. Paths data present in the input
 signify existing pre wiring for this track or keepout, and is retain unchanged
 by the router while it fills in any remaining connections.
 
-### PAD : (pad_radius pad_gap POINT3D SHAPE)
+### PAD : (float pad_radius float pad_gap POINT3D SHAPE)
 
 A single pad of a component. pads_radius is 0.0 if the pad shape is not a
 circle or oval. pad_gap is the collision gap required by the pad in units. The
@@ -136,7 +137,7 @@ that position.
 
 Represents all the electrically connected component pads of a track.
 
-### TRACK : (track_radius via_radius track_gap PADS PATHS)
+### TRACK : (float track_radius float via_radius float track_gap PADS PATHS)
 
 An set of electrically connected component pads and paths, or unused pads and
 keepouts. track_radius in units for the size of all the tracks, via_radius for
