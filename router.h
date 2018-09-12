@@ -97,6 +97,7 @@ typedef std::vector<path> paths;
 
 struct track
 {
+	int m_id;
 	double m_track_radius;
 	double m_via_radius;
 	double m_gap;
@@ -151,6 +152,7 @@ private:
 		 								double radius, double via, double gap);
 
 	pcb *m_pcb;
+	int m_id;
 	double m_via;
 	double m_gap;
 };

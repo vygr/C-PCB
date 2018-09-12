@@ -132,6 +132,7 @@ auto read_track(std::istream &in)
 	if (read_until(in, '(')) return std::pair<track, bool>(track{}, true);
 	if (in.peek() == ')') return std::pair<track, bool>(track{}, true);
 	auto t = track{};
+	in >> t.m_id;
 	in >> t.m_track_radius;
 	in >> t.m_via_radius;
 	in >> t.m_gap;

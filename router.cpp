@@ -416,6 +416,7 @@ void pcb::remove_netlist()
 
 net::net(const track &t, pcb *pcb)
 	: m_pcb(pcb)
+	, m_id(t.m_id)
 	, m_radius(t.m_track_radius * pcb->m_resolution)
 	, m_via(t.m_via_radius * pcb->m_resolution)
 	, m_gap(t.m_gap * pcb->m_resolution)
@@ -723,7 +724,8 @@ bool net::route()
 void net::print_net()
 {
 	auto scale = 1.0 / m_pcb->m_resolution;
-	std::cout << "(" << m_radius*scale << " " << m_via*scale << " " << m_gap*scale << " (";
+	std::cout << "(" << m_id << " " << m_radius*scale << " "
+					<< m_via*scale << " " << m_gap*scale << " (";
 	for (auto i = 0; i < static_cast<int>(m_pads.size()); ++i)
 	{
 		auto t = m_pads[i];

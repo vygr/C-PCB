@@ -46,7 +46,7 @@ PATH : (POINT3D ...)
 PATHS : ([PATH ...])
 PAD : (double pad_radius double pad_gap POINT3D SHAPE)
 PADS : ([PAD ...])
-TRACK : (double track_radius double via_radius double track_gap PADS PATHS)
+TRACK : (int id double track_radius double via_radius double track_gap PADS PATHS)
 PCB : DIMS TRACK ... ... ()
 ```
 
@@ -138,13 +138,18 @@ that position.
 
 Represents all the electrically connected component pads of a track.
 
-### TRACK : (double track_radius double via_radius double track_gap PADS PATHS)
+### TRACK : (int id double track_radius double via_radius double track_gap PADS PATHS)
 
 An set of electrically connected component pads and paths, or unused pads and
 keepouts. track_radius in units for the size of all the tracks, via_radius for
 the radius of all vias within this track and track_gap for the required gap
 between the tracks and vias of this track any other components on the PCB.
 track_radius of 0.0 specifies unused pads and or keepouts.
+
+The id is just a user supplied track identifier that is unchanged from the
+input to output, as the order of tracks in the output may be changed due to the
+routing process. This allows the identification or sorting of the output by the
+output consumer process etc.
 
 ## C_PCB options
 

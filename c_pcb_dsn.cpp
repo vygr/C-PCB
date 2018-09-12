@@ -309,6 +309,7 @@ int main(int argc, char *argv[])
 	auto maxy = double(-1000000.0);
 	auto default_rule = rule{0.25, 0.25};
 	auto default_via = std::string{"Via[0-1]_600:400_um"};
+	auto track_id = 0;
 	for (auto &&structure_node : structure_root->m_branches)
 	{
 		if (structure_node.m_value == "layer")
@@ -715,7 +716,7 @@ int main(int argc, char *argv[])
 					auto &&net = name_to_circuit_map[net_name];
 					auto track_rule = net.m_rule;
 					auto via_rule = name_to_padstack_map[net.m_via][0].m_rule;
-					the_tracks.push_back(track{track_rule.m_radius, via_rule.m_radius, track_rule.m_gap,
+					the_tracks.push_back(track{track_id++, track_rule.m_radius, via_rule.m_radius, track_rule.m_gap,
 												the_pads, net_to_wires_map[net_name]});
 				}
 			}
@@ -748,7 +749,7 @@ int main(int argc, char *argv[])
 			}
 		}
 	}
-	the_tracks.push_back(track{0.0, 0.0, 0.0, all_pads, all_keepouts});
+	the_tracks.push_back(track{track_id++, 0.0, 0.0, 0.0, all_pads, all_keepouts});
 
 	//output pcb format
 	auto border = double(arg_b);
@@ -757,7 +758,8 @@ int main(int argc, char *argv[])
 				<< " " << num_layers << ")\n";
 	for (auto &&track : the_tracks)
 	{
-		std::cout << "(" << track.m_track_radius << " " << track.m_via_radius << " " << track.m_gap << " (";
+		std::cout << "(" << track.m_id << " " << track.m_track_radius << " "
+						<< track.m_via_radius << " " << track.m_gap << " (";
 		for (auto i = 0; i < static_cast<int>(track.m_pads.size()); ++i)
 		{
 			auto &&term = track.m_pads[i];
