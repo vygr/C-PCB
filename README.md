@@ -39,14 +39,14 @@ Format of .pcb input file or stdin follows, stdout format is identical:
 
 ```
 DIMS : (int width int height int depth)
-POINT2D : (float x float y)
-POINT3D : (float x float y float z)
+POINT2D : (double x double y)
+POINT3D : (double x double y double z)
 SHAPE : (POINT2D ...)
 PATH : (POINT3D ...)
 PATHS : (PATH ...)
-PAD : (float pad_radius float pad_gap POINT3D SHAPE)
+PAD : (double pad_radius double pad_gap POINT3D SHAPE)
 PADS : (PAD ...)
-TRACK : (float track_radius float via_radius float track_gap PADS PATHS)
+TRACK : (double track_radius double via_radius double track_gap PADS PATHS)
 PCB : DIMS TRACK ... ... ()
 ```
 
@@ -68,7 +68,7 @@ eg.
 (100 50 2)
 ```
 
-### POINT2D : (float x float y)
+### POINT2D : (double x double y)
 
 2D point in units.
 
@@ -78,9 +78,9 @@ eg.
 (56.7 24.3)
 ```
 
-### POINT3D : (float x float y float z)
+### POINT3D : (double x double y double z)
 
-3D point in units and layer. z layer is a float format bu allways has a
+3D point in units and layer. z layer is a double format bu allways has a
 fractional part of 0. layers are numbered from 0.
 
 eg.
@@ -126,7 +126,7 @@ create the collision hash for that track. Paths data present in the input
 signify existing pre wiring for this track or keepout, and is retain unchanged
 by the router while it fills in any remaining connections.
 
-### PAD : (float pad_radius float pad_gap POINT3D SHAPE)
+### PAD : (double pad_radius double pad_gap POINT3D SHAPE)
 
 A single pad of a component. pads_radius is 0.0 if the pad shape is not a
 circle or oval. pad_gap is the collision gap required by the pad in units. The
@@ -137,7 +137,7 @@ that position.
 
 Represents all the electrically connected component pads of a track.
 
-### TRACK : (float track_radius float via_radius float track_gap PADS PATHS)
+### TRACK : (double track_radius double via_radius double track_gap PADS PATHS)
 
 An set of electrically connected component pads and paths, or unused pads and
 keepouts. track_radius in units for the size of all the tracks, via_radius for

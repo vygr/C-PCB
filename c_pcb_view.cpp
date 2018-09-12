@@ -26,9 +26,9 @@
 #include "io.h"
 
 extern point_2d add_2d(const point_2d &p1, const point_2d &p2);
-extern points_2d torus_as_tristrip(const point_2d &p, float radius1, float radius2, int resolution);
-extern points_2d circle_as_trifan(const point_2d &p, float radius, int resolution);
-extern points_2d thicken_path_as_tristrip(const points_2d &path, float radius, int capstyle, int joinstyle, int resolution);
+extern points_2d torus_as_tristrip(const point_2d &p, double radius1, double radius2, int resolution);
+extern points_2d circle_as_trifan(const point_2d &p, double radius, int resolution);
+extern points_2d thicken_path_as_tristrip(const points_2d &path, double radius, int capstyle, int joinstyle, int resolution);
 
 //compile gl shader
 unsigned int compile_shader(unsigned int type, std::string source)
@@ -87,7 +87,7 @@ auto draw_polygon_strip(const point_2d &offset, const points_2d &data)
 	{
 		vertex_buffer_data.push_back(add_2d(p, offset));
 	}
-	glBufferData(GL_ARRAY_BUFFER, vertex_buffer_data.size()*8, &vertex_buffer_data[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertex_buffer_data.size()*sizeof(point_2d), &vertex_buffer_data[0], GL_STATIC_DRAW);
 	glDrawArrays(GL_LINE_STRIP, 0, int(vertex_buffer_data.size()));
 }
 
@@ -100,7 +100,7 @@ auto draw_filled_polygon_strip(const point_2d &offset, const points_2d &data)
 	{
 		vertex_buffer_data.push_back(add_2d(p, offset));
 	}
-	glBufferData(GL_ARRAY_BUFFER, vertex_buffer_data.size()*8, &vertex_buffer_data[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertex_buffer_data.size()*sizeof(point_2d), &vertex_buffer_data[0], GL_STATIC_DRAW);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, int(vertex_buffer_data.size()));
 }
 
@@ -113,14 +113,14 @@ auto draw_filled_polygon_fan(const point_2d &offset, const points_2d &data)
 	{
 		vertex_buffer_data.push_back(add_2d(p, offset));
 	}
-	glBufferData(GL_ARRAY_BUFFER, vertex_buffer_data.size()*8, &vertex_buffer_data[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertex_buffer_data.size()*sizeof(point_2d), &vertex_buffer_data[0], GL_STATIC_DRAW);
 	glDrawArrays(GL_TRIANGLE_FAN, 0, int(vertex_buffer_data.size()));
 }
 
 //create circle polygon
-auto create_filled_circle(float radius)
+auto create_filled_circle(double radius)
 {
-	static auto circle_map = std::map<float, points_2d>{};
+	static auto circle_map = std::map<double, points_2d>{};
 	auto circle_itr = circle_map.find(radius);
 	if (circle_itr != end(circle_map)) return &circle_itr->second;
 	circle_map[radius] = circle_as_trifan(point_2d{0.0, 0.0}, radius, 32);
@@ -128,12 +128,12 @@ auto create_filled_circle(float radius)
 }
 
 //draw layers
-auto draw_layers(const tracks &ts, int pcb_height, int pcb_depth, float arg_m, float arg_s, float s)
+auto draw_layers(const tracks &ts, int pcb_height, int pcb_depth, double arg_m, double arg_s, double s)
 {
 	for (auto depth = pcb_depth - 1; depth > -1; --depth)
 	{
 		//draw track
-		auto yoffset = float((pcb_height + (arg_m * 2)) * arg_s * depth);
+		auto yoffset = double((pcb_height + (arg_m * 2)) * arg_s * depth);
 		for (auto &t : ts)
 		{
 			//draw paths
@@ -145,7 +145,7 @@ auto draw_layers(const tracks &ts, int pcb_height, int pcb_depth, float arg_m, f
 				{
 					if (path[start].m_z != path[end].m_z)
 					{
-						if (path[start].m_z == float(depth))
+						if (path[start].m_z == double(depth))
 						{
 							if ((end - start) > 1)
 							{
@@ -162,7 +162,7 @@ auto draw_layers(const tracks &ts, int pcb_height, int pcb_depth, float arg_m, f
 						start = end;
 					}
 				}
-				if (path[start].m_z == float(depth))
+				if (path[start].m_z == double(depth))
 				{
 					if ((end - start) > 1)
 					{
@@ -197,7 +197,7 @@ auto draw_layers(const tracks &ts, int pcb_height, int pcb_depth, float arg_m, f
 			}
 			for (auto &term : t.m_pads)
 			{
-				if (term.m_pos.m_z != float(depth)) continue;
+				if (term.m_pos.m_z != double(depth)) continue;
 				if (term.m_shape.empty())
 				{
 					draw_filled_polygon_fan(point_2d{term.m_pos.m_x, term.m_pos.m_y + yoffset},
@@ -336,7 +336,7 @@ int main(int argc, char *argv[])
 	glUseProgram(prog);
 
 	//set aspect and offset for 2D drawing
-	glUniform2f(vert_scale_id, 2.0/float(width), -2.0/float(height));
+	glUniform2f(vert_scale_id, 2.0/double(width), -2.0/double(height));
 	glUniform2f(vert_offset_id, -1.0, 1.0);
 
 	//setup vertex buffer ready for use
@@ -345,7 +345,7 @@ int main(int argc, char *argv[])
 	auto vertex_attrib = glGetAttribLocation(prog, "vert_vertex");
 	glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
 	glEnableVertexAttribArray(vertex_attrib);
-	glVertexAttribPointer(vertex_attrib, 2, GL_FLOAT, false, 0, 0);
+	glVertexAttribPointer(vertex_attrib, 2, GL_DOUBLE, false, 0, 0);
 
 	for (;;)
 	{
@@ -363,8 +363,8 @@ int main(int argc, char *argv[])
 		if (ts.empty()) break;
 
 		//scale tracks acording to window size
-		auto scale = float(arg_s);
-		auto border = float(arg_m * arg_s);
+		auto scale = double(arg_s);
+		auto border = double(arg_m * arg_s);
 		for (auto &t : ts)
 		{
 			t.m_track_radius *= scale;
@@ -404,7 +404,7 @@ int main(int argc, char *argv[])
 		if (arg_o == 0)
 		{
 			//draw paths for each layer
-			static auto colors = std::vector<float>{
+			static auto colors = std::vector<double>{
 				1.0, 0.0, 0.0,
 				0.0, 1.0, 0.0,
 				0.0, 0.0, 1.0,
@@ -426,7 +426,7 @@ int main(int argc, char *argv[])
 						{
 							if (path[start].m_z != path[end].m_z)
 							{
-								if (path[start].m_z == float(depth))
+								if (path[start].m_z == double(depth))
 								{
 									if ((end - start) > 1)
 									{
@@ -443,7 +443,7 @@ int main(int argc, char *argv[])
 								start = end;
 							}
 						}
-						if (path[start].m_z == float(depth))
+						if (path[start].m_z == double(depth))
 						{
 							if ((end - start) > 1)
 							{

@@ -21,7 +21,7 @@
 #include "layer.h"
 #include <algorithm>
 
-layer::layer(const dims &dims, float s)
+layer::layer(const dims &dims, double s)
 	: m_width(dims.m_width)
 	, m_height(dims.m_height)
 	, m_scale(s)
@@ -109,7 +109,7 @@ bool layer::hit_line(const line &l)
 	return false;
 }
 
-layers::layers(const dims &dims, float s)
+layers::layers(const dims &dims, double s)
 	: m_depth(dims.m_depth)
 {
 	m_layers.reserve(m_depth);
@@ -120,7 +120,7 @@ layers::layers(const dims &dims, float s)
 layers::~layers()
 {}
 
-void layers::add_line(const point_3d &p1, const point_3d &p2, float r, float g)
+void layers::add_line(const point_3d &p1, const point_3d &p2, double r, double g)
 {
 	auto z1 = int(p1.m_z);
 	auto z2 = int(p2.m_z);
@@ -129,7 +129,7 @@ void layers::add_line(const point_3d &p1, const point_3d &p2, float r, float g)
 	for (auto z = z1; z <= z2; ++z) m_layers[z]->add_line(l);
 }
 
-void layers::sub_line(const point_3d &p1, const point_3d &p2, float r, float g)
+void layers::sub_line(const point_3d &p1, const point_3d &p2, double r, double g)
 {
 	auto z1 = int(p1.m_z);
 	auto z2 = int(p2.m_z);
@@ -138,7 +138,7 @@ void layers::sub_line(const point_3d &p1, const point_3d &p2, float r, float g)
 	for (auto z = z1; z <= z2; ++z) m_layers[z]->sub_line(l);
 }
 
-bool layers::hit_line(const point_3d &p1, const point_3d &p2, float r, float g)
+bool layers::hit_line(const point_3d &p1, const point_3d &p2, double r, double g)
 {
 	auto z1 = int(p1.m_z);
 	auto z2 = int(p2.m_z);

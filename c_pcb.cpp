@@ -20,7 +20,7 @@
 
 #include "io.h"
 
-extern float length_2d(const point_2d &p);
+extern double length_2d(const point_2d &p);
 
 //generate range of routing vectors
 auto gen_vectors(int vec_range, int x_range, int y_range)
@@ -30,8 +30,8 @@ auto gen_vectors(int vec_range, int x_range, int y_range)
 	{
 		for (auto x = x_range; x >= -x_range; --x)
 		{
-			auto p = point_2d{float(x), float(y)};
-			if (length_2d(p) > 0.1 && length_2d(p) <= float(vec_range))
+			auto p = point_2d{double(x), double(y)};
+			if (length_2d(p) > 0.1 && length_2d(p) <= double(vec_range))
 			{
 				yield.push_back(node{x, y, 0});
 			}

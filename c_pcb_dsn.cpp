@@ -36,9 +36,9 @@ struct pin
 {
 	std::string m_name;
 	std::string m_form;
-	float m_x;
-	float m_y;
-	float m_angle;
+	double m_x;
+	double m_y;
+	double m_angle;
 };
 
 struct component
@@ -52,15 +52,15 @@ struct instance
 	std::string m_name;
 	std::string m_comp;
 	std::string m_side;
-	float m_x;
-	float m_y;
-	float m_angle;
+	double m_x;
+	double m_y;
+	double m_angle;
 };
 
 struct rule
 {
-	float m_radius;
-	float m_gap;
+	double m_radius;
+	double m_gap;
 };
 
 struct circuit
@@ -93,7 +93,7 @@ std::vector<std::string> split(const std::string &s, char delim)
 	return elems;
 }
 
-auto shape_to_cords(const points_2d &shape, float a1, float a2)
+auto shape_to_cords(const points_2d &shape, double a1, double a2)
 {
 	auto cords = points_2d{};
 	auto rads = fmod(a1+a2, 2*M_PI);
@@ -101,8 +101,8 @@ auto shape_to_cords(const points_2d &shape, float a1, float a2)
 	auto c = cos(rads);
 	for (auto &p : shape)
 	{
-		auto px = float(c*p.m_x - s*p.m_y);
-		auto py = float(s*p.m_x + c*p.m_y);
+		auto px = double(c*p.m_x - s*p.m_y);
+		auto py = double(s*p.m_x + c*p.m_y);
 		cords.push_back(point_2d{px, py});
 	}
 	return cords;
@@ -239,19 +239,19 @@ void get_value(std::stringstream &ss, std::vector<tree>::iterator t, int &x)
 	ss >> x;
 }
 
-void get_value(std::stringstream &ss, std::vector<tree>::iterator t, float &x)
+void get_value(std::stringstream &ss, std::vector<tree>::iterator t, double &x)
 {
 	ss_reset(ss, t->m_value);
 	ss >> x;
 }
 
-void get_2d(std::stringstream &ss, std::vector<tree>::iterator t, float &x, float &y)
+void get_2d(std::stringstream &ss, std::vector<tree>::iterator t, double &x, double &y)
 {
 	get_value(ss, t, x);
 	get_value(ss, t + 1, y);
 }
 
-void get_rect(std::stringstream &ss, std::vector<tree>::iterator t, float &x1, float &y1, float &x2, float &y2)
+void get_rect(std::stringstream &ss, std::vector<tree>::iterator t, double &x1, double &y1, double &x2, double &y2)
 {
 	get_2d(ss, t, x1, y1);
 	get_2d(ss, t + 2, x2, y2);
@@ -301,12 +301,12 @@ int main(int argc, char *argv[])
 	auto structure_root = search_tree(tree, "structure");
 	auto layer_to_index_map = std::map<std::string, int>{};
 	auto layer_to_keepout_map = std::map<std::string, paths>{};
-	const auto units = 1000.0f;
+	const auto units = 1000.0;
 	auto num_layers = 0;
-	auto minx = float(1000000.0);
-	auto miny = float(1000000.0);
-	auto maxx = float(-1000000.0);
-	auto maxy = float(-1000000.0);
+	auto minx = double(1000000.0);
+	auto miny = double(1000000.0);
+	auto maxx = double(-1000000.0);
+	auto maxy = double(-1000000.0);
 	auto default_rule = rule{0.25, 0.25};
 	auto default_via = std::string{"Via[0-1]_600:400_um"};
 	for (auto &&structure_node : structure_root->m_branches)
@@ -365,7 +365,7 @@ int main(int argc, char *argv[])
 					for (auto cords = begin(boundary_node.m_branches) + 2;
 					 		cords != end(boundary_node.m_branches); cords += 2)
 					{
-						float px, py;
+						double px, py;
 						get_2d(ss, cords, px, py);
 						px /= units;
 						py /= -units;
@@ -377,7 +377,7 @@ int main(int argc, char *argv[])
 				}
 				else if (boundary_node.m_value == "rect")
 				{
-					float x1, y1, x2, y2;
+					double x1, y1, x2, y2;
 					get_rect(ss, begin(boundary_node.m_branches) + 1, x1, y1, x2, y2);
 					x1 /= units;
 					y1 /= -units;
@@ -405,11 +405,11 @@ int main(int argc, char *argv[])
 					for (auto cords = begin(keepout_node.m_branches) + 2;
 					 		cords != end(keepout_node.m_branches); cords += 2)
 					{
-						float px, py;
+						double px, py;
 						get_2d(ss, cords, px, py);
 						px /= units;
 						py /= -units;
-						p.emplace_back(point_3d(px, py, 0.0f));
+						p.emplace_back(point_3d(px, py, 0.0));
 					}
 					p.push_back(p.front());
 					layer_to_keepout_map[layer].push_back(p);
@@ -472,7 +472,7 @@ int main(int argc, char *argv[])
 					{
 						get_value(ss, begin(padstack_node->m_branches[0].m_branches) + 1, the_rule.m_radius);
 						the_rule.m_radius /= (2 * units);
-						float x1, y1, x2, y2;
+						double x1, y1, x2, y2;
 						get_rect(ss, begin(padstack_node->m_branches[0].m_branches) + 2, x1, y1, x2, y2);
 						if (x1 != 0.0
 							|| x2 != 0.0
@@ -490,7 +490,7 @@ int main(int argc, char *argv[])
 					else if (padstack_node->m_branches[0].m_value == "rect")
 					{
 						the_rule.m_radius = 0.0;
-						float x1, y1, x2, y2;
+						double x1, y1, x2, y2;
 						get_rect(ss, begin(padstack_node->m_branches[0].m_branches) + 1, x1, y1, x2, y2);
 						x1 /= units;
 						y1 /= -units;
@@ -508,7 +508,7 @@ int main(int argc, char *argv[])
 						for (auto poly_node = begin(padstack_node->m_branches[0].m_branches) + 2;
 							 poly_node != end(padstack_node->m_branches[0].m_branches); poly_node += 2)
 						{
-							float x1, y1;
+							double x1, y1;
 							get_2d(ss, poly_node, x1, y1);
 							x1 /= units;
 							y1 /= -units;
@@ -564,11 +564,11 @@ int main(int argc, char *argv[])
 			if (instance.m_side != "front") m_x = -m_x;
 			auto s = sin(instance.m_angle);
 			auto c = cos(instance.m_angle);
-			auto px = float((c*m_x - s*m_y) + instance.m_x);
-			auto py = float((s*m_x + c*m_y) + instance.m_y);
+			auto px = double((c*m_x - s*m_y) + instance.m_x);
+			auto py = double((s*m_x + c*m_y) + instance.m_y);
 			for (auto &&p : name_to_padstack_map[pin.m_form])
 			{
-				auto tp = point_3d{px, py, (float)p.first};
+				auto tp = point_3d{px, py, (double)p.first};
 				auto cords = shape_to_cords(p.second.m_shape, pin.m_angle, instance.m_angle);
 				all_pads.push_back(pad{p.second.m_rule.m_radius, p.second.m_rule.m_gap, tp, cords});
 			}
@@ -630,8 +630,8 @@ int main(int argc, char *argv[])
 	{
 		if (wiring_node.m_value == "wire")
 		{
-			auto z = 0.0f;
-			auto radius = 0.0f;
+			auto z = 0.0;
+			auto radius = 0.0;
 			auto wire = path{};
 			for (auto &&wire_node : wiring_node.m_branches)
 			{
@@ -645,7 +645,7 @@ int main(int argc, char *argv[])
 					for (auto poly_node = begin(wire_node.m_branches) + 2;
 							poly_node != end(wire_node.m_branches); poly_node += 2)
 					{
-						float x, y;
+						double x, y;
 						get_2d(ss, poly_node, x, y);
 						x /= units;
 						y /= -units;
@@ -660,7 +660,7 @@ int main(int argc, char *argv[])
 		}
 		else if (wiring_node.m_value == "via")
 		{
-			float x, y;
+			double x, y;
 			get_2d(ss, begin(wiring_node.m_branches) + 1, x, y);
 			x /= units;
 			y /= -units;
@@ -671,7 +671,7 @@ int main(int argc, char *argv[])
 				if (wire_node->m_value == "net")
 				{
 					net_to_wires_map[wire_node->m_branches[0].m_value].emplace_back(
-						path{point_3d{x, y, 0}, point_3d{x, y, float(num_layers - 1)}});
+						path{point_3d{x, y, 0}, point_3d{x, y, double(num_layers - 1)}});
 				}
 			}
 		}
@@ -700,11 +700,11 @@ int main(int argc, char *argv[])
 						if (instance.m_side != "front") m_x = -m_x;
 						auto s = sin(instance.m_angle);
 						auto c = cos(instance.m_angle);
-						auto px = float((c*m_x - s*m_y) + instance.m_x);
-						auto py = float((s*m_x + c*m_y) + instance.m_y);
+						auto px = double((c*m_x - s*m_y) + instance.m_x);
+						auto py = double((s*m_x + c*m_y) + instance.m_y);
 						for (auto &&p : name_to_padstack_map[pin.m_form])
 						{
-							auto tp = point_3d{px, py, (float)p.first};
+							auto tp = point_3d{px, py, (double)p.first};
 							auto cords = shape_to_cords(p.second.m_shape, pin.m_angle, instance.m_angle);
 							auto term = pad{p.second.m_rule.m_radius, p.second.m_rule.m_gap, tp, cords};
 							the_pads.push_back(term);
@@ -730,7 +730,7 @@ int main(int argc, char *argv[])
 		{
 			for (auto &&l : layer_to_index_map)
 			{
-				auto z = (float)l.second;
+				auto z = (double)l.second;
 				for (auto &&p : k.second)
 				{
 					for (auto &&c : p) c.m_z = z;
@@ -740,7 +740,7 @@ int main(int argc, char *argv[])
 		}
 		else
 		{
-			auto z = (float)layer_to_index_map[k.first];
+			auto z = (double)layer_to_index_map[k.first];
 			for (auto &&p : k.second)
 			{
 				for (auto &&c : p) c.m_z = z;
@@ -762,8 +762,8 @@ int main(int argc, char *argv[])
 		{
 			auto &&term = track.m_pads[i];
 			std::cout << "(" << term.m_radius << " " << term.m_gap
-				<< " (" << term.m_pos.m_x-float(minx-border)
-				<< " " << term.m_pos.m_y-float(miny-border)
+				<< " (" << term.m_pos.m_x-double(minx-border)
+				<< " " << term.m_pos.m_y-double(miny-border)
 				<< " " << term.m_pos.m_z << ") (";
 			for (auto j = 0; j < static_cast<int>(term.m_shape.size()); ++j)
 			{
@@ -779,8 +779,8 @@ int main(int argc, char *argv[])
 			auto &&p = track.m_paths[i];
 			for (auto j = 0; j < static_cast<int>(p.size()); ++j)
 			{
-				std::cout << "(" << p[j].m_x-float(minx-border)
-					<< " " << p[j].m_y-float(miny-border)
+				std::cout << "(" << p[j].m_x-double(minx-border)
+					<< " " << p[j].m_y-double(miny-border)
 					<< " " << p[j].m_z << ")";
 			}
 			std::cout << ")";

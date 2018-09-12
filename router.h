@@ -37,8 +37,8 @@ struct pad
 		return std::tie(m_radius, m_gap, m_pos, m_shape)
 				== std::tie(t.m_radius, t.m_gap, t.m_pos, t.m_shape); }
 	bool operator<(const pad &t) const { return m_pos < t.m_pos; }
-	float m_radius;
-	float m_gap;
+	double m_radius;
+	double m_gap;
 	point_3d m_pos;
 	points_2d m_shape;
 };
@@ -97,9 +97,9 @@ typedef std::vector<path> paths;
 
 struct track
 {
-	float m_track_radius;
-	float m_via_radius;
-	float m_gap;
+	double m_track_radius;
+	double m_via_radius;
+	double m_gap;
 	pads m_pads;
 	paths m_paths;
 };
@@ -114,7 +114,7 @@ struct sort_node
 typedef std::vector<sort_node> sort_nodes;
 
 typedef std::vector<net> nets;
-typedef float (*dfunc_t)(const point_3d &, const point_3d &);
+typedef double (*dfunc_t)(const point_3d &, const point_3d &);
 
 //net object
 class net
@@ -127,7 +127,7 @@ public:
 	void shuffle_topology();
 
 	int m_area;
-	float m_radius;
+	double m_radius;
 	paths m_wires;
 	nodess m_paths;
 	std::vector<layers::line> m_paths_collision_lines;
@@ -148,11 +148,11 @@ private:
 	void sub_paths_collision_lines();
 	nodess optimise_paths(const nodess &paths);
 	std::pair<nodes, bool> backtrack_path(const node_set &vis, const node &end,
-		 								float radius, float via, float gap);
+		 								double radius, double via, double gap);
 
 	pcb *m_pcb;
-	float m_via;
-	float m_gap;
+	double m_via;
+	double m_gap;
 };
 
 //pcb class
@@ -172,18 +172,18 @@ public:
 	~pcb();
 	auto get_node(const node &n);
 	void add_track(track &t);
-	bool route(float timeout);
+	bool route(double timeout);
 	int cost();
 	void increase_quantization();
 	void print_pcb();
 	void print_netlist();
 	void print_stats();
 	point_3d grid_to_space_point(const node &n);
-	nodes &all_not_shorting(const nodes &gather, const node &n, float radius, float gap);
-	nodes &all_not_shorting_via(const nodes &gather, const node &n, float radius, float gap);
+	nodes &all_not_shorting(const nodes &gather, const node &n, double radius, double gap);
+	nodes &all_not_shorting_via(const nodes &gather, const node &n, double radius, double gap);
 	nodes &all_nearer_sorted(const nodess &vec, const node &n);
-	void mark_distances(float radius, float via, float gap,
-		const node_set &starts, const nodes &ends, const node &mid, float mid_scale);
+	void mark_distances(double radius, double via, double gap,
+		const node_set &starts, const nodes &ends, const node &mid, double mid_scale);
 	void unmark_distances();
 
 	int m_resolution;

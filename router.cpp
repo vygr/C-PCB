@@ -28,11 +28,11 @@ const double spacial_hash_res = 0.75;
 
 extern point_3d norm_3d(const point_3d &p);
 extern point_3d sub_3d(const point_3d &p1, const point_3d &p2);
-extern float length_2d(const point_2d &p);
+extern double length_2d(const point_2d &p);
 extern point_2d norm_2d(const point_2d &p);
 extern point_2d sub_2d(const point_2d &p1, const point_2d &p2);
 extern point_2d add_2d(const point_2d &p1, const point_2d &p2);
-extern point_2d scale_2d(const point_2d &p, float s);
+extern point_2d scale_2d(const point_2d &p, double s);
 
 std::default_random_engine rand_gen(0);
 
@@ -69,7 +69,7 @@ void pcb::add_track(track &t)
 }
 
 //attempt to route board within time
-bool pcb::route(float timeout)
+bool pcb::route(double timeout)
 {
 	remove_netlist();
 	unmark_distances();
@@ -121,7 +121,7 @@ bool pcb::route(float timeout)
 			}
 		}
 		auto end_time = std::chrono::high_resolution_clock::now();
-		std::chrono::duration<float> elapsed = end_time - start_time;
+		std::chrono::duration<double> elapsed = end_time - start_time;
 		if (elapsed.count() >= timeout) return false;
 		if (m_verbosity >= 1) print_netlist();
 	}
@@ -195,7 +195,7 @@ point_3d pcb::grid_to_space_point(const node &n)
 {
 	auto itr = m_deform.find(n);
 	if (itr != end(m_deform)) return itr->second;
-	return point_3d{float(n.m_x), float(n.m_y), float(n.m_z)};
+	return point_3d{double(n.m_x), double(n.m_y), double(n.m_z)};
 }
 
 //set grid node to value
@@ -275,7 +275,7 @@ nodes &pcb::all_nearer_sorted(const nodess &vec, const node &n)
 }
 
 //generate all grid points surrounding node that are not shorting with an existing track
-nodes &pcb::all_not_shorting(const nodes &gather, const node &n, float radius, float gap)
+nodes &pcb::all_not_shorting(const nodes &gather, const node &n, double radius, double gap)
 {
 	static auto yield = nodes{}; yield.clear();
 	auto np = grid_to_space_point(n);
@@ -288,7 +288,7 @@ nodes &pcb::all_not_shorting(const nodes &gather, const node &n, float radius, f
 }
 
 //generate all grid points surrounding node that are not shorting with an existing track
-nodes &pcb::all_not_shorting_via(const nodes &gather, const node &n, float radius, float gap)
+nodes &pcb::all_not_shorting_via(const nodes &gather, const node &n, double radius, double gap)
 {
 	static auto yield = nodes{}; yield.clear();
 	auto np = grid_to_space_point(n);
@@ -296,14 +296,14 @@ nodes &pcb::all_not_shorting_via(const nodes &gather, const node &n, float radiu
 	for (auto &new_node : gather)
 	{
 		auto nnp = grid_to_space_point(new_node);
-		nnp.m_z = 0.0f;
+		nnp.m_z = 0.0;
 		if (!m_layers.hit_line(np, nnp, radius, gap)) yield.emplace_back(new_node);
 	}
 	return yield;
 }
 
 //flood fill distances from starts till ends covered
-void pcb::mark_distances(float radius, float via, float gap, const node_set &starts, const nodes &ends, const node &mid, float mid_scale)
+void pcb::mark_distances(double radius, double via, double gap, const node_set &starts, const nodes &ends, const node &mid, double mid_scale)
 {
 	static auto via_vectors = nodess{
 		nodes{node{0, 0, -1}, node{0, 0, 1}},
@@ -500,7 +500,7 @@ net::net(const track &t, pcb *pcb)
 			{
 				m_wire_collision_lines.emplace_back(layers::line{
 				point_3d(p0.m_x, p0.m_y, 0),
-				point_3d(p0.m_x, p0.m_y, float(m_pcb->m_depth - 1)),
+				point_3d(p0.m_x, p0.m_y, double(m_pcb->m_depth - 1)),
 				m_via, m_gap});
 				for (auto z = 0; z < m_pcb->m_depth; ++z)
 				{
@@ -515,8 +515,8 @@ net::net(const track &t, pcb *pcb)
 				auto p = point_2d(p0.m_x, p0.m_y);
 				auto v = sub_2d(p, point_2d(p1.m_x, p1.m_y));
 				auto l = length_2d(v);
-				auto norm = scale_2d(v, 1.0f / l);
-				for (auto i = 0.0f; i < l; i += 0.25f)
+				auto norm = scale_2d(v, 1.0 / l);
+				for (auto i = 0.0; i < l; i += 0.25)
 				{
 					auto pn = add_2d(p, scale_2d(norm, i));
 					auto n = node{int(pn.m_x + 0.5), int(pn.m_y + 0.5), int(p0.m_z)};
@@ -582,7 +582,7 @@ std::vector<layers::line> net::paths_collision_lines() const
 			p1 = m_pcb->grid_to_space_point(path[i]);
 			if (p0.m_z != p1.m_z) paths_lines.emplace_back(layers::line{
 				point_3d(p0.m_x, p0.m_y, 0),
-				point_3d(p0.m_x, p0.m_y, float(m_pcb->m_depth - 1)),
+				point_3d(p0.m_x, p0.m_y, double(m_pcb->m_depth - 1)),
 				m_via, m_gap});
 			else paths_lines.emplace_back(layers::line{p0, p1, m_radius, m_gap});
 		}
@@ -643,7 +643,7 @@ nodess net::optimise_paths(const nodess &paths)
 
 //backtrack path from ends to starts
 std::pair<nodes, bool> net::backtrack_path(const node_set &visited, const node &end_node,
-	 									float radius, float via, float gap)
+	 									double radius, double via, double gap)
 {
 	static auto via_vectors = nodess{
 		nodes{node{0, 0, -1}, node{0, 0, 1}},
@@ -696,7 +696,7 @@ bool net::route()
 		auto &&n_s = m_pad_end_nodes[index - 1][0];
 		auto &&n_e = ends[0];
 		auto mid = n_s.mid(n_e);
-		auto mid_scale = m_pcb->m_viascost ? n_s.manhattan_distance(n_e) / float(m_pcb->m_viascost * 2) : 0.0f;
+		auto mid_scale = m_pcb->m_viascost ? n_s.manhattan_distance(n_e) / double(m_pcb->m_viascost * 2) : 0.0;
 		m_pcb->mark_distances(m_radius, m_via, m_gap, visited, ends, mid, mid_scale);
 		std::sort(begin(ends), end(ends), [&] (auto &&n1, auto && n2)
 		{
