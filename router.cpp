@@ -351,6 +351,7 @@ void pcb::unmark_distances()
 //aabb of pads
 auto aabb_pads(const pads &terms, int quantization)
 {
+	if (terms.empty()) return std::pair<int, layer::aabb>(0, {0, 0, 0, 0});
 	auto minx = (int(terms[0].m_pos.m_x) / quantization) * quantization;
 	auto miny = (int(terms[0].m_pos.m_y) / quantization) * quantization;
 	auto maxx = ((int(terms[0].m_pos.m_x) + (quantization - 1)) / quantization) * quantization;
@@ -366,8 +367,7 @@ auto aabb_pads(const pads &terms, int quantization)
 		maxx = std::max(tmaxx, maxx);
 		maxy = std::max(tmaxy, maxy);
 	}
-	auto rec = layer::aabb{minx, miny, maxx, maxy};
-	return std::pair<int, layer::aabb>((maxx - minx) * (maxy - miny), rec);
+	return std::pair<int, layer::aabb>((maxx - minx) * (maxy - miny), {minx, miny, maxx, maxy});
 }
 
 //reset areas

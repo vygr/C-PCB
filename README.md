@@ -43,16 +43,17 @@ POINT2D : (double x double y)
 POINT3D : (double x double y double z)
 SHAPE : (POINT2D ...)
 PATH : (POINT3D ...)
-PATHS : (PATH ...)
+PATHS : ([PATH ...])
 PAD : (double pad_radius double pad_gap POINT3D SHAPE)
-PADS : (PAD ...)
+PADS : ([PAD ...])
 TRACK : (double track_radius double via_radius double track_gap PADS PATHS)
 PCB : DIMS TRACK ... ... ()
 ```
 
 Special treatment is given to tracks with a track_radius of 0.0, they are used
 to hold unused pads and keepout paths. No attempt is made to route them, they
-are just added to the collision hash for all other routing.
+are just added to the collision hash for all other routing. PADS can be empty
+as well as PATHS.
 
 Tracks containing paths as input to the router are treated as pre existing
 wiring and are preserved as is in the output. Only pads of tracks with no
@@ -118,7 +119,7 @@ eg.
 ((10.0 10.0 0.0) (20.0 5.0 0.0) (20.0 5.0 1.0) (30.0 10.0 1.0) (40.0 10.0 1.0))
 ```
 
-### PATHS : (PATH ...)
+### PATHS : ([PATH ...])
 
 A set of path sections electrically connected with each other, normally via the
 pad terminals of components. Each track has a set of paths that are used to
@@ -133,7 +134,7 @@ circle or oval. pad_gap is the collision gap required by the pad in units. The
 3D point is the position of the pad on the board and then the shape relative to
 that position.
 
-### PADS : (PAD ...)
+### PADS : ([PAD ...])
 
 Represents all the electrically connected component pads of a track.
 
