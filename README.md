@@ -50,6 +50,9 @@ TRACK : (int:id double:track_radius double:via_radius double:track_gap PADS PATH
 PCB : DIMS TRACK ... ... ()
 ```
 
+Any character before an opening ( will be ignored, so comments can be free
+added at any point the parser is looking for an opening (.
+
 Special treatment is given to tracks with a track_radius of 0.0, they are used
 to hold unused pads and keepout paths. No attempt is made to route them, they
 are just added to the collision hash for all other routing. PADS can be empty
@@ -81,7 +84,7 @@ eg.
 
 ### POINT3D : (double:x double:y double:z)
 
-3D point in units and layer. z layer is a double format but allways has a
+3D point in units and layer. z layer is a double format but always has a
 fractional part of 0. Layers are numbered from 0.
 
 eg.
@@ -117,9 +120,7 @@ are no blind vias.
 eg.
 
 ```
-((10.0 10.0 0.0) (20.0 5.0 0.0)
- (20.0 5.0 0.0) (20.0 5.0 1.0)
- (20.0 5.0 1.0) (30.0 10.0 1.0) (40.0 10.0 1.0) ...)
+((10.0 10.0 0.0) (20.0 5.0 0.0) (20.0 5.0 1.0) (30.0 10.0 1.0) (40.0 10.0 1.0))
 ```
 
 ### PATHS : ([PATH ...])
