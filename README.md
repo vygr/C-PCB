@@ -38,7 +38,7 @@ You can drop the output to a file and view it as an animation with:
 Format of .pcb input file or stdin follows, stdout format is identical:
 
 ```
-DIMS : (int width int height int depth)
+DIMS : (int:width int:height int:depth)
 POINT2D : (double:x double:y)
 POINT3D : (double:x double:y double:z)
 SHAPE : (POINT2D ...)
@@ -46,7 +46,7 @@ PATH : (POINT3D ...)
 PATHS : ([PATH ...])
 PAD : (double:pad_radius double:pad_gap POINT3D SHAPE)
 PADS : ([PAD ...])
-TRACK : (int id double:track_radius double:via_radius double:track_gap PADS PATHS)
+TRACK : (int:id double:track_radius double:via_radius double:track_gap PADS PATHS)
 PCB : DIMS TRACK ... ... ()
 ```
 
@@ -59,7 +59,7 @@ Tracks containing paths as input to the router are treated as pre existing
 wiring and are preserved as is in the output. Only pads of tracks with no
 existing wiring to them are routed.
 
-### DIMS : (int width int height int depth)
+### DIMS : (int:width int:height int:depth)
 
 Dimensions of the board in units and layers.
 
@@ -82,7 +82,7 @@ eg.
 ### POINT3D : (double:x double:y double:z)
 
 3D point in units and layer. z layer is a double format but allways has a
-fractional part of 0. layers are numbered from 0.
+fractional part of 0. Layers are numbered from 0.
 
 eg.
 
@@ -111,7 +111,8 @@ square -> ((-5.0 -5.0) (-5.0 5.0) (5.0 5.0) (5.0 -5.0) (-5.0 -5.0))
 
 A connected set of points on the PCB. Used to specify a section of a track or
 keepout. Transitions between layers must only be vertical through the layers
-and signify a via in that position.
+and signify a through via in that position. All vias are through vias, there
+are no blind vias.
 
 eg.
 
@@ -133,17 +134,17 @@ by the router while it fills in any remaining connections.
 
 A single pad of a component. pads_radius is 0.0 if the pad shape is not a
 circle or oval. pad_gap is the collision gap required by the pad in units. The
-3D point is the position of the pad on the board and then the shape relative to
-that position.
+POINT3D is the position of the pad on the board and then the SHAPE is relative
+to that position.
 
 ### PADS : ([PAD ...])
 
 Represents all the electrically connected component pads of a track.
 
-### TRACK : (int id double:track_radius double:via_radius double:track_gap PADS PATHS)
+### TRACK : (int:id double:track_radius double:via_radius double:track_gap PADS PATHS)
 
-An set of electrically connected component pads and paths, or unused pads and
-keepouts. track_radius in units for the size of all the tracks, via_radius for
+A set of electrically connected component pads and paths, or unused pads and
+keepouts. track_radius in units for the radius of all tracks, via_radius for
 the radius of all vias within this track and track_gap for the required gap
 between the tracks and vias of this track any other components on the PCB.
 track_radius of 0.0 specifies unused pads and or keepouts.
