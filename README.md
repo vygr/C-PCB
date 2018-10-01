@@ -146,7 +146,11 @@ to that position.
 
 ### PADS : ([PAD ...])
 
-Represents all the electrically connected component pads of a track.
+Represents all the electrically connected component pads of a track. A padstack
+should be grouped together rather than being spread throughout the pads data.
+This is because the router looks for a sequence of pads with matching x and y
+position and uses the z min and max to create grid deformation information for
+neck down.
 
 ### TRACK : (string:id double:track_radius double:via_radius double:track_gap PADS PATHS)
 
