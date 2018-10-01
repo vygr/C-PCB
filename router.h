@@ -198,6 +198,7 @@ public:
 	int m_viascost;
 	std::map<node, point_3d> m_deform;
 	layers m_layers;
+	layers m_via_layers;
 	nodess m_routing_flood_vectors;
 	nodess m_routing_path_vectors;
 

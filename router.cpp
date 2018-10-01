@@ -52,6 +52,9 @@ pcb::pcb(const dims &dims, const nodess &rfvs, const nodess &rpvs,
 	, m_layers(layers(layers::dims{static_cast<int>(std::ceil(dims.m_width) * spacial_hash_res),
 		 							static_cast<int>(std::ceil(dims.m_height) * spacial_hash_res),
 									int(dims.m_depth)}, spacial_hash_res/res))
+	, m_via_layers(layers(layers::dims{static_cast<int>(std::ceil(dims.m_width) * spacial_hash_res),
+		 							static_cast<int>(std::ceil(dims.m_height) * spacial_hash_res),
+									int(dims.m_depth)}, spacial_hash_res/res))
 {
 	m_width *= res;
 	m_height *= res;
@@ -317,7 +320,9 @@ nodes &pcb::all_not_shorting_via(const nodes &gather, const node &n, double radi
 	{
 		auto nnp = node_to_point(new_node);
 		nnp.m_z = 0.0;
-		if (!m_layers.hit_line(np, nnp, radius, gap)) yield.emplace_back(new_node);
+		if (m_via_layers.hit_line(np, nnp, radius, gap)) continue;
+		if (m_layers.hit_line(np, nnp, radius, gap)) continue;
+		yield.emplace_back(new_node);
 	}
 	return yield;
 }
@@ -543,6 +548,9 @@ net::net(const track &t, pcb *pcb)
 			}
 		}
 	}
+
+	//add pad entries to via only spacial cache
+	for (auto &&l : m_pad_collision_lines) m_pcb->m_via_layers.add_line(l);
 
 	//bounds
 	auto result = aabb_pads(m_pads, pcb->m_quantization);

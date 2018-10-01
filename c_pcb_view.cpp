@@ -512,6 +512,10 @@ int main(int argc, char *argv[])
 							draw_filled_polygon_fan(point_2d{0.0, 0.0}, points);
 						}
 					}
+					glUniform4f(vert_color_id, 0.0, 0.0, 0.0, 1.0);
+					draw_filled_polygon_fan(point_2d{term.m_pos.m_x, term.m_pos.m_y},
+						*create_filled_circle(0.75));
+					glUniform4f(vert_color_id, 1.0, 1.0, 1.0, 1.0);
 				}
 			}
 		}
