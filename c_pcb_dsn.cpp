@@ -716,7 +716,7 @@ int main(int argc, char *argv[])
 					auto &&net = name_to_circuit_map[net_name];
 					auto track_rule = net.m_rule;
 					auto via_rule = name_to_padstack_map[net.m_via][0].m_rule;
-					the_tracks.push_back(track{track_id++, track_rule.m_radius, via_rule.m_radius, track_rule.m_gap,
+					the_tracks.push_back(track{std::to_string(track_id++), track_rule.m_radius, via_rule.m_radius, track_rule.m_gap,
 												the_pads, net_to_wires_map[net_name]});
 				}
 			}
@@ -749,12 +749,12 @@ int main(int argc, char *argv[])
 			}
 		}
 	}
-	the_tracks.push_back(track{track_id++, 0.0, 0.0, 0.0, all_pads, all_keepouts});
+	the_tracks.push_back(track{std::to_string(track_id++), 0.0, 0.0, 0.0, all_pads, all_keepouts});
 
 	//output pcb format
 	auto border = double(arg_b);
-	std::cout << "(" << int(maxx-minx+(border*2)+0.5)
-	 			<< " " << int(maxy-miny+(border*2)+0.5)
+	std::cout << "(" << maxx-minx+(border*2)
+	 			<< " " << maxy-miny+(border*2)
 				<< " " << num_layers << ")\n";
 	for (auto &&track : the_tracks)
 	{

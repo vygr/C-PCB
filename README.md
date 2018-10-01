@@ -46,7 +46,7 @@ PATH : (POINT3D ...)
 PATHS : ([PATH ...])
 PAD : (double:pad_radius double:pad_gap POINT3D SHAPE)
 PADS : ([PAD ...])
-TRACK : (int:id double:track_radius double:via_radius double:track_gap PADS PATHS)
+TRACK : (string:id double:track_radius double:via_radius double:track_gap PADS PATHS)
 PCB : DIMS TRACK ... ... ()
 ```
 
@@ -148,7 +148,7 @@ to that position.
 
 Represents all the electrically connected component pads of a track.
 
-### TRACK : (int:id double:track_radius double:via_radius double:track_gap PADS PATHS)
+### TRACK : (string:id double:track_radius double:via_radius double:track_gap PADS PATHS)
 
 A set of electrically connected component pads and paths, or unused pads and
 keepouts. track_radius in units for the radius of all tracks, via_radius for
