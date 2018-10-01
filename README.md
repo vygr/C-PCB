@@ -38,7 +38,7 @@ You can drop the output to a file and view it as an animation with:
 Format of .pcb input file or stdin follows, stdout format is identical:
 
 ```
-DIMS : (int:width int:height int:depth)
+DIMS : (double:width double:height double:depth)
 POINT2D : (double:x double:y)
 POINT3D : (double:x double:y double:z)
 SHAPE : (POINT2D ...)
@@ -67,14 +67,15 @@ Tracks containing paths as input to the router are treated as pre existing
 wiring and are preserved as is in the output. Only pads of tracks with no
 existing wiring to them are routed.
 
-### DIMS : (int:width int:height int:depth)
+### DIMS : (double:width double:height double:depth)
 
-Dimensions of the board in units and layers.
+Dimensions of the board in units and layers. depth is a double format but
+always has a fractional part of 0.
 
 eg.
 
 ```
-(100 50 2)
+(100.0 50.0 2.0)
 ```
 
 ### POINT2D : (double:x double:y)

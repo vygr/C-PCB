@@ -40,18 +40,18 @@ std::default_random_engine rand_gen(0);
 
 pcb::pcb(const dims &dims, const nodess &rfvs, const nodess &rpvs,
 		int res, int verb, int quant, int viascost)
-	: m_width(dims.m_width)
-	, m_height(dims.m_height)
-	, m_depth(dims.m_depth)
+	: m_width(std::ceil(dims.m_width))
+	, m_height(std::ceil(dims.m_height))
+	, m_depth(int(dims.m_depth))
 	, m_resolution(res)
 	, m_routing_flood_vectors(rfvs)
 	, m_routing_path_vectors(rpvs)
 	, m_quantization(quant * res)
 	, m_verbosity(verb)
 	, m_viascost(viascost * res)
-	, m_layers(layers(layers::dims{static_cast<int>(dims.m_width * spacial_hash_res),
-		 							static_cast<int>(dims.m_height * spacial_hash_res),
-									dims.m_depth}, spacial_hash_res/res))
+	, m_layers(layers(layers::dims{static_cast<int>(std::ceil(dims.m_width) * spacial_hash_res),
+		 							static_cast<int>(std::ceil(dims.m_height) * spacial_hash_res),
+									int(dims.m_depth)}, spacial_hash_res/res))
 {
 	m_width *= res;
 	m_height *= res;

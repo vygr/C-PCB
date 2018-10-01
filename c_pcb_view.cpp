@@ -291,7 +291,7 @@ int main(int argc, char *argv[])
 	auto dimensions = read_dimentions(in);
 	auto pcb_width = dimensions.m_width;
 	auto pcb_height = dimensions.m_height;
-	auto pcb_depth = dimensions.m_depth;
+	auto pcb_depth = int(dimensions.m_depth);
 	auto width = (pcb_width + (arg_m * 2)) * arg_s;
 	auto height = (pcb_height + (arg_m * 2)) * arg_s;
 	if (arg_o == 1) height *= pcb_depth;

@@ -164,9 +164,9 @@ public:
 	//dimensions of pcb board in grid points/layers
 	struct dims
 	{
-		int m_width;
-		int m_height;
-		int m_depth;
+		double m_width;
+		double m_height;
+		double m_depth;
 	};
 
 	pcb(const dims &dims, const nodess &rfvs, const nodess &rpvs,
