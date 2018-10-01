@@ -50,8 +50,13 @@ TRACK : (int:id double:track_radius double:via_radius double:track_gap PADS PATH
 PCB : DIMS TRACK ... ... ()
 ```
 
-Any character before an opening ( will be ignored, so comments can be free
-added at any point the parser is looking for an opening (.
+Any character before an opening ( will be ignored, so comments can be freely
+added at any point the parser is looking for an opening (. Such comments are
+allowed in the input but will not be present in the output.
+
+All track paths are assumed to have rounded ends and corners when testing for
+collision gap clearance. If the resulting board is milled or etched with
+beveled or square corners problems may occur in densely packed areas !
 
 Special treatment is given to tracks with a track_radius of 0.0, they are used
 to hold unused pads and keepout paths. No attempt is made to route them, they
