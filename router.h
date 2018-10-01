@@ -181,7 +181,10 @@ public:
 	void print_pcb();
 	void print_netlist();
 	void print_stats();
-	point_3d grid_to_space_point(const node &n);
+	point_3d node_to_point(const node &n);
+	node point_to_node(const point_3d &p);
+	point_3d node_to_pad_point(const node &n);
+	node pad_point_to_node(const point_3d &p);
 	nodes &all_not_shorting(const nodes &gather, const node &n, double radius, double gap);
 	nodes &all_not_shorting_via(const nodes &gather, const node &n, double radius, double gap);
 	nodes &all_nearer_sorted(const nodess &vec, const node &n);

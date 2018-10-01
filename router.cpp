@@ -190,12 +190,32 @@ void pcb::print_stats()
 	std::cerr << "Number of Vias: " << vias_set.size() << std::endl;
 }
 
-//convert grid node to space node
-point_3d pcb::grid_to_space_point(const node &n)
+//convert node to pad point
+point_3d pcb::node_to_pad_point(const node &n)
 {
 	auto itr = m_deform.find(n);
 	if (itr != end(m_deform)) return itr->second;
 	return point_3d{double(n.m_x), double(n.m_y), double(n.m_z)};
+}
+
+//convert pad point to node
+node pcb::pad_point_to_node(const point_3d &p)
+{
+	auto n = node{int(p.m_x + 0.5), int(p.m_y + 0.5), int(p.m_z)};
+	m_deform[n] = p;
+	return n;
+}
+
+//convert node to point
+point_3d pcb::node_to_point(const node &n)
+{
+	return point_3d{double(n.m_x), double(n.m_y), double(n.m_z)};
+}
+
+//convert point to node
+node pcb::point_to_node(const point_3d &p)
+{
+	return node{int(p.m_x + 0.5), int(p.m_y + 0.5), int(p.m_z)};
 }
 
 //set grid node to value
@@ -278,10 +298,10 @@ nodes &pcb::all_nearer_sorted(const nodess &vec, const node &n)
 nodes &pcb::all_not_shorting(const nodes &gather, const node &n, double radius, double gap)
 {
 	static auto yield = nodes{}; yield.clear();
-	auto np = grid_to_space_point(n);
+	auto np = node_to_point(n);
 	for (auto &new_node : gather)
 	{
-		auto nnp = grid_to_space_point(new_node);
+		auto nnp = node_to_point(new_node);
 		if (!m_layers.hit_line(np, nnp, radius, gap)) yield.emplace_back(new_node);
 	}
 	return yield;
@@ -291,11 +311,11 @@ nodes &pcb::all_not_shorting(const nodes &gather, const node &n, double radius, 
 nodes &pcb::all_not_shorting_via(const nodes &gather, const node &n, double radius, double gap)
 {
 	static auto yield = nodes{}; yield.clear();
-	auto np = grid_to_space_point(n);
+	auto np = node_to_point(n);
 	np.m_z = m_depth - 1;
 	for (auto &new_node : gather)
 	{
-		auto nnp = grid_to_space_point(new_node);
+		auto nnp = node_to_point(new_node);
 		nnp.m_z = 0.0;
 		if (!m_layers.hit_line(np, nnp, radius, gap)) yield.emplace_back(new_node);
 	}
@@ -484,8 +504,7 @@ net::net(const track &t, pcb *pcb)
 		auto &&ends = m_pad_end_nodes.back();
 		for (auto z = z1; z <= z2; ++z)
 		{
-			ends.emplace_back(node{int(x + 0.5), int(y + 0.5), int(z)});
-			m_pcb->m_deform[ends.back()] = point_3d(x, y, z);
+			ends.emplace_back(m_pcb->pad_point_to_node(point_3d(x, y, z)));
 		}
 	}
 
@@ -500,14 +519,12 @@ net::net(const track &t, pcb *pcb)
 			if (p0.m_z != p1.m_z)
 			{
 				m_wire_collision_lines.emplace_back(layers::line{
-				point_3d(p0.m_x, p0.m_y, 0),
-				point_3d(p0.m_x, p0.m_y, double(m_pcb->m_depth - 1)),
-				m_via, m_gap});
+					point_3d(p0.m_x, p0.m_y, 0),
+					point_3d(p0.m_x, p0.m_y, double(m_pcb->m_depth - 1)),
+					m_via, m_gap});
 				for (auto z = 0; z < m_pcb->m_depth; ++z)
 				{
-					auto n = node{int(p0.m_x + 0.5), int(p0.m_y + 0.5), z};
-					m_wire_nodes.insert(n);
-					m_pcb->m_deform[n] = point_3d(p0.m_x, p0.m_y, z);
+					m_wire_nodes.insert(m_pcb->pad_point_to_node(point_3d(p0.m_x, p0.m_y, z)));
 				}
 			}
 			else
@@ -520,13 +537,9 @@ net::net(const track &t, pcb *pcb)
 				for (auto i = 0.0; i < l; i += 0.25)
 				{
 					auto pn = add_2d(p, scale_2d(norm, i));
-					auto n = node{int(pn.m_x + 0.5), int(pn.m_y + 0.5), int(p0.m_z)};
-					m_wire_nodes.insert(n);
-					m_pcb->m_deform[n] = point_3d(pn.m_x, pn.m_y, p0.m_z);
+					m_wire_nodes.insert(m_pcb->pad_point_to_node(point_3d(pn.m_x, pn.m_y, p0.m_z)));
 				}
-				auto n = node{int(p1.m_x + 0.5), int(p1.m_y + 0.5), int(p1.m_z)};
-				m_wire_nodes.insert(n);
-				m_pcb->m_deform[n] = p1;
+				m_wire_nodes.insert(m_pcb->point_to_node(p1));
 			}
 		}
 	}
@@ -576,11 +589,11 @@ std::vector<layers::line> net::paths_collision_lines() const
 	paths_lines.reserve(max_lines);
 	for (auto const &path : m_paths)
 	{
-		auto p1 = m_pcb->grid_to_space_point(path[0]);
+		auto p1 = m_pcb->node_to_point(path[0]);
 		for (auto i = 1; i < static_cast<int>(path.size()); ++i)
 		{
 			auto p0 = p1;
-			p1 = m_pcb->grid_to_space_point(path[i]);
+			p1 = m_pcb->node_to_point(path[i]);
 			if (p0.m_z != p1.m_z) paths_lines.emplace_back(layers::line{
 				point_3d(p0.m_x, p0.m_y, 0),
 				point_3d(p0.m_x, p0.m_y, double(m_pcb->m_depth - 1)),
@@ -624,11 +637,11 @@ nodess net::optimise_paths(const nodess &paths)
 	{
 		auto opt_path = nodes{};
 		auto d = point_3d{0.0, 0.0, 0.0};
-		auto p1 = m_pcb->grid_to_space_point(path[0]);
+		auto p1 = m_pcb->node_to_point(path[0]);
 		for (auto i = 1; i < (int)path.size(); ++i)
 		{
 			auto p0 = p1;
-			p1 = m_pcb->grid_to_space_point(path[i]);
+			auto p1 = m_pcb->node_to_point(path[i]);
 			auto d1 = norm_3d(sub_3d(p1, p0));
 			if (d1 != d)
 			{
@@ -726,39 +739,35 @@ void net::print_net()
 	auto scale = 1.0 / m_pcb->m_resolution;
 	std::cout << "(" << m_id << " " << m_radius*scale << " "
 					<< m_via*scale << " " << m_gap*scale << " (";
-	for (auto i = 0; i < static_cast<int>(m_pads.size()); ++i)
+	for (auto &&t : m_pads)
 	{
-		auto t = m_pads[i];
 		std::cout << "(" << t.m_radius*scale << " " << t.m_gap*scale << " ("
 		 	<< t.m_pos.m_x*scale << " " << t.m_pos.m_y*scale << " " << t.m_pos.m_z << ") (";
-		for (auto j = 0; j < static_cast<int>(t.m_shape.size()); ++j)
-		{
-			auto c = t.m_shape[j];
-			std::cout << "(" << c.m_x*scale << " " << c.m_y*scale << ")";
-		}
+		for (auto &&c : t.m_shape) std::cout << "(" << c.m_x*scale << " " << c.m_y*scale << ")";
 		std::cout << "))";
 	}
 	std::cout << ") (";
-	for (auto i = 0; i < static_cast<int>(m_wires.size()); ++i)
+	for (auto &&wire : m_wires)
 	{
-		auto &&wire = m_wires[i];
 		std::cout << "(";
-		for (auto j = 0; j < static_cast<int>(wire.size()); ++j)
-		{
-			auto &&sp = wire[j];
-			std::cout << "(" << sp.m_x*scale << " " << sp.m_y*scale << " " << sp.m_z << ")";
-		}
+		for (auto &sp : wire) std::cout << "(" << sp.m_x*scale << " " << sp.m_y*scale << " " << sp.m_z << ")";
 		std::cout << ")";
 	}
 	for (auto i = 0; i < static_cast<int>(m_paths.size()); ++i)
 	{
 		auto &&path = m_paths[i];
 		std::cout << "(";
-		for (auto j = 0; j < static_cast<int>(path.size()); ++j)
+		// auto np = m_pcb->node_to_point(path.front());
+		// auto sp = m_pcb->node_to_pad_point(path.front());
+		// if (np != sp) std::cout << "(" << sp.m_x*scale << " " << sp.m_y*scale << " " << sp.m_z << ")";
+		for (auto &&node : path)
 		{
-			auto sp = m_pcb->grid_to_space_point(path[j]);
-			std::cout << "(" << sp.m_x*scale << " " << sp.m_y*scale << " " << sp.m_z << ")";
+			auto np = m_pcb->node_to_point(node);
+			std::cout << "(" << np.m_x*scale << " " << np.m_y*scale << " " << np.m_z << ")";
 		}
+		// np = m_pcb->node_to_point(path.back());
+		// sp = m_pcb->node_to_pad_point(path.back());
+		// if (np != sp) std::cout << "(" << sp.m_x*scale << " " << sp.m_y*scale << " " << sp.m_z << ")";
 		std::cout << ")";
 	}
 	std::cout << "))\n";
