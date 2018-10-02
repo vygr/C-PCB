@@ -411,6 +411,10 @@ int main(int argc, char *argv[])
 						px /= units;
 						py /= -units;
 						p.emplace_back(point_3d(px, py, 0.0));
+						minx = std::min(px, minx);
+						maxx = std::max(px, maxx);
+						miny = std::min(py, miny);
+						maxy = std::max(py, maxy);
 					}
 					p.push_back(p.front());
 					layer_to_keepout_map[layer].push_back(p);
@@ -572,11 +576,20 @@ int main(int argc, char *argv[])
 				auto tp = point_3d{px, py, (double)p.first};
 				auto cords = shape_to_cords(p.second.m_shape, pin.m_angle, instance.m_angle);
 				all_pads.push_back(pad{p.second.m_rule.m_radius, p.second.m_rule.m_gap, tp, cords});
+				for (auto &&p1 : cords)
+				{
+					auto x = p1.m_x + px;
+					auto y = p1.m_y + py;
+					minx = std::min(x - p.second.m_rule.m_radius - p.second.m_rule.m_gap, minx);
+					maxx = std::max(x + p.second.m_rule.m_radius + p.second.m_rule.m_gap, maxx);
+					miny = std::min(y - p.second.m_rule.m_radius - p.second.m_rule.m_gap, miny);
+					maxy = std::max(y + p.second.m_rule.m_radius + p.second.m_rule.m_gap, maxy);
+				}
+				minx = std::min(px - p.second.m_rule.m_radius - p.second.m_rule.m_gap, minx);
+				maxx = std::max(px + p.second.m_rule.m_radius + p.second.m_rule.m_gap, maxx);
+				miny = std::min(py - p.second.m_rule.m_radius - p.second.m_rule.m_gap, miny);
+				maxy = std::max(py + p.second.m_rule.m_radius + p.second.m_rule.m_gap, maxy);
 			}
-			minx = std::min(px, minx);
-			maxx = std::max(px, maxx);
-			miny = std::min(py, miny);
-			maxy = std::max(py, maxy);
 		}
 	}
 
@@ -651,6 +664,10 @@ int main(int argc, char *argv[])
 						x /= units;
 						y /= -units;
 						wire.push_back(point_3d(x, y, z));
+						minx = std::min(x, minx);
+						maxx = std::max(x, maxx);
+						miny = std::min(y, miny);
+						maxy = std::max(y, maxy);
 					}
 				}
 				else if (wire_node.m_value == "net")
@@ -665,6 +682,10 @@ int main(int argc, char *argv[])
 			get_2d(ss, begin(wiring_node.m_branches) + 1, x, y);
 			x /= units;
 			y /= -units;
+			minx = std::min(x, minx);
+			maxx = std::max(x, maxx);
+			miny = std::min(y, miny);
+			maxy = std::max(y, maxy);
 
 			for (auto wire_node = begin(wiring_node.m_branches) + 3;
 					wire_node != end(wiring_node.m_branches); ++wire_node)
@@ -753,9 +774,11 @@ int main(int argc, char *argv[])
 
 	//output pcb format
 	auto border = double(arg_b);
-	std::cout << "(" << maxx-minx+(border*2)
-	 			<< " " << maxy-miny+(border*2)
+	std::cout << "(" << maxx - minx + border * 2
+	 			<< " " << maxy - miny + border * 2
 				<< " " << num_layers << ")\n";
+	minx -= border;
+	miny -= border;
 	for (auto &&track : the_tracks)
 	{
 		std::cout << "(" << track.m_id << " " << track.m_track_radius << " "
@@ -764,8 +787,8 @@ int main(int argc, char *argv[])
 		{
 			auto &&term = track.m_pads[i];
 			std::cout << "(" << term.m_radius << " " << term.m_gap
-				<< " (" << term.m_pos.m_x-double(minx-border)
-				<< " " << term.m_pos.m_y-double(miny-border)
+				<< " (" << term.m_pos.m_x - minx
+				<< " " << term.m_pos.m_y - miny
 				<< " " << term.m_pos.m_z << ") (";
 			for (auto j = 0; j < static_cast<int>(term.m_shape.size()); ++j)
 			{
@@ -781,8 +804,8 @@ int main(int argc, char *argv[])
 			auto &&p = track.m_paths[i];
 			for (auto j = 0; j < static_cast<int>(p.size()); ++j)
 			{
-				std::cout << "(" << p[j].m_x-double(minx-border)
-					<< " " << p[j].m_y-double(miny-border)
+				std::cout << "(" << p[j].m_x - minx
+					<< " " << p[j].m_y - miny
 					<< " " << p[j].m_z << ")";
 			}
 			std::cout << ")";
