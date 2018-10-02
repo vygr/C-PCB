@@ -58,6 +58,11 @@ All track paths are assumed to have rounded ends and corners when testing for
 collision gap clearance. If the resulting board is milled or etched with
 beveled or square corners problems may occur in densely packed areas !
 
+All the x, y, z co-ordinates of the board components MUST reside in the
+posative space ! Relative co-ordinates for SHAPE of pads will of course contain
+negative members, but the resulting value once added to the PAD position MUST
+be positive.
+
 Special treatment is given to tracks with a track_radius of 0.0, they are used
 to hold unused pads and keepout paths. No attempt is made to route them, they
 are just added to the collision hash for all other routing. PADS can be empty
