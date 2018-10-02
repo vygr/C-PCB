@@ -183,9 +183,9 @@ void pcb::print_stats()
 		num_pads += net.m_pads.size();
 		for (auto &term : net.m_pads)
 		{
-			auto x = int(term.m_pos.m_x+0.5);
-			auto y = int(term.m_pos.m_y+0.5);
-			vias_set.erase(node{x, y, 0});
+			auto n = point_to_node(term.m_pos);
+			n.m_z = 0;
+			vias_set.erase(n);
 		}
 	}
 	std::cerr << "Number of Pads: " << num_pads << '\n';
@@ -644,17 +644,17 @@ nodess net::optimise_paths(const nodess &paths)
 	for (auto &path : paths)
 	{
 		auto opt_path = nodes{};
-		auto d = point_3d{0.0, 0.0, 0.0};
+		auto d0 = point_3d{0.0, 0.0, 0.0};
 		auto p1 = m_pcb->node_to_point(path[0]);
 		for (auto i = 1; i < (int)path.size(); ++i)
 		{
 			auto p0 = p1;
-			auto p1 = m_pcb->node_to_point(path[i]);
+			p1 = m_pcb->node_to_point(path[i]);
 			auto d1 = norm_3d(sub_3d(p1, p0));
-			if (d1 != d)
+			if (d0 != d1)
 			{
 				opt_path.emplace_back(path[i-1]);
-				d = d1;
+				d0 = d1;
 			}
 		}
 		opt_path.emplace_back(path[path.size()-1]);
