@@ -193,32 +193,41 @@ void pcb::print_stats()
 	std::cerr << "Number of Vias: " << vias_set.size() << std::endl;
 }
 
-//convert node to pad point
-point_3d pcb::node_to_pad_point(const node &n)
-{
-	auto itr = m_deform.find(n);
-	if (itr != end(m_deform)) return itr->second;
-	return point_3d{double(n.m_x), double(n.m_y), double(n.m_z)};
-}
-
-//convert pad point to node
-node pcb::pad_point_to_node(const point_3d &p)
-{
-	auto n = node{int(p.m_x + 0.5), int(p.m_y + 0.5), int(p.m_z)};
-	m_deform[n] = p;
-	return n;
-}
-
 //convert node to point
-point_3d pcb::node_to_point(const node &n)
+inline point_3d pcb::node_to_point(const node &n)
 {
 	return point_3d{double(n.m_x), double(n.m_y), double(n.m_z)};
 }
 
 //convert point to node
-node pcb::point_to_node(const point_3d &p)
+inline node pcb::point_to_node(const point_3d &p)
 {
 	return node{int(p.m_x + 0.5), int(p.m_y + 0.5), int(p.m_z)};
+}
+
+//convert node to pad point
+point_3d pcb::node_to_pad_point(const node &n)
+{
+	auto itr = m_deform.find(n);
+	if (itr != end(m_deform)) return itr->second;
+	return node_to_point(n);
+}
+
+//convert pad point to node
+node pcb::pad_point_to_node(const point_3d &p)
+{
+	auto n = point_to_node(p);
+	// auto itr = m_deform.find(n);
+	// if (itr != end(m_deform))
+	// {
+	// 	auto p2 = itr->second;
+	// 	std::cerr << "n(" << n.m_x << " " << n.m_y << " " << n.m_z << ")\n";
+	// 	std::cerr << "p1(" << p2.m_x << " " << p2.m_y << " " << p2.m_z << ")\n"; 
+	// 	std::cerr << "p2(" << p.m_x << " " << p.m_y << " " << p.m_z << ")\n"; 
+	// 	exit(1);
+	// }
+	m_deform[n] = p;
+	return n;
 }
 
 //set grid node to value
