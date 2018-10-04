@@ -303,7 +303,7 @@ auto circle_as_trifan(const point_2d &p, double radius, int resolution)
 
 auto thicken_path_as_lines(const points_2d &path, double radius, int capstyle, int joinstyle, int resolution)
 {
-	if (radius == 0.0) radius = 0.00000001f;
+	if (radius == 0.0) radius = 0.00000001;
 	auto index = 0;
 	auto step = 1;
 	auto out_points = points_2d{};
