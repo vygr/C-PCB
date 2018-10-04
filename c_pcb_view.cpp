@@ -469,7 +469,7 @@ int main(int argc, char *argv[])
 				}
 			}
 			//draw pads and vias
-			glUniform4f(vert_color_id, 1.0, 1.0, 1.0, 1.0);
+			glUniform4f(vert_color_id, 1.0, 1.0, 1.0, 0.5);
 			for (auto &t : ts)
 			{
 				for (auto &path : t.m_paths)
@@ -480,10 +480,10 @@ int main(int argc, char *argv[])
 						{
 							draw_filled_polygon_fan(point_2d{path[i].m_x, path[i].m_y},
 								*create_filled_circle(t.m_via_radius));
-							glUniform4f(vert_color_id, 0.0, 0.0, 0.0, 1.0);
+							glUniform4f(vert_color_id, 0.0, 0.0, 0.0, 0.5);
 							draw_filled_polygon_fan(point_2d{path[i].m_x, path[i].m_y},
 								*create_filled_circle(t.m_via_radius * 0.5));
-							glUniform4f(vert_color_id, 1.0, 1.0, 1.0, 1.0);
+							glUniform4f(vert_color_id, 1.0, 1.0, 1.0, 0.5);
 						}
 					}
 				}
@@ -512,10 +512,10 @@ int main(int argc, char *argv[])
 							draw_filled_polygon_fan(point_2d{0.0, 0.0}, points);
 						}
 					}
-					glUniform4f(vert_color_id, 0.0, 0.0, 0.0, 1.0);
+					glUniform4f(vert_color_id, 0.0, 0.0, 0.0, 0.5);
 					draw_filled_polygon_fan(point_2d{term.m_pos.m_x, term.m_pos.m_y},
 						*create_filled_circle(0.75));
-					glUniform4f(vert_color_id, 1.0, 1.0, 1.0, 1.0);
+					glUniform4f(vert_color_id, 1.0, 1.0, 1.0, 0.5);
 				}
 			}
 		}
