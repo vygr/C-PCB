@@ -1,4110 +1,692 @@
-
-(PCB "cnc-control"
+(pcb BigSeries.dsn
   (parser
     (string_quote ")
     (space_in_quoted_tokens on)
     (host_cad "KiCad's Pcbnew")
-    (host_version 4.0.7)
-    (generated_by_freeroute)
+    (host_version "(2018-01-11 revision 6f2beeb)-master")
   )
   (resolution um 10)
+  (unit um)
   (structure
-    (boundary
-      (rect pcb 141776.0 -105554.0 217456.0 -49572.6)
-    )
-    (boundary
-      (rect signal 141876.0 -105454.0 217356.0 -49672.6)
-    )
-    (snap_angle 
-      fortyfive_degree
-    )
-    (via "Via[0-1]_600:400_um")
-    (control
-      (via_at_smd off)
-    )
-    (rule
-      (width 250.0)
-      (clear 200.2)
-      (clear 125.0 (type smd_to_turn_gap))
-      (clear 50.0 (type smd_smd))
-    )
     (layer F.Cu
       (type signal)
+      (property
+        (index 0)
+      )
     )
     (layer B.Cu
       (type signal)
+      (property
+        (index 1)
+      )
     )
-    (autoroute_settings
-      (fanout off)
-      (autoroute on)
-      (postroute on)
-      (vias on)
-      (via_costs 50)
-      (plane_via_costs 5)
-      (start_ripup_costs 100)
-      (start_pass_no 546)
-      (layer_rule F.Cu
-        (active on)
-        (preferred_direction horizontal)
-        (preferred_direction_trace_costs 1.0)
-        (against_preferred_direction_trace_costs 2.4)
-      )
-      (layer_rule B.Cu
-        (active on)
-        (preferred_direction vertical)
-        (preferred_direction_trace_costs 1.0)
-        (against_preferred_direction_trace_costs 1.7)
-      )
+    (boundary
+      (path pcb 0  136174 -69015.2  136342 -69060.3  136500 -69134  136643 -69234
+            136766 -69357.2  136866 -69500  136940 -69658  136985 -69826.4
+            137000 -70000  137000 -80000  137030 -80347.3  137121 -80684
+            137268 -81000  137468 -81285.6  137714 -81532.1  138000 -81732.1
+            138316 -81879.4  138653 -81969.6  139000 -82000  176000 -82000
+            176347 -82030.4  176684 -82120.6  177000 -82267.9  177286 -82467.9
+            177532 -82714.4  177732 -83000  177879 -83316  177970 -83652.7
+            178000 -84000  178000 -136000  177970 -136347  177879 -136684
+            177732 -137000  177532 -137286  177286 -137532  177000 -137732
+            176684 -137879  176347 -137970  176000 -138000  124000 -138000
+            123653 -137970  123316 -137879  123000 -137732  122714 -137532
+            122468 -137286  122268 -137000  122121 -136684  122030 -136347
+            122000 -136000  122000 -70000  122015 -69826.4  122060 -69658
+            122134 -69500  122234 -69357.2  122357 -69234  122500 -69134
+            122658 -69060.3  122826 -69015.2  123000 -69000  136000 -69000
+            136174 -69015.2)
+    )
+    (plane GND (polygon B.Cu 0  122000 -70000  123000 -69000  136000 -69000  137000 -70000
+            137000 -82000  176000 -82000  178000 -84000  178000 -136000
+            176000 -138000  124000 -138000  122000 -136000))
+    (plane GND (polygon F.Cu 0  122000 -69900  123000 -69000  136100 -69000  137000 -69900
+            137000 -81400  137800 -82000  176000 -82000  178000 -84000  178000 -136000
+            176000 -138000  124000 -138000  122000 -136000))
+    (keepout "" (polygon signal 0  148802 -103205  147640 -103516  146550 -104024  145565 -104714
+            144714 -105565  144024 -106550  143516 -107640  143205 -108802
+            143100 -110000  143205 -111198  143516 -112360  144024 -113450
+            144714 -114435  145565 -115286  146550 -115976  147640 -116484
+            148802 -116795  150000 -116900  151198 -116795  152360 -116484
+            153450 -115976  154435 -115286  155286 -114435  155976 -113450
+            156484 -112360  156795 -111198  156900 -110000  156795 -108802
+            156484 -107640  155976 -106550  155286 -105565  154435 -104714
+            153450 -104024  152360 -103516  151198 -103205  150000 -103100
+            148802 -103205))
+    (keepout "" (polygon F.Cu 0  143200 -107800  145300 -104600  148400 -103200  150100 -103000
+            153100 -103600  155600 -105700  156700 -108400  156600 -113200
+            154700 -115100  150900 -117000  146100 -115900  143200 -112000))
+    (keepout "" (polygon B.Cu 0  143200 -107800  145300 -104600  148400 -103200  150100 -103000
+            153100 -103600  155600 -105700  156700 -108400  156600 -113200
+            154700 -115100  150900 -117000  146100 -115900  143200 -112000))
+    (keepout "" (polygon F.Cu 0  177500 -83000  167500 -83000  167500 -92000  178000 -92000))
+    (keepout "" (polygon B.Cu 0  177500 -83000  167500 -83000  167500 -92000  178000 -92000))
+    (keepout "" (polygon B.Cu 0  145200 -118000  149600 -118000  150800 -120300  149700 -123100
+            145300 -123100  144300 -120300))
+    (via "Via[0-1]_600:400_um" "Via[0-1]_254:101.6_um" "Via[0-1]_400:200_um")
+    (rule
+      (width 250)
+      (clearance 200.1)
+      (clearance 200.1 (type default_smd))
+      (clearance 50 (type smd_smd))
     )
   )
   (placement
-    (component "Arduino:Arduino_Uno_Shield"
-      (place 
-        ARD1 148501.0 -105004.0 front 0
-        (pin RST2 (clearance_class "kicad_default"))
-        (pin GND4 (clearance_class "kicad_default"))
-        (pin MOSI (clearance_class "kicad_default"))
-        (pin SCK (clearance_class "kicad_default"))
-        (pin 5V2 (clearance_class "kicad_default"))
-        (pin A0 (clearance_class "kicad_default"))
-        (pin VIN (clearance_class "kicad_default"))
-        (pin GND3 (clearance_class "kicad_default"))
-        (pin GND2 (clearance_class "kicad_default"))
-        (pin 5V1 (clearance_class "kicad_default"))
-        (pin 3.3V (clearance_class "kicad_default"))
-        (pin RST1 (clearance_class "kicad_default"))
-        (pin IORF (clearance_class "kicad_default"))
-        (pin D0 (clearance_class "kicad_default"))
-        (pin D1 (clearance_class "kicad_default"))
-        (pin D2 (clearance_class "kicad_default"))
-        (pin D3 (clearance_class "kicad_default"))
-        (pin D4 (clearance_class "kicad_default"))
-        (pin D5 (clearance_class "kicad_default"))
-        (pin D6 (clearance_class "kicad_default"))
-        (pin D7 (clearance_class "kicad_default"))
-        (pin GND1 (clearance_class "kicad_default"))
-        (pin D8 (clearance_class "kicad_default"))
-        (pin D9 (clearance_class "kicad_default"))
-        (pin D10 (clearance_class "kicad_default"))
-        (pin SCL (clearance_class "kicad_default"))
-        (pin SDA (clearance_class "kicad_default"))
-        (pin AREF (clearance_class "kicad_default"))
-        (pin D13 (clearance_class "kicad_default"))
-        (pin D12 (clearance_class "kicad_default"))
-        (pin D11 (clearance_class "kicad_default"))
-        (pin @1 (clearance_class default))
-        (pin A1 (clearance_class "kicad_default"))
-        (pin A2 (clearance_class "kicad_default"))
-        (pin A3 (clearance_class "kicad_default"))
-        (pin A4 (clearance_class "kicad_default"))
-        (pin A5 (clearance_class "kicad_default"))
-        (pin MISO (clearance_class "kicad_default"))
-        (keepout "keepout_1" (clearance_class default))
-        (keepout "keepout_2" (clearance_class default))
-        (keepout "keepout_3" (clearance_class default))
-        (keepout "keepout_4" (clearance_class default))
-        (keepout "keepout_5" (clearance_class default))
-        (keepout "keepout_6" (clearance_class default))
-        (keepout "keepout_7" (clearance_class default))
-        (keepout "keepout_8" (clearance_class default))
-      )
+    (component Socket_Strips:Socket_Strip_Straight_1x04_Pitch2.54mm
+      (place P2 126900 -117560 front 0 (PN CONN_01X04))
     )
-    (component "Capacitors_THT:CP_Radial_D4.0mm_P2.00mm"
-      (place 
-        C1 161290.0 -83820.0 front 90
-        (pin 1 (clearance_class "kicad_default"))
-        (pin 2 (clearance_class "kicad_default"))
-      )
+    (component kicad_images:NovelKeys
+      (place G2 149300 -120400 back 0 (PN LOGO))
     )
-    (component "TerminalBlocks_Phoenix:TerminalBlock_Phoenix_MPT-2.54mm_6pol"
-      (place 
-        J1 162560.0 -96520.0 front 0
-        (pin 4 (clearance_class "kicad_default"))
-        (pin 1 (clearance_class "kicad_default"))
-        (pin 2 (clearance_class "kicad_default"))
-        (pin 3 (clearance_class "kicad_default"))
-        (pin 5 (clearance_class "kicad_default"))
-        (pin 6 (clearance_class "kicad_default"))
-      )
-      (place 
-        J3 180340.0 -96520.0 front 0
-        (pin 4 (clearance_class "kicad_default"))
-        (pin 1 (clearance_class "kicad_default"))
-        (pin 2 (clearance_class "kicad_default"))
-        (pin 3 (clearance_class "kicad_default"))
-        (pin 5 (clearance_class "kicad_default"))
-        (pin 6 (clearance_class "kicad_default"))
-      )
-      (place 
-        J5 198120.0 -96520.0 front 0
-        (pin 4 (clearance_class "kicad_default"))
-        (pin 1 (clearance_class "kicad_default"))
-        (pin 2 (clearance_class "kicad_default"))
-        (pin 3 (clearance_class "kicad_default"))
-        (pin 5 (clearance_class "kicad_default"))
-        (pin 6 (clearance_class "kicad_default"))
-      )
+    (component keyboard_parts:NovelKeys_Kailh_Big_Series_Switch
+      (place SW1 150000 -110000 front 0 (PN KEYSW))
     )
-    (component "TerminalBlocks_Phoenix:TerminalBlock_Phoenix_MPT-2.54mm_4pol"
-      (place 
-        J2 198120.0 -60960.0 front 180
-        (pin 4 (clearance_class "kicad_default"))
-        (pin 1 (clearance_class "kicad_default"))
-        (pin 2 (clearance_class "kicad_default"))
-        (pin 3 (clearance_class "kicad_default"))
-      )
-      (place 
-        J4 210820.0 -60960.0 front 180
-        (pin 4 (clearance_class "kicad_default"))
-        (pin 1 (clearance_class "kicad_default"))
-        (pin 2 (clearance_class "kicad_default"))
-        (pin 3 (clearance_class "kicad_default"))
-      )
-      (place 
-        J6 181610.0 -60960.0 front 180
-        (pin 4 (clearance_class "kicad_default"))
-        (pin 1 (clearance_class "kicad_default"))
-        (pin 2 (clearance_class "kicad_default"))
-        (pin 3 (clearance_class "kicad_default"))
-      )
+    (component Capacitors_SMD:C_0603
+      (place C6 150200 -89400 back 180 (PN .1u))
+      (place C4 162750 -97800 back 270 (PN .1u))
+      (place C1 166800 -104300 back 0 (PN .1u))
+      (place C3 159400 -98000 back 270 (PN 1u))
+      (place C2 164250 -97800 back 270 (PN .1u))
+      (place C5 172950 -106300 back 180 (PN .1u))
+      (place C7 127200 -106400 back 0 (PN .1u))
+      (place C9 155200 -128000 front 90 (PN .1u))
     )
-    (component "TerminalBlocks_Phoenix:TerminalBlock_Phoenix_MPT-2.54mm_2pol"
-      (place 
-        J7 210820.0 -87630.0 front 90
-        (pin 2 (clearance_class "kicad_default"))
-        (pin 1 (clearance_class "kicad_default"))
-        (keepout "keepout_1" (clearance_class default))
-        (keepout "keepout_2" (clearance_class default))
-        (keepout "keepout_3" (clearance_class default))
-        (keepout "keepout_4" (clearance_class default))
-      )
-      (place 
-        J8 165100.0 -60960.0 front 180
-        (pin 2 (clearance_class "kicad_default"))
-        (pin 1 (clearance_class "kicad_default"))
-        (keepout "keepout_1" (clearance_class default))
-        (keepout "keepout_2" (clearance_class default))
-        (keepout "keepout_3" (clearance_class default))
-        (keepout "keepout_4" (clearance_class default))
-      )
+    (component "Diodes_SMD:D_SOD-123"
+      (place D1 149950 -100950 back 0 (PN D))
     )
-    (component "Resistors_THT:R_Axial_DIN0411_L9.9mm_D3.6mm_P7.62mm_Vertical"
-      (place 
-        R1 176530.0 -71120.0 front 180
-        (pin 1 (clearance_class "kicad_default"))
-        (pin 2 (clearance_class "kicad_default"))
-      )
+    (component Socket_Strips:Socket_Strip_Straight_2x03_Pitch2.54mm
+      (place P1 129400 -129460 front 0 (PN CONN_02X03))
     )
-    (component "Potentiometers:Potentiometer_Trimmer_ACP_CA9VSMD_Horizontal_Px9.2mm_Py5.0mm_MountLS"
-      (place 
-        RV1 200660.0 -76200.0 front 0
-        (pin 3 (clearance_class "kicad_default"))
-        (pin 2 (clearance_class "kicad_default"))
-        (pin 1 (clearance_class "kicad_default"))
-        (keepout "keepout_1" (clearance_class default))
-        (keepout "keepout_2" (clearance_class default))
-      )
+    (component Socket_Strips:Socket_Strip_Straight_2x08_Pitch2.54mm
+      (place P3 173040 -116680 front 0 (PN CONN_02X08))
     )
-    (component "Housings_DIP:DIP-6_W7.62mm"
-      (place 
-        U1 177800.0 -86360.0 front 180
-        (pin 1 (clearance_class "kicad_default"))
-        (pin 4 (clearance_class "kicad_default"))
-        (pin 2 (clearance_class "kicad_default"))
-        (pin 5 (clearance_class "kicad_default"))
-        (pin 3 (clearance_class "kicad_default"))
-        (pin 6 (clearance_class "kicad_default"))
-      )
+    (component "SeeedOPL-Crystal Oscillator-2016:X3-SMD-3.6X1.3X0.8MM"
+      (place Y1 166500 -101500 back 90 (PN 16MHz))
     )
-    (component "Power_Integrations:TO-220"
-      (place 
-        U2 190500.0 -85090.0 front 180
-        (pin 2 (clearance_class "kicad_default"))
-        (pin 3 (clearance_class "kicad_default"))
-        (pin 1 (clearance_class "kicad_default"))
-      )
+    (component keyboard_parts:USB_miniB_molex675031020
+      (place J1 129790 -70100 back 180 (PN MINI))
+    )
+    (component Resistors_SMD:R_0603
+      (place R3 134700 -88700 back 90 (PN 10k))
+      (place R1 129000 -80900 back 270 (PN 22))
+      (place R2 131000 -80900 back 270 (PN 22))
+    )
+    (component ws2812:WS2812b
+      (place RGB1 173000 -110000 back 90 (PN WS2812B))
+      (place RGB2 150200 -85500 back 90 (PN WS2812B))
+      (place RGB3 126800 -110200 back 270 (PN WS2812B))
+      (place RGB4 150200 -134200 back 270 (PN WS2812B))
+      (place RGB5 150000 -128100 front 270 (PN WS2812B))
+    )
+    (component keyboard_parts:SW_TACTILE_SMD
+      (place RST1 129700 -88900 back 0 (PN SW_PUSH))
+    )
+    (component kicad_images:Woodkeys_small
+      (place G1 172330 -87130 back 0 (PN LOGO))
+    )
+    (component Capacitors_SMD:C_0603::1
+      (place C8 155000 -134400 back 90 (PN .1u))
+    )
+    (component "Housings_DFN_QFN:QFN-32-1EP_5x5mm_Pitch0.5mm"
+      (place IC1 160850 -103200 back 0 (PN ATMEGA32U2))
     )
   )
   (library
-    (image "Arduino:Arduino_Uno_Shield"
-      (side front)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" RST2 63627.0 25400.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" GND4 66167.0 25400.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" MOSI 66167.0 27940.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" SCK 63627.0 27940.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" 5V2 66167.0 30480.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" A0 50800.0 2540.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" VIN 45720.0 2540.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" GND3 43180.0 2540.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" GND2 40640.0 2540.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" 5V1 38100.0 2540.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" 3.3V 35560.0 2540.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" RST1 33020.0 2540.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" IORF 30480.0 2540.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" D0 63500.0 50800.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" D1 60960.0 50800.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" D2 58420.0 50800.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" D3 55880.0 50800.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" D4 53340.0 50800.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" D5 50800.0 50800.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" D6 48260.0 50800.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" D7 45720.0 50800.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" GND1 26416.0 50800.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" D8 41656.0 50800.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" D9 39116.0 50800.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" D10 36576.0 50800.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" SCL 18796.0 50800.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" SDA 21336.0 50800.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" AREF 23876.0 50800.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" D13 28956.0 50800.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" D12 31496.0 50800.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" D11 34036.0 50800.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" @1 27940.0 2540.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" A1 53340.0 2540.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" A2 55880.0 2540.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" A3 58420.0 2540.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" A4 60960.0 2540.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" A5 63500.0 2540.0)
-      (pin "Oval[A]Pad_1727.2x1727.2_um" MISO 63627.0 30480.0)
-      (keepout
-        (circle F.Cu 3200.0 66040.0 7620.0)
-      )
-      (keepout
-        (circle B.Cu 3200.0 66040.0 7620.0)
-      )
-      (keepout
-        (circle F.Cu 3200.0 66040.0 35560.0)
-      )
-      (keepout
-        (circle B.Cu 3200.0 66040.0 35560.0)
-      )
-      (keepout
-        (circle F.Cu 3200.0 15240.0 50800.0)
-      )
-      (keepout
-        (circle B.Cu 3200.0 15240.0 50800.0)
-      )
-      (keepout
-        (circle F.Cu 3200.0 13970.0 2540.0)
-      )
-      (keepout
-        (circle B.Cu 3200.0 13970.0 2540.0)
-      )
-      (outline
-        (polygon signal 0
-          -6381.1 32310.0
-          9556.1 32310.0
-          9600.0 32353.9
-          9600.0 32416.1
-          9556.1 32460.0
-          -6381.1 32460.0
-          -6425.0 32416.1
-          -6425.0 32353.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -6381.1 43740.0
-          9556.1 43740.0
-          9600.0 43783.9
-          9600.0 43846.1
-          9556.1 43890.0
-          -6381.1 43890.0
-          -6425.0 43846.1
-          -6425.0 43783.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          9493.9 32310.0
-          9556.1 32310.0
-          9600.0 32353.9
-          9600.0 43846.1
-          9556.1 43890.0
-          9493.9 43890.0
-          9450.0 43846.1
-          9450.0 32353.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -6381.1 32310.0
-          -6318.9 32310.0
-          -6275.0 32353.9
-          -6275.0 43846.1
-          -6318.9 43890.0
-          -6381.1 43890.0
-          -6425.0 43846.1
-          -6425.0 32353.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          11398.9 3100.0
-          11461.1 3100.0
-          11505.0 3143.9
-          11505.0 12096.1
-          11461.1 12140.0
-          11398.9 12140.0
-          11355.0 12096.1
-          11355.0 3143.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1936.1 3100.0
-          11461.1 3100.0
-          11505.0 3143.9
-          11505.0 3206.1
-          11461.1 3250.0
-          -1936.1 3250.0
-          -1980.0 3206.1
-          -1980.0 3143.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1936.1 3100.0
-          -1873.9 3100.0
-          -1830.0 3143.9
-          -1830.0 12096.1
-          -1873.9 12140.0
-          -1936.1 12140.0
-          -1980.0 12096.1
-          -1980.0 3143.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1936.1 11990.0
-          11461.1 11990.0
-          11505.0 12033.9
-          11505.0 12096.1
-          11461.1 12140.0
-          -1936.1 12140.0
-          -1980.0 12096.1
-          -1980.0 12033.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -31.1 -75.0
-          31.1 -75.0
-          75.0 -31.1
-          75.0 53371.1
-          31.1 53415.0
-          -31.1 53415.0
-          -75.0 53371.1
-          -75.0 -31.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          66008.9 40565.0
-          66071.1 40565.0
-          66115.0 40608.9
-          66115.0 51847.1
-          66071.1 51891.0
-          66008.9 51891.0
-          65965.0 51847.1
-          65965.0 40608.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          68548.9 38025.0
-          68611.1 38025.0
-          68655.0 38068.9
-          68655.0 38131.1
-          66071.1 40715.0
-          66008.9 40715.0
-          65965.0 40671.1
-          65965.0 40608.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          68548.9 3735.0
-          68611.1 3735.0
-          68655.0 3778.9
-          68655.0 38131.1
-          68611.1 38175.0
-          68548.9 38175.0
-          68505.0 38131.1
-          68505.0 3778.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          66008.9 1195.0
-          66071.1 1195.0
-          68655.0 3778.9
-          68655.0 3841.1
-          68611.1 3885.0
-          68548.9 3885.0
-          65965.0 1301.1
-          65965.0 1238.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          66008.9 -75.0
-          66071.1 -75.0
-          66115.0 -31.1
-          66115.0 1301.1
-          66071.1 1345.0
-          66008.9 1345.0
-          65965.0 1301.1
-          65965.0 -31.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          66008.9 51741.0
-          66071.1 51741.0
-          66115.0 51784.9
-          66115.0 51847.1
-          64547.1 53415.0
-          64484.9 53415.0
-          64441.0 53371.1
-          64441.0 53308.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -31.1 -75.0
-          66071.1 -75.0
-          66115.0 -31.1
-          66115.0 31.1
-          66071.1 75.0
-          -31.1 75.0
-          -75.0 31.1
-          -75.0 -31.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          -31.1 53265.0
-          64547.1 53265.0
-          64591.0 53308.9
-          64591.0 53371.1
-          64547.1 53415.0
-          -31.1 53415.0
-          -75.0 53371.1
-          -75.0 53308.9
-        )
-      )
+    (image Socket_Strips:Socket_Strip_Straight_1x04_Pitch2.54mm
+      (outline (path signal 100  -1270 1270  -1270 -8890))
+      (outline (path signal 100  -1270 -8890  1270 -8890))
+      (outline (path signal 100  1270 -8890  1270 1270))
+      (outline (path signal 100  1270 1270  -1270 1270))
+      (outline (path signal 120  -1330 -1270  -1330 -8950))
+      (outline (path signal 120  -1330 -8950  1330 -8950))
+      (outline (path signal 120  1330 -8950  1330 -1270))
+      (outline (path signal 120  1330 -1270  -1330 -1270))
+      (outline (path signal 120  -1330 0  -1330 1330))
+      (outline (path signal 120  -1330 1330  0 1330))
+      (outline (path signal 50  -1800 1800  -1800 -9400))
+      (outline (path signal 50  -1800 -9400  1800 -9400))
+      (outline (path signal 50  1800 -9400  1800 1800))
+      (outline (path signal 50  1800 1800  -1800 1800))
+      (pin Rect[A]Pad_1700x1700_um 1 0 0)
+      (pin Oval[A]Pad_1700x1700_um 2 0 -2540)
+      (pin Oval[A]Pad_1700x1700_um 3 0 -5080)
+      (pin Oval[A]Pad_1700x1700_um 4 0 -7620)
     )
-    (image "Capacitors_THT:CP_Radial_D4.0mm_P2.00mm"
-      (side front)
-      (pin "Rect[A]Pad_1200x1200_um" 1 0.0 0.0)
-      (pin "Round[A]Pad_1200_um" 2 2000.0 0.0)
-      (outline
-        (polygon signal 0
-          996.2124616956078 -2050.0
-          1003.7875383043922 -2050.0
-          1633.6654639807525 -1950.2183674373532
-          2205.3658500914075 -1658.9341499085924
-          2658.934149908592 -1205.3658500914075
-          2950.218367437353 -633.6654639807526
-          3050.0 -3.787538304392237
-          3050.0 3.787538304392237
-          2950.218367437353 633.6654639807526
-          2658.934149908592 1205.3658500914075
-          2205.3658500914075 1658.9341499085924
-          1633.6654639807525 1950.2183674373532
-          1003.7875383043922 2050.0
-          996.2124616956078 2050.0
-          366.33453601924737 1950.2183674373532
-          -205.36585009140768 1658.9341499085924
-          -658.9341499085923 1205.3658500914075
-          -950.2183674373533 633.6654639807526
-          -1050.0 3.787538304392237
-          -1050.0 -3.787538304392237
-          -950.2183674373533 -633.6654639807526
-          -658.9341499085923 -1205.3658500914075
-          -205.36585009140768 -1658.9341499085924
-          366.33453601924737 -1950.2183674373532
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1720.7 -50.0
-          -779.3 -50.0
-          -750.0 -20.7
-          -750.0 20.7
-          -779.3 50.0
-          -1720.7 50.0
-          -1750.0 20.7
-          -1750.0 -20.7
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1270.7 -500.0
-          -1229.3 -500.0
-          -1200.0 -470.7
-          -1200.0 470.7
-          -1229.3 500.0
-          -1270.7 500.0
-          -1300.0 470.7
-          -1300.0 -470.7
-        )
-      )
-      (outline
-        (polygon signal 0
-          975.1 -2110.0
-          1024.9 -2110.0
-          1060.0 -2074.9
-          1060.0 2074.9
-          1024.9 2110.0
-          975.1 2110.0
-          940.0 2074.9
-          940.0 -2074.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          1015.1 -2110.0
-          1064.9 -2110.0
-          1100.0 -2074.9
-          1100.0 2074.9
-          1064.9 2110.0
-          1015.1 2110.0
-          980.0 2074.9
-          980.0 -2074.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          1055.1 -2109.0
-          1104.9 -2109.0
-          1140.0 -2073.9
-          1140.0 2073.9
-          1104.9 2109.0
-          1055.1 2109.0
-          1020.0 2073.9
-          1020.0 -2073.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          1095.1 -2107.0
-          1144.9 -2107.0
-          1180.0 -2071.9
-          1180.0 2071.9
-          1144.9 2107.0
-          1095.1 2107.0
-          1060.0 2071.9
-          1060.0 -2071.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          1135.1 -2104.0
-          1184.9 -2104.0
-          1220.0 -2068.9
-          1220.0 2068.9
-          1184.9 2104.0
-          1135.1 2104.0
-          1100.0 2068.9
-          1100.0 -2068.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          1175.1 -2101.0
-          1224.9 -2101.0
-          1260.0 -2065.9
-          1260.0 2065.9
-          1224.9 2101.0
-          1175.1 2101.0
-          1140.0 2065.9
-          1140.0 -2065.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          1215.1 720.0
-          1264.9 720.0
-          1300.0 755.1
-          1300.0 2061.9
-          1264.9 2097.0
-          1215.1 2097.0
-          1180.0 2061.9
-          1180.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          1215.1 -2097.0
-          1264.9 -2097.0
-          1300.0 -2061.9
-          1300.0 -755.1
-          1264.9 -720.0
-          1215.1 -720.0
-          1180.0 -755.1
-          1180.0 -2061.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          1255.1 720.0
-          1304.9 720.0
-          1340.0 755.1
-          1340.0 2056.9
-          1304.9 2092.0
-          1255.1 2092.0
-          1220.0 2056.9
-          1220.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          1255.1 -2092.0
-          1304.9 -2092.0
-          1340.0 -2056.9
-          1340.0 -755.1
-          1304.9 -720.0
-          1255.1 -720.0
-          1220.0 -755.1
-          1220.0 -2056.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          1295.1 720.0
-          1344.9 720.0
-          1380.0 755.1
-          1380.0 2050.9
-          1344.9 2086.0
-          1295.1 2086.0
-          1260.0 2050.9
-          1260.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          1295.1 -2086.0
-          1344.9 -2086.0
-          1380.0 -2050.9
-          1380.0 -755.1
-          1344.9 -720.0
-          1295.1 -720.0
-          1260.0 -755.1
-          1260.0 -2050.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          1335.1 720.0
-          1384.9 720.0
-          1420.0 755.1
-          1420.0 2043.9
-          1384.9 2079.0
-          1335.1 2079.0
-          1300.0 2043.9
-          1300.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          1335.1 -2079.0
-          1384.9 -2079.0
-          1420.0 -2043.9
-          1420.0 -755.1
-          1384.9 -720.0
-          1335.1 -720.0
-          1300.0 -755.1
-          1300.0 -2043.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          1375.1 720.0
-          1424.9 720.0
-          1460.0 755.1
-          1460.0 2036.9
-          1424.9 2072.0
-          1375.1 2072.0
-          1340.0 2036.9
-          1340.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          1375.1 -2072.0
-          1424.9 -2072.0
-          1460.0 -2036.9
-          1460.0 -755.1
-          1424.9 -720.0
-          1375.1 -720.0
-          1340.0 -755.1
-          1340.0 -2036.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          1415.1 720.0
-          1464.9 720.0
-          1500.0 755.1
-          1500.0 2028.9
-          1464.9 2064.0
-          1415.1 2064.0
-          1380.0 2028.9
-          1380.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          1415.1 -2064.0
-          1464.9 -2064.0
-          1500.0 -2028.9
-          1500.0 -755.1
-          1464.9 -720.0
-          1415.1 -720.0
-          1380.0 -755.1
-          1380.0 -2028.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          1455.1 720.0
-          1504.9 720.0
-          1540.0 755.1
-          1540.0 2019.9
-          1504.9 2055.0
-          1455.1 2055.0
-          1420.0 2019.9
-          1420.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          1455.1 -2055.0
-          1504.9 -2055.0
-          1540.0 -2019.9
-          1540.0 -755.1
-          1504.9 -720.0
-          1455.1 -720.0
-          1420.0 -755.1
-          1420.0 -2019.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          1495.1 720.0
-          1544.9 720.0
-          1580.0 755.1
-          1580.0 2009.9
-          1544.9 2045.0
-          1495.1 2045.0
-          1460.0 2009.9
-          1460.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          1495.1 -2045.0
-          1544.9 -2045.0
-          1580.0 -2009.9
-          1580.0 -755.1
-          1544.9 -720.0
-          1495.1 -720.0
-          1460.0 -755.1
-          1460.0 -2009.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          1535.1 720.0
-          1584.9 720.0
-          1620.0 755.1
-          1620.0 1998.9
-          1584.9 2034.0
-          1535.1 2034.0
-          1500.0 1998.9
-          1500.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          1535.1 -2034.0
-          1584.9 -2034.0
-          1620.0 -1998.9
-          1620.0 -755.1
-          1584.9 -720.0
-          1535.1 -720.0
-          1500.0 -755.1
-          1500.0 -1998.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          1575.1 720.0
-          1624.9 720.0
-          1660.0 755.1
-          1660.0 1987.9
-          1624.9 2023.0
-          1575.1 2023.0
-          1540.0 1987.9
-          1540.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          1575.1 -2023.0
-          1624.9 -2023.0
-          1660.0 -1987.9
-          1660.0 -755.1
-          1624.9 -720.0
-          1575.1 -720.0
-          1540.0 -755.1
-          1540.0 -1987.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          1615.1 720.0
-          1664.9 720.0
-          1700.0 755.1
-          1700.0 1974.9
-          1664.9 2010.0
-          1615.1 2010.0
-          1580.0 1974.9
-          1580.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          1615.1 -2010.0
-          1664.9 -2010.0
-          1700.0 -1974.9
-          1700.0 -755.1
-          1664.9 -720.0
-          1615.1 -720.0
-          1580.0 -755.1
-          1580.0 -1974.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          1655.1 720.0
-          1704.9 720.0
-          1740.0 755.1
-          1740.0 1961.9
-          1704.9 1997.0
-          1655.1 1997.0
-          1620.0 1961.9
-          1620.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          1655.1 -1997.0
-          1704.9 -1997.0
-          1740.0 -1961.9
-          1740.0 -755.1
-          1704.9 -720.0
-          1655.1 -720.0
-          1620.0 -755.1
-          1620.0 -1961.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          1696.1 720.0
-          1745.9 720.0
-          1781.0 755.1
-          1781.0 1947.9
-          1745.9 1983.0
-          1696.1 1983.0
-          1661.0 1947.9
-          1661.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          1696.1 -1983.0
-          1745.9 -1983.0
-          1781.0 -1947.9
-          1781.0 -755.1
-          1745.9 -720.0
-          1696.1 -720.0
-          1661.0 -755.1
-          1661.0 -1947.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          1736.1 720.0
-          1785.9 720.0
-          1821.0 755.1
-          1821.0 1931.9
-          1785.9 1967.0
-          1736.1 1967.0
-          1701.0 1931.9
-          1701.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          1736.1 -1967.0
-          1785.9 -1967.0
-          1821.0 -1931.9
-          1821.0 -755.1
-          1785.9 -720.0
-          1736.1 -720.0
-          1701.0 -755.1
-          1701.0 -1931.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          1776.1 720.0
-          1825.9 720.0
-          1861.0 755.1
-          1861.0 1915.9
-          1825.9 1951.0
-          1776.1 1951.0
-          1741.0 1915.9
-          1741.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          1776.1 -1951.0
-          1825.9 -1951.0
-          1861.0 -1915.9
-          1861.0 -755.1
-          1825.9 -720.0
-          1776.1 -720.0
-          1741.0 -755.1
-          1741.0 -1915.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          1816.1 720.0
-          1865.9 720.0
-          1901.0 755.1
-          1901.0 1898.9
-          1865.9 1934.0
-          1816.1 1934.0
-          1781.0 1898.9
-          1781.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          1816.1 -1934.0
-          1865.9 -1934.0
-          1901.0 -1898.9
-          1901.0 -755.1
-          1865.9 -720.0
-          1816.1 -720.0
-          1781.0 -755.1
-          1781.0 -1898.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          1856.1 720.0
-          1905.9 720.0
-          1941.0 755.1
-          1941.0 1880.9
-          1905.9 1916.0
-          1856.1 1916.0
-          1821.0 1880.9
-          1821.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          1856.1 -1916.0
-          1905.9 -1916.0
-          1941.0 -1880.9
-          1941.0 -755.1
-          1905.9 -720.0
-          1856.1 -720.0
-          1821.0 -755.1
-          1821.0 -1880.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          1896.1 720.0
-          1945.9 720.0
-          1981.0 755.1
-          1981.0 1861.9
-          1945.9 1897.0
-          1896.1 1897.0
-          1861.0 1861.9
-          1861.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          1896.1 -1897.0
-          1945.9 -1897.0
-          1981.0 -1861.9
-          1981.0 -755.1
-          1945.9 -720.0
-          1896.1 -720.0
-          1861.0 -755.1
-          1861.0 -1861.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          1936.1 720.0
-          1985.9 720.0
-          2021.0 755.1
-          2021.0 1841.9
-          1985.9 1877.0
-          1936.1 1877.0
-          1901.0 1841.9
-          1901.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          1936.1 -1877.0
-          1985.9 -1877.0
-          2021.0 -1841.9
-          2021.0 -755.1
-          1985.9 -720.0
-          1936.1 -720.0
-          1901.0 -755.1
-          1901.0 -1841.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          1976.1 720.0
-          2025.9 720.0
-          2061.0 755.1
-          2061.0 1820.9
-          2025.9 1856.0
-          1976.1 1856.0
-          1941.0 1820.9
-          1941.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          1976.1 -1856.0
-          2025.9 -1856.0
-          2061.0 -1820.9
-          2061.0 -755.1
-          2025.9 -720.0
-          1976.1 -720.0
-          1941.0 -755.1
-          1941.0 -1820.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          2016.1 720.0
-          2065.9 720.0
-          2101.0 755.1
-          2101.0 1797.9
-          2065.9 1833.0
-          2016.1 1833.0
-          1981.0 1797.9
-          1981.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          2016.1 -1833.0
-          2065.9 -1833.0
-          2101.0 -1797.9
-          2101.0 -755.1
-          2065.9 -720.0
-          2016.1 -720.0
-          1981.0 -755.1
-          1981.0 -1797.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          2056.1 720.0
-          2105.9 720.0
-          2141.0 755.1
-          2141.0 1774.9
-          2105.9 1810.0
-          2056.1 1810.0
-          2021.0 1774.9
-          2021.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          2056.1 -1810.0
-          2105.9 -1810.0
-          2141.0 -1774.9
-          2141.0 -755.1
-          2105.9 -720.0
-          2056.1 -720.0
-          2021.0 -755.1
-          2021.0 -1774.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          2096.1 720.0
-          2145.9 720.0
-          2181.0 755.1
-          2181.0 1749.9
-          2145.9 1785.0
-          2096.1 1785.0
-          2061.0 1749.9
-          2061.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          2096.1 -1785.0
-          2145.9 -1785.0
-          2181.0 -1749.9
-          2181.0 -755.1
-          2145.9 -720.0
-          2096.1 -720.0
-          2061.0 -755.1
-          2061.0 -1749.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          2136.1 720.0
-          2185.9 720.0
-          2221.0 755.1
-          2221.0 1723.9
-          2185.9 1759.0
-          2136.1 1759.0
-          2101.0 1723.9
-          2101.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          2136.1 -1759.0
-          2185.9 -1759.0
-          2221.0 -1723.9
-          2221.0 -755.1
-          2185.9 -720.0
-          2136.1 -720.0
-          2101.0 -755.1
-          2101.0 -1723.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          2176.1 720.0
-          2225.9 720.0
-          2261.0 755.1
-          2261.0 1696.9
-          2225.9 1732.0
-          2176.1 1732.0
-          2141.0 1696.9
-          2141.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          2176.1 -1732.0
-          2225.9 -1732.0
-          2261.0 -1696.9
-          2261.0 -755.1
-          2225.9 -720.0
-          2176.1 -720.0
-          2141.0 -755.1
-          2141.0 -1696.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          2216.1 720.0
-          2265.9 720.0
-          2301.0 755.1
-          2301.0 1667.9
-          2265.9 1703.0
-          2216.1 1703.0
-          2181.0 1667.9
-          2181.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          2216.1 -1703.0
-          2265.9 -1703.0
-          2301.0 -1667.9
-          2301.0 -755.1
-          2265.9 -720.0
-          2216.1 -720.0
-          2181.0 -755.1
-          2181.0 -1667.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          2256.1 720.0
-          2305.9 720.0
-          2341.0 755.1
-          2341.0 1637.9
-          2305.9 1673.0
-          2256.1 1673.0
-          2221.0 1637.9
-          2221.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          2256.1 -1673.0
-          2305.9 -1673.0
-          2341.0 -1637.9
-          2341.0 -755.1
-          2305.9 -720.0
-          2256.1 -720.0
-          2221.0 -755.1
-          2221.0 -1637.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          2296.1 720.0
-          2345.9 720.0
-          2381.0 755.1
-          2381.0 1605.9
-          2345.9 1641.0
-          2296.1 1641.0
-          2261.0 1605.9
-          2261.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          2296.1 -1641.0
-          2345.9 -1641.0
-          2381.0 -1605.9
-          2381.0 -755.1
-          2345.9 -720.0
-          2296.1 -720.0
-          2261.0 -755.1
-          2261.0 -1605.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          2336.1 720.0
-          2385.9 720.0
-          2421.0 755.1
-          2421.0 1571.9
-          2385.9 1607.0
-          2336.1 1607.0
-          2301.0 1571.9
-          2301.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          2336.1 -1607.0
-          2385.9 -1607.0
-          2421.0 -1571.9
-          2421.0 -755.1
-          2385.9 -720.0
-          2336.1 -720.0
-          2301.0 -755.1
-          2301.0 -1571.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          2376.1 720.0
-          2425.9 720.0
-          2461.0 755.1
-          2461.0 1536.9
-          2425.9 1572.0
-          2376.1 1572.0
-          2341.0 1536.9
-          2341.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          2376.1 -1572.0
-          2425.9 -1572.0
-          2461.0 -1536.9
-          2461.0 -755.1
-          2425.9 -720.0
-          2376.1 -720.0
-          2341.0 -755.1
-          2341.0 -1536.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          2416.1 720.0
-          2465.9 720.0
-          2501.0 755.1
-          2501.0 1499.9
-          2465.9 1535.0
-          2416.1 1535.0
-          2381.0 1499.9
-          2381.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          2416.1 -1535.0
-          2465.9 -1535.0
-          2501.0 -1499.9
-          2501.0 -755.1
-          2465.9 -720.0
-          2416.1 -720.0
-          2381.0 -755.1
-          2381.0 -1499.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          2456.1 720.0
-          2505.9 720.0
-          2541.0 755.1
-          2541.0 1460.9
-          2505.9 1496.0
-          2456.1 1496.0
-          2421.0 1460.9
-          2421.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          2456.1 -1496.0
-          2505.9 -1496.0
-          2541.0 -1460.9
-          2541.0 -755.1
-          2505.9 -720.0
-          2456.1 -720.0
-          2421.0 -755.1
-          2421.0 -1460.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          2496.1 720.0
-          2545.9 720.0
-          2581.0 755.1
-          2581.0 1419.9
-          2545.9 1455.0
-          2496.1 1455.0
-          2461.0 1419.9
-          2461.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          2496.1 -1455.0
-          2545.9 -1455.0
-          2581.0 -1419.9
-          2581.0 -755.1
-          2545.9 -720.0
-          2496.1 -720.0
-          2461.0 -755.1
-          2461.0 -1419.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          2536.1 720.0
-          2585.9 720.0
-          2621.0 755.1
-          2621.0 1375.9
-          2585.9 1411.0
-          2536.1 1411.0
-          2501.0 1375.9
-          2501.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          2536.1 -1411.0
-          2585.9 -1411.0
-          2621.0 -1375.9
-          2621.0 -755.1
-          2585.9 -720.0
-          2536.1 -720.0
-          2501.0 -755.1
-          2501.0 -1375.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          2576.1 720.0
-          2625.9 720.0
-          2661.0 755.1
-          2661.0 1329.9
-          2625.9 1365.0
-          2576.1 1365.0
-          2541.0 1329.9
-          2541.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          2576.1 -1365.0
-          2625.9 -1365.0
-          2661.0 -1329.9
-          2661.0 -755.1
-          2625.9 -720.0
-          2576.1 -720.0
-          2541.0 -755.1
-          2541.0 -1329.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          2616.1 720.0
-          2665.9 720.0
-          2701.0 755.1
-          2701.0 1280.9
-          2665.9 1316.0
-          2616.1 1316.0
-          2581.0 1280.9
-          2581.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          2616.1 -1316.0
-          2665.9 -1316.0
-          2701.0 -1280.9
-          2701.0 -755.1
-          2665.9 -720.0
-          2616.1 -720.0
-          2581.0 -755.1
-          2581.0 -1280.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          2656.1 720.0
-          2705.9 720.0
-          2741.0 755.1
-          2741.0 1228.9
-          2705.9 1264.0
-          2656.1 1264.0
-          2621.0 1228.9
-          2621.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          2656.1 -1264.0
-          2705.9 -1264.0
-          2741.0 -1228.9
-          2741.0 -755.1
-          2705.9 -720.0
-          2656.1 -720.0
-          2621.0 -755.1
-          2621.0 -1228.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          2696.1 720.0
-          2745.9 720.0
-          2781.0 755.1
-          2781.0 1172.9
-          2745.9 1208.0
-          2696.1 1208.0
-          2661.0 1172.9
-          2661.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          2696.1 -1208.0
-          2745.9 -1208.0
-          2781.0 -1172.9
-          2781.0 -755.1
-          2745.9 -720.0
-          2696.1 -720.0
-          2661.0 -755.1
-          2661.0 -1172.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          2736.1 720.0
-          2785.9 720.0
-          2821.0 755.1
-          2821.0 1112.9
-          2785.9 1148.0
-          2736.1 1148.0
-          2701.0 1112.9
-          2701.0 755.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          2736.1 -1148.0
-          2785.9 -1148.0
-          2821.0 -1112.9
-          2821.0 -755.1
-          2785.9 -720.0
-          2736.1 -720.0
-          2701.0 -755.1
-          2701.0 -1112.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          2776.1 -1083.0
-          2825.9 -1083.0
-          2861.0 -1047.9
-          2861.0 1047.9
-          2825.9 1083.0
-          2776.1 1083.0
-          2741.0 1047.9
-          2741.0 -1047.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          2816.1 -1012.0
-          2865.9 -1012.0
-          2901.0 -976.9
-          2901.0 976.9
-          2865.9 1012.0
-          2816.1 1012.0
-          2781.0 976.9
-          2781.0 -976.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          2856.1 -934.0
-          2905.9 -934.0
-          2941.0 -898.9
-          2941.0 898.9
-          2905.9 934.0
-          2856.1 934.0
-          2821.0 898.9
-          2821.0 -898.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          2896.1 -846.0
-          2945.9 -846.0
-          2981.0 -810.9
-          2981.0 810.9
-          2945.9 846.0
-          2896.1 846.0
-          2861.0 810.9
-          2861.0 -810.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          2936.1 -746.0
-          2985.9 -746.0
-          3021.0 -710.9
-          3021.0 710.9
-          2985.9 746.0
-          2936.1 746.0
-          2901.0 710.9
-          2901.0 -710.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          2976.1 -627.0
-          3025.9 -627.0
-          3061.0 -591.9
-          3061.0 591.9
-          3025.9 627.0
-          2976.1 627.0
-          2941.0 591.9
-          2941.0 -591.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          3016.1 -475.0
-          3065.9 -475.0
-          3101.0 -439.9
-          3101.0 439.9
-          3065.9 475.0
-          3016.1 475.0
-          2981.0 439.9
-          2981.0 -439.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          3056.1 -225.0
-          3105.9 -225.0
-          3141.0 -189.9
-          3141.0 189.9
-          3105.9 225.0
-          3056.1 225.0
-          3021.0 189.9
-          3021.0 -189.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1724.9 -60.0
-          -775.1 -60.0
-          -740.0 -24.9
-          -740.0 24.9
-          -775.1 60.0
-          -1724.9 60.0
-          -1760.0 24.9
-          -1760.0 -24.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1274.9 -510.0
-          -1225.1 -510.0
-          -1190.0 -474.9
-          -1190.0 474.9
-          -1225.1 510.0
-          -1274.9 510.0
-          -1310.0 474.9
-          -1310.0 -474.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1360.4 -2375.0
-          -1339.6 -2375.0
-          -1325.0 -2360.4
-          -1325.0 2360.4
-          -1339.6 2375.0
-          -1360.4 2375.0
-          -1375.0 2360.4
-          -1375.0 -2360.4
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1360.4 -2375.0
-          3360.4 -2375.0
-          3375.0 -2360.4
-          3375.0 -2339.6
-          3360.4 -2325.0
-          -1360.4 -2325.0
-          -1375.0 -2339.6
-          -1375.0 -2360.4
-        )
-      )
-      (outline
-        (polygon signal 0
-          3339.6 -2375.0
-          3360.4 -2375.0
-          3375.0 -2360.4
-          3375.0 2360.4
-          3360.4 2375.0
-          3339.6 2375.0
-          3325.0 2360.4
-          3325.0 -2360.4
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1360.4 2325.0
-          3360.4 2325.0
-          3375.0 2339.6
-          3375.0 2360.4
-          3360.4 2375.0
-          -1360.4 2375.0
-          -1375.0 2360.4
-          -1375.0 2339.6
-        )
-      )
+    (image kicad_images:NovelKeys
+      (outline (path signal 150  1900 -2100  1900 1800))
+      (outline (path signal 150  0 1900  1900 -2100))
+      (outline (path signal 150  -100 1800  0 1900))
+      (outline (path signal 150  -100 -2200  -100 1800))
+      (outline (path signal 150  1800 -2200  0 1700))
+      (outline (path signal 150  1800 -2200  1900 -2200))
+      (outline (path signal 150  3800 1700  2100 -400))
+      (outline (path signal 150  3700 1800  3800 1700))
+      (outline (path signal 150  2100 -200  3700 1800))
+      (outline (path signal 150  2700 300  3900 -1900))
+      (outline (path signal 150  0 1800  0 -2200))
+      (outline (path signal 150  1800 -2000  1800 1800))
+      (outline (path signal 150  3800 -2000  2600 200))
+      (outline (path signal 150  3800 -1900  3800 -2000))
+      (outline (path signal 150  2100 -200  2100 -400))
+      (outline (path signal 150  1800 1800  1900 1800))
+      (outline (path signal 150  3800 -2000  3900 -1900))
+      (outline (path signal 150  1900 -2200  1900 -2100))
+      (outline (path signal 150  -100 -2200  0 -2200))
+      (outline (path signal 150  100 1900  1800 -2000))
+      (outline (path signal 150  0 1900  100 1900))
     )
-    (image "TerminalBlocks_Phoenix:TerminalBlock_Phoenix_MPT-2.54mm_6pol"
-      (side front)
-      (pin "Oval[A]Pad_1998.98x1998.98_um" 4 7620.0 0.0 (rotate 180))
-      (pin "Rect[A]Pad_1998.98x1998.98_um" 1 0.0 0.0 (rotate 180))
-      (pin "Oval[A]Pad_1998.98x1998.98_um" 2 2540.0 0.0 (rotate 180))
-      (pin "Oval[A]Pad_1998.98x1998.98_um" 3 5080.0 0.0 (rotate 180))
-      (pin "Oval[A]Pad_1998.98x1998.98_um" 5 10160.0 0.0 (rotate 180))
-      (pin "Oval[A]Pad_1998.98x1998.98_um" 6 12700.0 0.0 (rotate 180))
-      (outline
-        (polygon signal 0
-          -1790.4 3275.0
-          14490.4 3275.0
-          14505.0 3289.6
-          14505.0 3310.4
-          14490.4 3325.0
-          -1790.4 3325.0
-          -1805.0 3310.4
-          -1805.0 3289.6
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1790.4 -3325.0
-          -1769.6 -3325.0
-          -1755.0 -3310.4
-          -1755.0 3310.4
-          -1769.6 3325.0
-          -1790.4 3325.0
-          -1805.0 3310.4
-          -1805.0 -3310.4
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1790.4 -3325.0
-          14490.4 -3325.0
-          14505.0 -3310.4
-          14505.0 -3289.6
-          14490.4 -3275.0
-          -1790.4 -3275.0
-          -1805.0 -3289.6
-          -1805.0 -3310.4
-        )
-      )
-      (outline
-        (polygon signal 0
-          14469.6 -3325.0
-          14490.4 -3325.0
-          14505.0 -3310.4
-          14505.0 3310.4
-          14490.4 3325.0
-          14469.6 3325.0
-          14455.0 3310.4
-          14455.0 -3310.4
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1580.5 3023.8
-          14280.5 3023.8
-          14324.4 3067.7
-          14324.4 3129.9
-          14280.5 3173.8
-          -1580.5 3173.8
-          -1624.4 3129.9
-          -1624.4 3067.7
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1580.5 2625.0
-          14280.5 2625.0
-          14324.4 2668.9
-          14324.4 2731.2
-          14280.5 2775.1
-          -1580.5 2775.1
-          -1624.4 2731.2
-          -1624.4 2668.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1580.5 -3173.8
-          14280.5 -3173.8
-          14324.4 -3129.9
-          14324.4 -3067.7
-          14280.5 -3023.8
-          -1580.5 -3023.8
-          -1624.4 -3067.7
-          -1624.4 -3129.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1580.5 -2676.0
-          14280.5 -2676.0
-          14324.4 -2632.1
-          14324.4 -2569.8
-          14280.5 -2525.9
-          -1580.5 -2525.9
-          -1624.4 -2569.8
-          -1624.4 -2632.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          11419.2 -3173.8
-          11481.4 -3173.8
-          11525.3 -3129.9
-          11525.3 -2569.8
-          11481.4 -2525.9
-          11419.2 -2525.9
-          11375.3 -2569.8
-          11375.3 -3129.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          8818.2 -3173.8
-          8880.5 -3173.8
-          8924.4 -3129.9
-          8924.4 -2569.8
-          8880.5 -2525.9
-          8818.3 -2525.9
-          8774.3 -2569.9
-          8774.3 -3129.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          6316.3 -3173.8
-          6378.6 -3173.8
-          6422.5 -3129.9
-          6422.5 -2569.9
-          6378.5 -2525.9
-          6316.4 -2525.9
-          6272.4 -2569.9
-          6272.4 -3129.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          3819.5 -3173.8
-          3881.8 -3173.8
-          3925.7 -3129.9
-          3925.7 -2569.9
-          3881.7 -2525.9
-          3819.6 -2525.9
-          3775.6 -2569.9
-          3775.6 -3129.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1377.3 -3173.8
-          -1315.1 -3173.8
-          -1271.2 -3129.9
-          -1271.2 -2569.8
-          -1315.1 -2525.9
-          -1377.3 -2525.9
-          -1421.2 -2569.8
-          -1421.2 -3129.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          14015.1 -3173.8
-          14077.3 -3173.8
-          14121.2 -3129.9
-          14121.2 -2569.8
-          14077.3 -2525.9
-          14015.1 -2525.9
-          13971.2 -2569.8
-          13971.2 -3129.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          1221.1 -3173.8
-          1283.4 -3173.8
-          1327.3 -3129.9
-          1327.3 -2569.9
-          1283.3 -2525.9
-          1221.1 -2525.9
-          1177.2 -2569.8
-          1177.2 -3129.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          14213.2 -3173.8
-          14275.4 -3173.8
-          14319.3 -3129.9
-          14319.3 3129.9
-          14275.4 3173.8
-          14213.2 3173.8
-          14169.3 3129.9
-          14169.3 -3129.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1575.5 -3173.8
-          -1513.2 -3173.8
-          -1469.3 -3129.9
-          -1469.3 3129.9
-          -1513.2 3173.8
-          -1575.5 3173.8
-          -1619.4 3129.9
-          -1619.4 -3129.9
-        )
-      )
+    (image keyboard_parts:NovelKeys_Kailh_Big_Series_Switch
+      (outline (path signal 300  -28000 30500  -18000 30500))
+      (outline (path signal 300  -28000 20500  -28000 30500))
+      (outline (path signal 300  28000 30500  28000 20500))
+      (outline (path signal 300  18000 30500  28000 30500))
+      (outline (path signal 300  28000 -30500  18000 -30500))
+      (outline (path signal 300  28000 -20500  28000 -30500))
+      (outline (path signal 300  -28000 -30500  -28000 -20500))
+      (outline (path signal 300  -18000 -30500  -28000 -30500))
+      (outline (path signal 150  6900 0  6562.29 -2132.22  5582.22 -4055.72  4055.72 -5582.22
+            2132.22 -6562.29  0 -6900  -2132.22 -6562.29  -4055.72 -5582.22
+            -5582.22 -4055.72  -6562.29 -2132.22  -6900 0  -6562.29 2132.22
+            -5582.22 4055.72  -4055.72 5582.22  -2132.22 6562.29  0 6900
+            2132.22 6562.29  4055.72 5582.22  5582.22 4055.72  6562.29 2132.22))
+      (pin Oval[A]Pad_7000x3000_um 2 10160 20740)
+      (pin Oval[A]Pad_8000x4000_um 1 -15240 10850)
     )
-    (image "TerminalBlocks_Phoenix:TerminalBlock_Phoenix_MPT-2.54mm_4pol"
-      (side front)
-      (pin "Oval[A]Pad_1998.98x1998.98_um" 4 7620.0 0.0 (rotate 180))
-      (pin "Rect[A]Pad_1998.98x1998.98_um" 1 0.0 0.0 (rotate 180))
-      (pin "Oval[A]Pad_1998.98x1998.98_um" 2 2540.0 0.0 (rotate 180))
-      (pin "Oval[A]Pad_1998.98x1998.98_um" 3 5080.0 0.0 (rotate 180))
-      (outline
-        (polygon signal 0
-          -1790.4 3275.0
-          9410.4 3275.0
-          9425.0 3289.6
-          9425.0 3310.4
-          9410.4 3325.0
-          -1790.4 3325.0
-          -1805.0 3310.4
-          -1805.0 3289.6
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1790.4 -3325.0
-          -1769.6 -3325.0
-          -1755.0 -3310.4
-          -1755.0 3310.4
-          -1769.6 3325.0
-          -1790.4 3325.0
-          -1805.0 3310.4
-          -1805.0 -3310.4
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1790.4 -3325.0
-          9410.4 -3325.0
-          9425.0 -3310.4
-          9425.0 -3289.6
-          9410.4 -3275.0
-          -1790.4 -3275.0
-          -1805.0 -3289.6
-          -1805.0 -3310.4
-        )
-      )
-      (outline
-        (polygon signal 0
-          9389.6 -3325.0
-          9410.4 -3325.0
-          9425.0 -3310.4
-          9425.0 3310.4
-          9410.4 3325.0
-          9389.6 3325.0
-          9375.0 3310.4
-          9375.0 -3310.4
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1522.1 3023.8
-          9142.1 3023.8
-          9186.0 3067.7
-          9186.0 3129.9
-          9142.1 3173.8
-          -1522.1 3173.8
-          -1566.0 3129.9
-          -1566.0 3067.7
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1522.1 2625.0
-          9142.1 2625.0
-          9186.0 2668.9
-          9186.0 2731.1
-          9142.0 2775.1
-          -1522.0 2775.1
-          -1566.0 2731.1
-          -1566.0 2668.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1522.1 -2676.0
-          9142.1 -2676.0
-          9186.0 -2632.1
-          9186.0 -2569.8
-          9142.1 -2525.9
-          -1522.1 -2525.9
-          -1566.0 -2569.8
-          -1566.0 -2632.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1522.1 -3173.8
-          9142.1 -3173.8
-          9186.0 -3129.9
-          9186.0 -3067.7
-          9142.1 -3023.8
-          -1522.1 -3023.8
-          -1566.0 -3067.7
-          -1566.0 -3129.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          6275.7 -3173.8
-          6338.0 -3173.8
-          6381.9 -3129.9
-          6381.9 -2569.9
-          6337.9 -2525.9
-          6275.7 -2525.9
-          6231.8 -2569.8
-          6231.8 -3129.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          3778.9 -3173.8
-          3841.1 -3173.8
-          3885.0 -3129.9
-          3885.0 -2569.8
-          3841.1 -2525.9
-          3778.9 -2525.9
-          3735.0 -2569.8
-          3735.0 -3129.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1318.9 -3173.8
-          -1256.6 -3173.8
-          -1212.7 -3129.9
-          -1212.7 -2569.9
-          -1256.7 -2525.9
-          -1318.9 -2525.9
-          -1362.8 -2569.8
-          -1362.8 -3129.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          8879.2 -3173.8
-          8941.5 -3173.8
-          8985.4 -3129.9
-          8985.4 -2569.9
-          8941.4 -2525.9
-          8879.2 -2525.9
-          8835.3 -2569.8
-          8835.3 -3129.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          1282.0 -3173.8
-          1344.3 -3173.8
-          1388.2 -3129.9
-          1388.2 -2569.8
-          1344.3 -2525.9
-          1282.1 -2525.9
-          1238.1 -2569.9
-          1238.1 -3129.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          9077.3 -3173.8
-          9139.6 -3173.8
-          9183.5 -3129.9
-          9183.5 3129.9
-          9139.6 3173.8
-          9077.3 3173.8
-          9033.4 3129.9
-          9033.4 -3129.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1517.0 -3173.8
-          -1454.8 -3173.8
-          -1410.9 -3129.9
-          -1410.9 3129.9
-          -1454.8 3173.8
-          -1517.0 3173.8
-          -1560.9 3129.9
-          -1560.9 -3129.9
-        )
-      )
+    (image Capacitors_SMD:C_0603
+      (outline (path signal 50  1400 -650  -1400 -650))
+      (outline (path signal 50  1400 -650  1400 650))
+      (outline (path signal 50  -1400 650  -1400 -650))
+      (outline (path signal 50  -1400 650  1400 650))
+      (outline (path signal 120  350 -600  -350 -600))
+      (outline (path signal 120  -350 600  350 600))
+      (outline (path signal 100  -800 400  800 400))
+      (outline (path signal 100  800 400  800 -400))
+      (outline (path signal 100  800 -400  -800 -400))
+      (outline (path signal 100  -800 -400  -800 400))
+      (pin Rect[T]Pad_800x750_um 2 750 0)
+      (pin Rect[T]Pad_800x750_um 1 -750 0)
     )
-    (image "TerminalBlocks_Phoenix:TerminalBlock_Phoenix_MPT-2.54mm_2pol"
-      (side front)
-      (pin "Oval[A]Pad_1998.98x1998.98_um" 2 2540.0 0.0)
-      (pin "Rect[A]Pad_1998.98x1998.98_um" 1 0.0 0.0)
-      (keepout
-        (circle F.Cu 1100.0 0.0 -2540.0)
-      )
-      (keepout
-        (circle B.Cu 1100.0 0.0 -2540.0)
-      )
-      (keepout
-        (circle F.Cu 1100.0 2540.0 -2540.0)
-      )
-      (keepout
-        (circle B.Cu 1100.0 2540.0 -2540.0)
-      )
-      (outline
-        (polygon signal 0
-          -1710.4 3275.0
-          4310.4 3275.0
-          4325.0 3289.6
-          4325.0 3310.4
-          4310.4 3325.0
-          -1710.4 3325.0
-          -1725.0 3310.4
-          -1725.0 3289.6
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1710.4 -3325.0
-          -1689.6 -3325.0
-          -1675.0 -3310.4
-          -1675.0 3310.4
-          -1689.6 3325.0
-          -1710.4 3325.0
-          -1725.0 3310.4
-          -1725.0 -3310.4
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1710.4 -3325.0
-          4310.4 -3325.0
-          4325.0 -3310.4
-          4325.0 -3289.6
-          4310.4 -3275.0
-          -1710.4 -3275.0
-          -1725.0 -3289.6
-          -1725.0 -3310.4
-        )
-      )
-      (outline
-        (polygon signal 0
-          4289.6 -3325.0
-          4310.4 -3325.0
-          4325.0 -3310.4
-          4325.0 3310.4
-          4310.4 3325.0
-          4289.6 3325.0
-          4275.0 3310.4
-          4275.0 -3310.4
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1560.2 -2676.0
-          4100.2 -2676.0
-          4144.1 -2632.1
-          4144.1 -2569.8
-          4100.2 -2525.9
-          -1560.2 -2525.9
-          -1604.1 -2569.8
-          -1604.1 -2632.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1362.1 -3173.8
-          -1299.8 -3173.8
-          -1255.9 -3129.9
-          -1255.9 -2569.9
-          -1299.9 -2525.9
-          -1362.1 -2525.9
-          -1406.0 -2569.8
-          -1406.0 -3129.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          3839.8 -3173.8
-          3902.1 -3173.8
-          3946.0 -3129.9
-          3946.0 -2569.9
-          3902.0 -2525.9
-          3839.9 -2525.9
-          3795.9 -2569.9
-          3795.9 -3129.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          1238.9 -3173.8
-          1301.1 -3173.8
-          1345.0 -3129.9
-          1345.0 -2569.8
-          1301.1 -2525.9
-          1238.9 -2525.9
-          1195.0 -2569.8
-          1195.0 -3129.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1560.2 2625.0
-          4100.2 2625.0
-          4144.1 2668.9
-          4144.1 2731.1
-          4100.1 2775.1
-          -1560.1 2775.1
-          -1604.1 2731.1
-          -1604.1 2668.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1560.2 -3173.8
-          4100.2 -3173.8
-          4144.1 -3129.9
-          4144.1 -3067.7
-          4100.2 -3023.8
-          -1560.2 -3023.8
-          -1604.1 -3067.7
-          -1604.1 -3129.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          4037.9 -3173.8
-          4100.2 -3173.8
-          4144.1 -3129.9
-          4144.1 3129.9
-          4100.2 3173.8
-          4037.9 3173.8
-          3994.0 3129.9
-          3994.0 -3129.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1560.2 3023.8
-          4100.2 3023.8
-          4144.1 3067.7
-          4144.1 3129.9
-          4100.2 3173.8
-          -1560.2 3173.8
-          -1604.1 3129.9
-          -1604.1 3067.7
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1560.2 -3173.8
-          -1497.9 -3173.8
-          -1454.0 -3129.9
-          -1454.0 3129.9
-          -1497.9 3173.8
-          -1560.2 3173.8
-          -1604.1 3129.9
-          -1604.1 -3129.9
-        )
-      )
+    (image "Diodes_SMD:D_SOD-123"
+      (outline (path signal 120  -2250 1000  -2250 -1000))
+      (outline (path signal 100  250 0  750 0))
+      (outline (path signal 100  250 -400  -350 0))
+      (outline (path signal 100  250 400  250 -400))
+      (outline (path signal 100  -350 0  250 400))
+      (outline (path signal 100  -350 0  -350 -550))
+      (outline (path signal 100  -350 0  -350 550))
+      (outline (path signal 100  -750 0  -350 0))
+      (outline (path signal 100  -1400 -900  -1400 900))
+      (outline (path signal 100  1400 -900  -1400 -900))
+      (outline (path signal 100  1400 900  1400 -900))
+      (outline (path signal 100  -1400 900  1400 900))
+      (outline (path signal 50  -2350 1150  2350 1150))
+      (outline (path signal 50  2350 1150  2350 -1150))
+      (outline (path signal 50  2350 -1150  -2350 -1150))
+      (outline (path signal 50  -2350 1150  -2350 -1150))
+      (outline (path signal 120  -2250 -1000  1650 -1000))
+      (outline (path signal 120  -2250 1000  1650 1000))
+      (pin Rect[T]Pad_900x1200_um 1 -1650 0)
+      (pin Rect[T]Pad_900x1200_um 2 1650 0)
     )
-    (image "Resistors_THT:R_Axial_DIN0411_L9.9mm_D3.6mm_P7.62mm_Vertical"
-      (side front)
-      (pin "Round[A]Pad_2400_um" 1 0.0 0.0)
-      (pin "Oval[A]Pad_2400x2400_um" 2 7620.0 0.0)
-      (outline
-        (polygon signal 0
-          -3.7879682179341656 -1850.0
-          3.7879682179341656 -1850.0
-          571.8619611769037 -1760.0192039200197
-          1087.7695245835025 -1497.1304754164973
-          1497.1304754164973 -1087.7695245835025
-          1760.0192039200197 -571.8619611769037
-          1850.0 -3.7879682179341656
-          1850.0 3.7879682179341656
-          1760.0192039200197 571.8619611769037
-          1497.1304754164973 1087.7695245835025
-          1087.7695245835025 1497.1304754164973
-          571.8619611769037 1760.0192039200197
-          3.7879682179341656 1850.0
-          -3.7879682179341656 1850.0
-          -571.8619611769037 1760.0192039200197
-          -1087.7695245835025 1497.1304754164973
-          -1497.1304754164973 1087.7695245835025
-          -1760.0192039200197 571.8619611769037
-          -1850.0 3.7879682179341656
-          -1850.0 -3.7879682179341656
-          -1760.0192039200197 -571.8619611769037
-          -1497.1304754164973 -1087.7695245835025
-          -1087.7695245835025 -1497.1304754164973
-          -571.8619611769037 -1760.0192039200197
-        )
-      )
-      (outline
-        (polygon signal 0
-          -4.421538461538462 -1920.0
-          4.421538461538462 -1920.0
-          593.591060947857 -1826.7250755980253
-          1129.1851749901691 -1553.8148250098309
-          1553.8148250098309 -1129.1851749901691
-          1826.7250755980253 -593.591060947857
-          1920.0 -4.421538461538462
-          1920.0 4.421538461538462
-          1826.7250755980253 593.591060947857
-          1553.8148250098309 1129.1851749901691
-          1129.1851749901691 1553.8148250098309
-          593.591060947857 1826.7250755980253
-          4.421538461538462 1920.0
-          -4.421538461538462 1920.0
-          -593.591060947857 1826.7250755980253
-          -1129.1851749901691 1553.8148250098309
-          -1553.8148250098309 1129.1851749901691
-          -1826.7250755980253 593.591060947857
-          -1920.0 4.421538461538462
-          -1920.0 -4.421538461538462
-          -1826.7250755980253 -593.591060947857
-          -1553.8148250098309 -1129.1851749901691
-          -1129.1851749901691 -1553.8148250098309
-          -593.591060947857 -1826.7250755980253
-        )
-      )
-      (outline
-        (polygon signal 0
-          -20.7 -50.0
-          7640.7 -50.0
-          7670.0 -20.7
-          7670.0 20.7
-          7640.7 50.0
-          -20.7 50.0
-          -50.0 20.7
-          -50.0 -20.7
-        )
-      )
-      (outline
-        (polygon signal 0
-          1835.1 -60.0
-          6144.9 -60.0
-          6180.0 -24.9
-          6180.0 24.9
-          6144.9 60.0
-          1835.1 60.0
-          1800.0 24.9
-          1800.0 -24.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -2160.4 -2175.0
-          -2139.6 -2175.0
-          -2125.0 -2160.4
-          -2125.0 2160.4
-          -2139.6 2175.0
-          -2160.4 2175.0
-          -2175.0 2160.4
-          -2175.0 -2160.4
-        )
-      )
-      (outline
-        (polygon signal 0
-          -2160.4 -2175.0
-          9160.4 -2175.0
-          9175.0 -2160.4
-          9175.0 -2139.6
-          9160.4 -2125.0
-          -2160.4 -2125.0
-          -2175.0 -2139.6
-          -2175.0 -2160.4
-        )
-      )
-      (outline
-        (polygon signal 0
-          9139.6 -2175.0
-          9160.4 -2175.0
-          9175.0 -2160.4
-          9175.0 2160.4
-          9160.4 2175.0
-          9139.6 2175.0
-          9125.0 2160.4
-          9125.0 -2160.4
-        )
-      )
-      (outline
-        (polygon signal 0
-          -2160.4 2125.0
-          9160.4 2125.0
-          9175.0 2139.6
-          9175.0 2160.4
-          9160.4 2175.0
-          -2160.4 2175.0
-          -2175.0 2160.4
-          -2175.0 2139.6
-        )
-      )
+    (image Socket_Strips:Socket_Strip_Straight_2x03_Pitch2.54mm
+      (outline (path signal 100  -3810 1270  -3810 -6350))
+      (outline (path signal 100  -3810 -6350  1270 -6350))
+      (outline (path signal 100  1270 -6350  1270 1270))
+      (outline (path signal 100  1270 1270  -3810 1270))
+      (outline (path signal 120  1330 -1270  1330 -6410))
+      (outline (path signal 120  1330 -6410  -3870 -6410))
+      (outline (path signal 120  -3870 -6410  -3870 1330))
+      (outline (path signal 120  -3870 1330  -1270 1330))
+      (outline (path signal 120  -1270 1330  -1270 -1270))
+      (outline (path signal 120  -1270 -1270  1330 -1270))
+      (outline (path signal 120  1330 0  1330 1330))
+      (outline (path signal 120  1330 1330  60 1330))
+      (outline (path signal 50  -4350 1800  -4350 -6850))
+      (outline (path signal 50  -4350 -6850  1800 -6850))
+      (outline (path signal 50  1800 -6850  1800 1800))
+      (outline (path signal 50  1800 1800  -4350 1800))
+      (pin Rect[A]Pad_1700x1700_um 1 0 0)
+      (pin Oval[A]Pad_1700x1700_um 2 -2540 0)
+      (pin Oval[A]Pad_1700x1700_um 3 0 -2540)
+      (pin Oval[A]Pad_1700x1700_um 4 -2540 -2540)
+      (pin Oval[A]Pad_1700x1700_um 5 0 -5080)
+      (pin Oval[A]Pad_1700x1700_um 6 -2540 -5080)
     )
-    (image "Potentiometers:Potentiometer_Trimmer_ACP_CA9VSMD_Horizontal_Px9.2mm_Py5.0mm_MountLS"
-      (side front)
-      (pin "Rect[B]Pad_2500x2500_um" 3 -4625.0 2500.0)
-      (pin "Rect[B]Pad_2500x2500_um" 2 4625.0 0.0)
-      (pin "Rect[B]Pad_2500x2500_um" 1 -4625.0 -2500.0)
-      (keepout
-        (circle F.Cu 4000.0 -125.0 0.0)
-      )
-      (keepout
-        (circle B.Cu 4000.0 -125.0 0.0)
-      )
-      (outline
-        (polygon signal 0
-          -128.78882833787466 -1550.0
-          -121.21117166212534 -1550.0
-          354.16039161836403 -1474.7200156531005
-          786.4694783032667 -1254.4305216967334
-          1129.4305216967334 -911.4694783032667
-          1349.7200156531005 -479.160391618364
-          1425.0 -3.7888283378746594
-          1425.0 3.7888283378746594
-          1349.7200156531005 479.160391618364
-          1129.4305216967334 911.4694783032667
-          786.4694783032667 1254.4305216967334
-          354.16039161836403 1474.7200156531005
-          -121.21117166212534 1550.0
-          -128.78882833787466 1550.0
-          -604.160391618364 1474.7200156531005
-          -1036.4694783032667 1254.4305216967334
-          -1379.4305216967334 911.4694783032667
-          -1599.7200156531005 479.160391618364
-          -1675.0 3.7888283378746594
-          -1675.0 -3.7888283378746594
-          -1599.7200156531005 -479.160391618364
-          -1379.4305216967334 -911.4694783032667
-          -1036.4694783032667 -1254.4305216967334
-          -604.160391618364 -1474.7200156531005
-        )
-      )
-      (outline
-        (polygon signal 0
-          -128.78793774319064 -1100.0
-          -121.21206225680935 -1100.0
-          215.1696160887055 -1046.7179714423437
-          521.9591922005571 -890.4408077994428
-          765.4408077994428 -646.9591922005571
-          921.7179714423437 -340.16961608870554
-          975.0 -3.7879377431906613
-          975.0 3.7879377431906613
-          921.7179714423437 340.16961608870554
-          765.4408077994428 646.9591922005571
-          521.9591922005571 890.4408077994428
-          215.1696160887055 1046.7179714423437
-          -121.21206225680935 1100.0
-          -128.78793774319064 1100.0
-          -465.16961608870554 1046.7179714423437
-          -771.9591922005571 890.4408077994428
-          -1015.4408077994428 646.9591922005571
-          -1171.7179714423437 340.16961608870554
-          -1225.0 3.7879377431906613
-          -1225.0 -3.7879377431906613
-          -1171.7179714423437 -340.16961608870554
-          -1015.4408077994428 -646.9591922005571
-          -771.9591922005571 -890.4408077994428
-          -465.16961608870554 -1046.7179714423437
-        )
-      )
-      (outline
-        (polygon signal 0
-          -4895.7 -4950.0
-          -4854.3 -4950.0
-          -4825.0 -4920.7
-          -4825.0 4920.7
-          -4854.3 4950.0
-          -4895.7 4950.0
-          -4925.0 4920.7
-          -4925.0 -4920.7
-        )
-      )
-      (outline
-        (polygon signal 0
-          -4895.7 -4950.0
-          5145.7 -4950.0
-          5175.0 -4920.7
-          5175.0 -4879.3
-          5145.7 -4850.0
-          -4895.7 -4850.0
-          -4925.0 -4879.3
-          -4925.0 -4920.7
-        )
-      )
-      (outline
-        (polygon signal 0
-          5104.3 -4950.0
-          5145.7 -4950.0
-          5175.0 -4920.7
-          5175.0 4920.7
-          5145.7 4950.0
-          5104.3 4950.0
-          5075.0 4920.7
-          5075.0 -4920.7
-        )
-      )
-      (outline
-        (polygon signal 0
-          -4895.7 4850.0
-          5145.7 4850.0
-          5175.0 4879.3
-          5175.0 4920.7
-          5145.7 4950.0
-          -4895.7 4950.0
-          -4925.0 4920.7
-          -4925.0 4879.3
-        )
-      )
-      (outline
-        (polygon signal 0
-          -4959.9 4901.0
-          5209.9 4901.0
-          5245.0 4936.1
-          5245.0 4985.9
-          5209.9 5021.0
-          -4959.9 5021.0
-          -4995.0 4985.9
-          -4995.0 4936.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          -4959.9 -5020.0
-          5209.9 -5020.0
-          5245.0 -4984.9
-          5245.0 -4935.1
-          5209.9 -4900.0
-          -4959.9 -4900.0
-          -4995.0 -4935.1
-          -4995.0 -4984.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -4959.9 3871.0
-          -4910.1 3871.0
-          -4875.0 3906.1
-          -4875.0 4985.9
-          -4910.1 5021.0
-          -4959.9 5021.0
-          -4995.0 4985.9
-          -4995.0 3906.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          -4959.9 -1130.0
-          -4910.1 -1130.0
-          -4875.0 -1094.9
-          -4875.0 1093.9
-          -4910.1 1129.0
-          -4959.9 1129.0
-          -4995.0 1093.9
-          -4995.0 -1094.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -4959.9 -5020.0
-          -4910.1 -5020.0
-          -4875.0 -4984.9
-          -4875.0 -3905.1
-          -4910.1 -3870.0
-          -4959.9 -3870.0
-          -4995.0 -3905.1
-          -4995.0 -4984.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          5160.1 1370.0
-          5209.9 1370.0
-          5245.0 1405.1
-          5245.0 4985.9
-          5209.9 5021.0
-          5160.1 5021.0
-          5125.0 4985.9
-          5125.0 1405.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          5160.1 -5020.0
-          5209.9 -5020.0
-          5245.0 -4984.9
-          5245.0 -1405.1
-          5209.9 -1370.0
-          5160.1 -1370.0
-          5125.0 -1405.1
-          5125.0 -4984.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -4959.9 4901.0
-          -4550.1 4901.0
-          -4515.0 4936.1
-          -4515.0 4985.9
-          -4550.1 5021.0
-          -4959.9 5021.0
-          -4995.0 4985.9
-          -4995.0 4936.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          -4239.9 4901.0
-          -3830.1 4901.0
-          -3795.0 4936.1
-          -3795.0 4985.9
-          -3830.1 5021.0
-          -4239.9 5021.0
-          -4275.0 4985.9
-          -4275.0 4936.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          -3519.9 4901.0
-          -3110.1 4901.0
-          -3075.0 4936.1
-          -3075.0 4985.9
-          -3110.1 5021.0
-          -3519.9 5021.0
-          -3555.0 4985.9
-          -3555.0 4936.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          -2799.9 4901.0
-          -2390.1 4901.0
-          -2355.0 4936.1
-          -2355.0 4985.9
-          -2390.1 5021.0
-          -2799.9 5021.0
-          -2835.0 4985.9
-          -2835.0 4936.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          -2079.9 4901.0
-          -1670.1 4901.0
-          -1635.0 4936.1
-          -1635.0 4985.9
-          -1670.1 5021.0
-          -2079.9 5021.0
-          -2115.0 4985.9
-          -2115.0 4936.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1359.9 4901.0
-          -950.1 4901.0
-          -915.0 4936.1
-          -915.0 4985.9
-          -950.1 5021.0
-          -1359.9 5021.0
-          -1395.0 4985.9
-          -1395.0 4936.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          -639.9 4901.0
-          -230.1 4901.0
-          -195.0 4936.1
-          -195.0 4985.9
-          -230.1 5021.0
-          -639.9 5021.0
-          -675.0 4985.9
-          -675.0 4936.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          80.1 4901.0
-          489.9 4901.0
-          525.0 4936.1
-          525.0 4985.9
-          489.9 5021.0
-          80.1 5021.0
-          45.0 4985.9
-          45.0 4936.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          800.1 4901.0
-          1209.9 4901.0
-          1245.0 4936.1
-          1245.0 4985.9
-          1209.9 5021.0
-          800.1 5021.0
-          765.0 4985.9
-          765.0 4936.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          1520.1 4901.0
-          1929.9 4901.0
-          1965.0 4936.1
-          1965.0 4985.9
-          1929.9 5021.0
-          1520.1 5021.0
-          1485.0 4985.9
-          1485.0 4936.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          2240.1 4901.0
-          2649.9 4901.0
-          2685.0 4936.1
-          2685.0 4985.9
-          2649.9 5021.0
-          2240.1 5021.0
-          2205.0 4985.9
-          2205.0 4936.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          2960.1 4901.0
-          3369.9 4901.0
-          3405.0 4936.1
-          3405.0 4985.9
-          3369.9 5021.0
-          2960.1 5021.0
-          2925.0 4985.9
-          2925.0 4936.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          3680.1 4901.0
-          4089.9 4901.0
-          4125.0 4936.1
-          4125.0 4985.9
-          4089.9 5021.0
-          3680.1 5021.0
-          3645.0 4985.9
-          3645.0 4936.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          4400.1 4901.0
-          4809.9 4901.0
-          4845.0 4936.1
-          4845.0 4985.9
-          4809.9 5021.0
-          4400.1 5021.0
-          4365.0 4985.9
-          4365.0 4936.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          5120.1 4901.0
-          5209.9 4901.0
-          5245.0 4936.1
-          5245.0 4985.9
-          5209.9 5021.0
-          5120.1 5021.0
-          5085.0 4985.9
-          5085.0 4936.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          -4959.9 -5020.0
-          -4550.1 -5020.0
-          -4515.0 -4984.9
-          -4515.0 -4935.1
-          -4550.1 -4900.0
-          -4959.9 -4900.0
-          -4995.0 -4935.1
-          -4995.0 -4984.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -4239.9 -5020.0
-          -3830.1 -5020.0
-          -3795.0 -4984.9
-          -3795.0 -4935.1
-          -3830.1 -4900.0
-          -4239.9 -4900.0
-          -4275.0 -4935.1
-          -4275.0 -4984.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -3519.9 -5020.0
-          -3110.1 -5020.0
-          -3075.0 -4984.9
-          -3075.0 -4935.1
-          -3110.1 -4900.0
-          -3519.9 -4900.0
-          -3555.0 -4935.1
-          -3555.0 -4984.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -2799.9 -5020.0
-          -2390.1 -5020.0
-          -2355.0 -4984.9
-          -2355.0 -4935.1
-          -2390.1 -4900.0
-          -2799.9 -4900.0
-          -2835.0 -4935.1
-          -2835.0 -4984.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -2079.9 -5020.0
-          -1670.1 -5020.0
-          -1635.0 -4984.9
-          -1635.0 -4935.1
-          -1670.1 -4900.0
-          -2079.9 -4900.0
-          -2115.0 -4935.1
-          -2115.0 -4984.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1359.9 -5020.0
-          -950.1 -5020.0
-          -915.0 -4984.9
-          -915.0 -4935.1
-          -950.1 -4900.0
-          -1359.9 -4900.0
-          -1395.0 -4935.1
-          -1395.0 -4984.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -639.9 -5020.0
-          -230.1 -5020.0
-          -195.0 -4984.9
-          -195.0 -4935.1
-          -230.1 -4900.0
-          -639.9 -4900.0
-          -675.0 -4935.1
-          -675.0 -4984.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          80.1 -5020.0
-          489.9 -5020.0
-          525.0 -4984.9
-          525.0 -4935.1
-          489.9 -4900.0
-          80.1 -4900.0
-          45.0 -4935.1
-          45.0 -4984.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          800.1 -5020.0
-          1209.9 -5020.0
-          1245.0 -4984.9
-          1245.0 -4935.1
-          1209.9 -4900.0
-          800.1 -4900.0
-          765.0 -4935.1
-          765.0 -4984.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          1520.1 -5020.0
-          1929.9 -5020.0
-          1965.0 -4984.9
-          1965.0 -4935.1
-          1929.9 -4900.0
-          1520.1 -4900.0
-          1485.0 -4935.1
-          1485.0 -4984.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          2240.1 -5020.0
-          2649.9 -5020.0
-          2685.0 -4984.9
-          2685.0 -4935.1
-          2649.9 -4900.0
-          2240.1 -4900.0
-          2205.0 -4935.1
-          2205.0 -4984.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          2960.1 -5020.0
-          3369.9 -5020.0
-          3405.0 -4984.9
-          3405.0 -4935.1
-          3369.9 -4900.0
-          2960.1 -4900.0
-          2925.0 -4935.1
-          2925.0 -4984.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          3680.1 -5020.0
-          4089.9 -5020.0
-          4125.0 -4984.9
-          4125.0 -4935.1
-          4089.9 -4900.0
-          3680.1 -4900.0
-          3645.0 -4935.1
-          3645.0 -4984.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          4400.1 -5020.0
-          4809.9 -5020.0
-          4845.0 -4984.9
-          4845.0 -4935.1
-          4809.9 -4900.0
-          4400.1 -4900.0
-          4365.0 -4935.1
-          4365.0 -4984.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          5120.1 -5020.0
-          5209.9 -5020.0
-          5245.0 -4984.9
-          5245.0 -4935.1
-          5209.9 -4900.0
-          5120.1 -4900.0
-          5085.0 -4935.1
-          5085.0 -4984.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -4959.9 4541.0
-          -4910.1 4541.0
-          -4875.0 4576.1
-          -4875.0 4985.9
-          -4910.1 5021.0
-          -4959.9 5021.0
-          -4995.0 4985.9
-          -4995.0 4576.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          -4959.9 3871.0
-          -4910.1 3871.0
-          -4875.0 3906.1
-          -4875.0 4265.9
-          -4910.1 4301.0
-          -4959.9 4301.0
-          -4995.0 4265.9
-          -4995.0 3906.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          -4959.9 940.0
-          -4910.1 940.0
-          -4875.0 975.1
-          -4875.0 1093.9
-          -4910.1 1129.0
-          -4959.9 1129.0
-          -4995.0 1093.9
-          -4995.0 975.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          -4959.9 220.0
-          -4910.1 220.0
-          -4875.0 255.1
-          -4875.0 664.9
-          -4910.1 700.0
-          -4959.9 700.0
-          -4995.0 664.9
-          -4995.0 255.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          -4959.9 -500.0
-          -4910.1 -500.0
-          -4875.0 -464.9
-          -4875.0 -55.1
-          -4910.1 -20.0
-          -4959.9 -20.0
-          -4995.0 -55.1
-          -4995.0 -464.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -4959.9 -1130.0
-          -4910.1 -1130.0
-          -4875.0 -1094.9
-          -4875.0 -775.1
-          -4910.1 -740.0
-          -4959.9 -740.0
-          -4995.0 -775.1
-          -4995.0 -1094.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -4959.9 -4100.0
-          -4910.1 -4100.0
-          -4875.0 -4064.9
-          -4875.0 -3905.1
-          -4910.1 -3870.0
-          -4959.9 -3870.0
-          -4995.0 -3905.1
-          -4995.0 -4064.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -4959.9 -4820.0
-          -4910.1 -4820.0
-          -4875.0 -4784.9
-          -4875.0 -4375.1
-          -4910.1 -4340.0
-          -4959.9 -4340.0
-          -4995.0 -4375.1
-          -4995.0 -4784.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          5160.1 4541.0
-          5209.9 4541.0
-          5245.0 4576.1
-          5245.0 4985.9
-          5209.9 5021.0
-          5160.1 5021.0
-          5125.0 4985.9
-          5125.0 4576.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          5160.1 3821.0
-          5209.9 3821.0
-          5245.0 3856.1
-          5245.0 4265.9
-          5209.9 4301.0
-          5160.1 4301.0
-          5125.0 4265.9
-          5125.0 3856.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          5160.1 3101.0
-          5209.9 3101.0
-          5245.0 3136.1
-          5245.0 3545.9
-          5209.9 3581.0
-          5160.1 3581.0
-          5125.0 3545.9
-          5125.0 3136.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          5160.1 2380.0
-          5209.9 2380.0
-          5245.0 2415.1
-          5245.0 2825.9
-          5209.9 2861.0
-          5160.1 2861.0
-          5125.0 2825.9
-          5125.0 2415.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          5160.1 1660.0
-          5209.9 1660.0
-          5245.0 1695.1
-          5245.0 2104.9
-          5209.9 2140.0
-          5160.1 2140.0
-          5125.0 2104.9
-          5125.0 1695.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          5160.1 -1940.0
-          5209.9 -1940.0
-          5245.0 -1904.9
-          5245.0 -1495.1
-          5209.9 -1460.0
-          5160.1 -1460.0
-          5125.0 -1495.1
-          5125.0 -1904.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          5160.1 -2660.0
-          5209.9 -2660.0
-          5245.0 -2624.9
-          5245.0 -2215.1
-          5209.9 -2180.0
-          5160.1 -2180.0
-          5125.0 -2215.1
-          5125.0 -2624.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          5160.1 -3380.0
-          5209.9 -3380.0
-          5245.0 -3344.9
-          5245.0 -2935.1
-          5209.9 -2900.0
-          5160.1 -2900.0
-          5125.0 -2935.1
-          5125.0 -3344.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          5160.1 -4100.0
-          5209.9 -4100.0
-          5245.0 -4064.9
-          5245.0 -3655.1
-          5209.9 -3620.0
-          5160.1 -3620.0
-          5125.0 -3655.1
-          5125.0 -4064.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          5160.1 -4820.0
-          5209.9 -4820.0
-          5245.0 -4784.9
-          5245.0 -4375.1
-          5209.9 -4340.0
-          5160.1 -4340.0
-          5125.0 -4375.1
-          5125.0 -4784.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -6160.4 -5175.0
-          -6139.6 -5175.0
-          -6125.0 -5160.4
-          -6125.0 5160.4
-          -6139.6 5175.0
-          -6160.4 5175.0
-          -6175.0 5160.4
-          -6175.0 -5160.4
-        )
-      )
-      (outline
-        (polygon signal 0
-          -6160.4 -5175.0
-          6160.4 -5175.0
-          6175.0 -5160.4
-          6175.0 -5139.6
-          6160.4 -5125.0
-          -6160.4 -5125.0
-          -6175.0 -5139.6
-          -6175.0 -5160.4
-        )
-      )
-      (outline
-        (polygon signal 0
-          6139.6 -5175.0
-          6160.4 -5175.0
-          6175.0 -5160.4
-          6175.0 5160.4
-          6160.4 5175.0
-          6139.6 5175.0
-          6125.0 5160.4
-          6125.0 -5160.4
-        )
-      )
-      (outline
-        (polygon signal 0
-          -6160.4 5125.0
-          6160.4 5125.0
-          6175.0 5139.6
-          6175.0 5160.4
-          6160.4 5175.0
-          -6160.4 5175.0
-          -6175.0 5160.4
-          -6175.0 5139.6
-        )
-      )
-      (outline
-        (polygon signal 0
-          -6160.4 -5175.0
-          -6139.6 -5175.0
-          -6125.0 -5160.4
-          -6125.0 5160.4
-          -6139.6 5175.0
-          -6160.4 5175.0
-          -6175.0 5160.4
-          -6175.0 -5160.4
-        )
-      )
-      (outline
-        (polygon signal 0
-          -6160.4 -5175.0
-          6160.4 -5175.0
-          6175.0 -5160.4
-          6175.0 -5139.6
-          6160.4 -5125.0
-          -6160.4 -5125.0
-          -6175.0 -5139.6
-          -6175.0 -5160.4
-        )
-      )
-      (outline
-        (polygon signal 0
-          6139.6 -5175.0
-          6160.4 -5175.0
-          6175.0 -5160.4
-          6175.0 5160.4
-          6160.4 5175.0
-          6139.6 5175.0
-          6125.0 5160.4
-          6125.0 -5160.4
-        )
-      )
-      (outline
-        (polygon signal 0
-          -6160.4 5125.0
-          6160.4 5125.0
-          6175.0 5139.6
-          6175.0 5160.4
-          6160.4 5175.0
-          -6160.4 5175.0
-          -6175.0 5160.4
-          -6175.0 5139.6
-        )
-      )
+    (image Socket_Strips:Socket_Strip_Straight_2x08_Pitch2.54mm
+      (outline (path signal 100  -3810 1270  -3810 -19050))
+      (outline (path signal 100  -3810 -19050  1270 -19050))
+      (outline (path signal 100  1270 -19050  1270 1270))
+      (outline (path signal 100  1270 1270  -3810 1270))
+      (outline (path signal 120  1330 -1270  1330 -19110))
+      (outline (path signal 120  1330 -19110  -3870 -19110))
+      (outline (path signal 120  -3870 -19110  -3870 1330))
+      (outline (path signal 120  -3870 1330  -1270 1330))
+      (outline (path signal 120  -1270 1330  -1270 -1270))
+      (outline (path signal 120  -1270 -1270  1330 -1270))
+      (outline (path signal 120  1330 0  1330 1330))
+      (outline (path signal 120  1330 1330  60 1330))
+      (outline (path signal 50  -4350 1800  -4350 -19550))
+      (outline (path signal 50  -4350 -19550  1800 -19550))
+      (outline (path signal 50  1800 -19550  1800 1800))
+      (outline (path signal 50  1800 1800  -4350 1800))
+      (pin Rect[A]Pad_1700x1700_um 1 0 0)
+      (pin Oval[A]Pad_1700x1700_um 2 -2540 0)
+      (pin Oval[A]Pad_1700x1700_um 3 0 -2540)
+      (pin Oval[A]Pad_1700x1700_um 4 -2540 -2540)
+      (pin Oval[A]Pad_1700x1700_um 5 0 -5080)
+      (pin Oval[A]Pad_1700x1700_um 6 -2540 -5080)
+      (pin Oval[A]Pad_1700x1700_um 7 0 -7620)
+      (pin Oval[A]Pad_1700x1700_um 8 -2540 -7620)
+      (pin Oval[A]Pad_1700x1700_um 9 0 -10160)
+      (pin Oval[A]Pad_1700x1700_um 10 -2540 -10160)
+      (pin Oval[A]Pad_1700x1700_um 11 0 -12700)
+      (pin Oval[A]Pad_1700x1700_um 12 -2540 -12700)
+      (pin Oval[A]Pad_1700x1700_um 13 0 -15240)
+      (pin Oval[A]Pad_1700x1700_um 14 -2540 -15240)
+      (pin Oval[A]Pad_1700x1700_um 15 0 -17780)
+      (pin Oval[A]Pad_1700x1700_um 16 -2540 -17780)
     )
-    (image "Housings_DIP:DIP-6_W7.62mm"
-      (side front)
-      (pin "Rect[A]Pad_1600x1600_um" 1 0.0 0.0)
-      (pin "Oval[A]Pad_1600x1600_um" 4 7620.0 -5080.0)
-      (pin "Oval[A]Pad_1600x1600_um" 2 0.0 -2540.0)
-      (pin "Oval[A]Pad_1600x1600_um" 5 7620.0 -2540.0)
-      (pin "Oval[A]Pad_1600x1600_um" 3 0.0 -5080.0)
-      (pin "Oval[A]Pad_1600x1600_um" 6 7620.0 0.0)
-      (outline
-        (polygon signal 0
-          1614.3 1220.0
-          7005.7 1220.0
-          7035.0 1249.3
-          7035.0 1290.7
-          7005.7 1320.0
-          1614.3 1320.0
-          1585.0 1290.7
-          1585.0 1249.3
-        )
-      )
-      (outline
-        (polygon signal 0
-          6964.3 -6400.0
-          7005.7 -6400.0
-          7035.0 -6370.7
-          7035.0 1290.7
-          7005.7 1320.0
-          6964.3 1320.0
-          6935.0 1290.7
-          6935.0 -6370.7
-        )
-      )
-      (outline
-        (polygon signal 0
-          614.3 -6400.0
-          7005.7 -6400.0
-          7035.0 -6370.7
-          7035.0 -6329.3
-          7005.7 -6300.0
-          614.3 -6300.0
-          585.0 -6329.3
-          585.0 -6370.7
-        )
-      )
-      (outline
-        (polygon signal 0
-          614.3 -6400.0
-          655.7 -6400.0
-          685.0 -6370.7
-          685.0 290.7
-          655.7 320.0
-          614.3 320.0
-          585.0 290.7
-          585.0 -6370.7
-        )
-      )
-      (outline
-        (polygon signal 0
-          614.3 220.0
-          655.7 220.0
-          1685.0 1249.3
-          1685.0 1290.7
-          1655.7 1320.0
-          1614.3 1320.0
-          585.0 290.7
-          585.0 249.3
-        )
-      )
-      (outline
-        (polygon signal 0
-          1135.1 1270.0
-          2834.9 1270.0
-          2870.0 1305.1
-          2870.0 1354.9
-          2834.9 1390.0
-          1135.1 1390.0
-          1100.0 1354.9
-          1100.0 1305.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          1135.1 -6470.0
-          1184.9 -6470.0
-          1220.0 -6434.9
-          1220.0 1354.9
-          1184.9 1390.0
-          1135.1 1390.0
-          1100.0 1354.9
-          1100.0 -6434.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          1135.1 -6470.0
-          6484.9 -6470.0
-          6520.0 -6434.9
-          6520.0 -6385.1
-          6484.9 -6350.0
-          1135.1 -6350.0
-          1100.0 -6385.1
-          1100.0 -6434.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          6435.1 -6470.0
-          6484.9 -6470.0
-          6520.0 -6434.9
-          6520.0 1354.9
-          6484.9 1390.0
-          6435.1 1390.0
-          6400.0 1354.9
-          6400.0 -6434.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          4785.1 1270.0
-          6484.9 1270.0
-          6520.0 1305.1
-          6520.0 1354.9
-          6484.9 1390.0
-          4785.1 1390.0
-          4750.0 1354.9
-          4750.0 1305.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1110.4 -6625.0
-          -1089.6 -6625.0
-          -1075.0 -6610.4
-          -1075.0 1560.4
-          -1089.6 1575.0
-          -1110.4 1575.0
-          -1125.0 1560.4
-          -1125.0 -6610.4
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1110.4 -6625.0
-          8710.4 -6625.0
-          8725.0 -6610.4
-          8725.0 -6589.6
-          8710.4 -6575.0
-          -1110.4 -6575.0
-          -1125.0 -6589.6
-          -1125.0 -6610.4
-        )
-      )
-      (outline
-        (polygon signal 0
-          8689.6 -6625.0
-          8710.4 -6625.0
-          8725.0 -6610.4
-          8725.0 1560.4
-          8710.4 1575.0
-          8689.6 1575.0
-          8675.0 1560.4
-          8675.0 -6610.4
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1110.4 1525.0
-          8710.4 1525.0
-          8725.0 1539.6
-          8725.0 1560.4
-          8710.4 1575.0
-          -1110.4 1575.0
-          -1125.0 1560.4
-          -1125.0 1539.6
-        )
-      )
+    (image "SeeedOPL-Crystal Oscillator-2016:X3-SMD-3.6X1.3X0.8MM"
+      (outline (path signal 66.04  -1905 -889  1778 -889))
+      (outline (path signal 66.04  1778 -889  1778 889))
+      (outline (path signal 66.04  -1905 889  1778 889))
+      (outline (path signal 66.04  -1905 -889  -1905 889))
+      (outline (path signal 203.2  1699.26 647.7  1798.32 647.7))
+      (outline (path signal 203.2  1798.32 647.7  1798.32 -647.7))
+      (outline (path signal 203.2  1798.32 -647.7  1699.26 -647.7))
+      (outline (path signal 203.2  -1699.26 -647.7  -1849.12 -647.7))
+      (outline (path signal 203.2  -1849.12 -647.7  -1849.12 647.7))
+      (outline (path signal 203.2  -1849.12 647.7  -1699.26 647.7))
+      (outline (path signal 127  -1597.66 647.7  1597.66 647.7))
+      (outline (path signal 127  1597.66 647.7  1597.66 -647.7))
+      (outline (path signal 127  1597.66 -647.7  -1597.66 -647.7))
+      (outline (path signal 127  -1597.66 -647.7  -1597.66 647.7))
+      (outline (path signal 127  -797.56 647.7  -398.78 647.7))
+      (outline (path signal 127  398.78 647.7  797.56 647.7))
+      (outline (path signal 127  -797.56 -647.7  -398.78 -647.7))
+      (outline (path signal 127  398.78 -647.7  797.56 -647.7))
+      (outline (path signal 63.5  -1259.45 -1198.88  -1266.31 -1242.17  -1286.2 -1281.22
+            -1317.2 -1312.22  -1356.25 -1332.12  -1399.54 -1338.97  -1442.83 -1332.12
+            -1481.88 -1312.22  -1512.88 -1281.22  -1532.78 -1242.17  -1539.63 -1198.88
+            -1532.78 -1155.59  -1512.88 -1116.54  -1481.88 -1085.54  -1442.83 -1065.64
+            -1399.54 -1058.79  -1356.25 -1065.64  -1317.2 -1085.54  -1286.2 -1116.54
+            -1266.31 -1155.59))
+      (pin Rect[T]Pad_698.5x1699.26_um 1 -1198.88 0)
+      (pin Rect[T]Pad_698.5x1699.26_um 2 0 0)
+      (pin Rect[T]Pad_698.5x1699.26_um 3 1198.88 0)
     )
-    (image "Power_Integrations:TO-220"
-      (side front)
-      (pin "Oval[A]Pad_2032x2540_um" 2 0.0 0.0)
-      (pin "Oval[A]Pad_2032x2540_um" 3 2540.0 0.0)
-      (pin "Oval[A]Pad_2032x2540_um" 1 -2540.0 0.0)
-      (outline
-        (polygon signal 0
-          4794.9 -1853.0
-          4857.1 -1853.0
-          4901.0 -1809.1
-          4901.0 1682.1
-          4857.1 1726.0
-          4794.9 1726.0
-          4751.0 1682.1
-          4751.0 -1809.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          -4857.1 -1853.0
-          -4794.9 -1853.0
-          -4751.0 -1809.1
-          -4751.0 1682.1
-          -4794.9 1726.0
-          -4857.1 1726.0
-          -4901.0 1682.1
-          -4901.0 -1809.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          -5365.1 2719.0
-          5365.1 2719.0
-          5409.0 2762.9
-          5409.0 2825.1
-          5365.1 2869.0
-          -5365.1 2869.0
-          -5409.0 2825.1
-          -5409.0 2762.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          1746.9 1703.0
-          1809.1 1703.0
-          1853.0 1746.9
-          1853.0 3079.1
-          1809.1 3123.0
-          1746.9 3123.0
-          1703.0 3079.1
-          1703.0 1746.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -1809.1 1703.0
-          -1746.9 1703.0
-          -1703.0 1746.9
-          -1703.0 3079.1
-          -1746.9 3123.0
-          -1809.1 3123.0
-          -1853.0 3079.1
-          -1853.0 1746.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -5365.1 1576.0
-          5365.1 1576.0
-          5409.0 1619.9
-          5409.0 1682.1
-          5365.1 1726.0
-          -5365.1 1726.0
-          -5409.0 1682.1
-          -5409.0 1619.9
-        )
-      )
-      (outline
-        (polygon signal 0
-          -5365.1 -1853.0
-          5365.1 -1853.0
-          5409.0 -1809.1
-          5409.0 -1746.9
-          5365.1 -1703.0
-          -5365.1 -1703.0
-          -5409.0 -1746.9
-          -5409.0 -1809.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          -5365.1 -1853.0
-          -5302.9 -1853.0
-          -5259.0 -1809.1
-          -5259.0 3079.1
-          -5302.9 3123.0
-          -5365.1 3123.0
-          -5409.0 3079.1
-          -5409.0 -1809.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          5302.9 -1853.0
-          5365.1 -1853.0
-          5409.0 -1809.1
-          5409.0 3079.1
-          5365.1 3123.0
-          5302.9 3123.0
-          5259.0 3079.1
-          5259.0 -1809.1
-        )
-      )
-      (outline
-        (polygon signal 0
-          -5365.1 2973.0
-          5365.1 2973.0
-          5409.0 3016.9
-          5409.0 3079.1
-          5365.1 3123.0
-          -5365.1 3123.0
-          -5409.0 3079.1
-          -5409.0 3016.9
-        )
-      )
+    (image keyboard_parts:USB_miniB_molex675031020
+      (outline (path signal 200  3850 -2000  3850 7000))
+      (outline (path signal 200  -3850 -2000  3850 -2000))
+      (outline (path signal 200  -3850 7000  3850 7000))
+      (outline (path signal 200  -3850 7000  -3850 -2000))
+      (pin Rect[T]Pad_500x2250_um 1 -1600 6225)
+      (pin Rect[T]Pad_500x2250_um 2 -800 6225)
+      (pin Rect[T]Pad_500x2250_um 3 0 6225)
+      (pin Rect[T]Pad_500x2250_um 4 800 6225)
+      (pin Rect[T]Pad_500x2250_um 5 1600 6225)
+      (pin Rect[T]Pad_2050x3500_um 6 -4925 6250)
+      (pin Rect[T]Pad_2050x3500_um 7 4925 6250)
+      (pin Rect[T]Pad_2050x4000_um 8 -4925 2000)
+      (pin Rect[T]Pad_2050x4000_um 9 4925 2000)
+      (keepout "" (circle F.Cu 900 2200 3900))
+      (keepout "" (circle B.Cu 900 2200 3900))
+      (keepout "" (circle F.Cu 900 -2200 3900))
+      (keepout "" (circle B.Cu 900 -2200 3900))
     )
-    (padstack "Round[A]Pad_1200_um"
-      (shape
-        (circle F.Cu 1200.0 0.0 0.0)
-      )
-      (shape
-        (circle B.Cu 1200.0 0.0 0.0)
-      )
+    (image Resistors_SMD:R_0603
+      (outline (path signal 100  -800 -400  -800 400))
+      (outline (path signal 100  800 -400  -800 -400))
+      (outline (path signal 100  800 400  800 -400))
+      (outline (path signal 100  -800 400  800 400))
+      (outline (path signal 120  500 -680  -500 -680))
+      (outline (path signal 120  -500 680  500 680))
+      (outline (path signal 50  -1250 700  1250 700))
+      (outline (path signal 50  -1250 700  -1250 -700))
+      (outline (path signal 50  1250 -700  1250 700))
+      (outline (path signal 50  1250 -700  -1250 -700))
+      (pin Rect[T]Pad_500x900_um 1 -750 0)
+      (pin Rect[T]Pad_500x900_um 2 750 0)
+    )
+    (image ws2812:WS2812b
+      (outline (path signal 200  -2500 -2200  -2500 2500))
+      (outline (path signal 200  -2250 -2500  2500 -2500))
+      (outline (path signal 200  -2500 -2200  -2250 -2500))
+      (outline (path signal 200  2500 2500  2500 -2500))
+      (outline (path signal 200  -2499.36 2499.36  2499.36 2499.36))
+      (pin Rect[T]Pad_899.16x1501.14_um 1 1600.2 2499.36)
+      (pin Rect[T]Pad_899.16x1501.14_um 2 -1600.2 2499.36)
+      (pin Rect[T]Pad_899.16x1501.14_um 3 -1600.2 -2499.36)
+      (pin Rect[T]Pad_899.16x1501.14_um 4 1600.2 -2499.36)
+    )
+    (image keyboard_parts:SW_TACTILE_SMD
+      (outline (path signal 66.04  -2499.36 -2598.42  2598.42 -2598.42))
+      (outline (path signal 66.04  2598.42 -2598.42  2598.42 2598.42))
+      (outline (path signal 66.04  -2499.36 2598.42  2598.42 2598.42))
+      (outline (path signal 66.04  -2499.36 -2598.42  -2499.36 2598.42))
+      (outline (path signal 127  2598.42 1432.56  2598.42 -1468.12))
+      (outline (path signal 127  2598.42 -1468.12  1468.12 -2598.42))
+      (outline (path signal 127  1498.6 -2598.42  -1099.82 -2598.42))
+      (outline (path signal 127  -1099.82 -2598.42  -1457.96 -2598.42))
+      (outline (path signal 127  -1457.96 -2598.42  -2598.42 -1457.96))
+      (outline (path signal 127  -2598.42 -1457.96  -2598.42 1394.46))
+      (outline (path signal 127  -2598.42 1394.46  -1394.46 2598.42))
+      (outline (path signal 127  -1399.54 2598.42  1498.6 2598.42))
+      (outline (path signal 127  1432.56 2598.42  2598.42 1432.56))
+      (outline (path signal 127  -1399.54 2598.42  -2397.76 1597.66))
+      (outline (path signal 127  1498.6 2598.42  2397.76 1699.26))
+      (outline (path signal 127  1498.6 -2598.42  2397.76 -1699.26))
+      (outline (path signal 127  -1457.96 -2598.42  -1498.6 -2598.42))
+      (outline (path signal 127  -1498.6 -2598.42  -2397.76 -1699.26))
+      (pin Rect[T]Pad_998.22x698.5_um 1 -2999.74 1849.12)
+      (pin Rect[T]Pad_998.22x698.5_um 1@1 2999.74 1849.12)
+      (pin Rect[T]Pad_998.22x698.5_um 2 -2999.74 -1849.12)
+      (pin Rect[T]Pad_998.22x698.5_um 2@1 2999.74 -1849.12)
+    )
+    (image kicad_images:Woodkeys_small
+    )
+    (image Capacitors_SMD:C_0603::1
+      (outline (path signal 100  -800 -400  -800 400))
+      (outline (path signal 100  800 -400  -800 -400))
+      (outline (path signal 100  800 400  800 -400))
+      (outline (path signal 100  -800 400  800 400))
+      (outline (path signal 120  -350 600  350 600))
+      (outline (path signal 120  350 -600  -350 -600))
+      (outline (path signal 50  -1400 650  1400 650))
+      (outline (path signal 50  -1400 650  -1400 -650))
+      (outline (path signal 50  1400 -650  1400 650))
+      (outline (path signal 50  1400 -650  -1400 -650))
+      (pin Rect[T]Pad_800x750_um 1 -750 0)
+      (pin Rect[T]Pad_800x750_um 2 750 0)
+    )
+    (image "Housings_DFN_QFN:QFN-32-1EP_5x5mm_Pitch0.5mm"
+      (outline (path signal 150  2625 2625  2100 2625))
+      (outline (path signal 150  2625 -2625  2100 -2625))
+      (outline (path signal 150  -2625 -2625  -2100 -2625))
+      (outline (path signal 150  -2625 2625  -2100 2625))
+      (outline (path signal 150  2625 -2625  2625 -2100))
+      (outline (path signal 150  -2625 -2625  -2625 -2100))
+      (outline (path signal 150  2625 2625  2625 2100))
+      (outline (path signal 50  -3000 -3000  3000 -3000))
+      (outline (path signal 50  -3000 3000  3000 3000))
+      (outline (path signal 50  3000 3000  3000 -3000))
+      (outline (path signal 50  -3000 3000  -3000 -3000))
+      (outline (path signal 150  -2500 1500  -1500 2500))
+      (outline (path signal 150  -2500 -2500  -2500 1500))
+      (outline (path signal 150  2500 -2500  -2500 -2500))
+      (outline (path signal 150  2500 2500  2500 -2500))
+      (outline (path signal 150  -1500 2500  2500 2500))
+      (pin Rect[T]Pad_1725x1725_um 33 -862.5 862.5)
+      (pin Rect[T]Pad_1725x1725_um 33@1 -862.5 -862.5)
+      (pin Rect[T]Pad_1725x1725_um 33@2 862.5 862.5)
+      (pin Rect[T]Pad_1725x1725_um 33@3 862.5 -862.5)
+      (pin Rect[T]Pad_700x250_um (rotate 90) 32 -1750 2400)
+      (pin Rect[T]Pad_700x250_um (rotate 90) 31 -1250 2400)
+      (pin Rect[T]Pad_700x250_um (rotate 90) 30 -750 2400)
+      (pin Rect[T]Pad_700x250_um (rotate 90) 29 -250 2400)
+      (pin Rect[T]Pad_700x250_um (rotate 90) 28 250 2400)
+      (pin Rect[T]Pad_700x250_um (rotate 90) 27 750 2400)
+      (pin Rect[T]Pad_700x250_um (rotate 90) 26 1250 2400)
+      (pin Rect[T]Pad_700x250_um (rotate 90) 25 1750 2400)
+      (pin Rect[T]Pad_700x250_um 24 2400 1750)
+      (pin Rect[T]Pad_700x250_um 23 2400 1250)
+      (pin Rect[T]Pad_700x250_um 22 2400 750)
+      (pin Rect[T]Pad_700x250_um 21 2400 250)
+      (pin Rect[T]Pad_700x250_um 20 2400 -250)
+      (pin Rect[T]Pad_700x250_um 19 2400 -750)
+      (pin Rect[T]Pad_700x250_um 18 2400 -1250)
+      (pin Rect[T]Pad_700x250_um 17 2400 -1750)
+      (pin Rect[T]Pad_700x250_um (rotate 90) 16 1750 -2400)
+      (pin Rect[T]Pad_700x250_um (rotate 90) 15 1250 -2400)
+      (pin Rect[T]Pad_700x250_um (rotate 90) 14 750 -2400)
+      (pin Rect[T]Pad_700x250_um (rotate 90) 13 250 -2400)
+      (pin Rect[T]Pad_700x250_um (rotate 90) 12 -250 -2400)
+      (pin Rect[T]Pad_700x250_um (rotate 90) 11 -750 -2400)
+      (pin Rect[T]Pad_700x250_um (rotate 90) 10 -1250 -2400)
+      (pin Rect[T]Pad_700x250_um (rotate 90) 9 -1750 -2400)
+      (pin Rect[T]Pad_700x250_um 8 -2400 -1750)
+      (pin Rect[T]Pad_700x250_um 7 -2400 -1250)
+      (pin Rect[T]Pad_700x250_um 6 -2400 -750)
+      (pin Rect[T]Pad_700x250_um 5 -2400 -250)
+      (pin Rect[T]Pad_700x250_um 4 -2400 250)
+      (pin Rect[T]Pad_700x250_um 3 -2400 750)
+      (pin Rect[T]Pad_700x250_um 2 -2400 1250)
+      (pin Rect[T]Pad_700x250_um 1 -2400 1750)
+    )
+    (padstack Oval[A]Pad_1700x1700_um
+      (shape (path F.Cu 1700  0 0  0 0))
+      (shape (path B.Cu 1700  0 0  0 0))
       (attach off)
     )
-    (padstack "Round[A]Pad_2400_um"
-      (shape
-        (circle F.Cu 2400.0 0.0 0.0)
-      )
-      (shape
-        (circle B.Cu 2400.0 0.0 0.0)
-      )
+    (padstack Oval[A]Pad_7000x3000_um
+      (shape (path F.Cu 3000  -2000 0  2000 0))
+      (shape (path B.Cu 3000  -2000 0  2000 0))
       (attach off)
     )
-    (padstack "Oval[A]Pad_1600x1600_um"
-      (shape
-        (polygon F.Cu 0
-          -331.4 -800.0
-          331.4 -800.0
-          800.0 -331.4
-          800.0 331.4
-          331.4 800.0
-          -331.4 800.0
-          -800.0 331.4
-          -800.0 -331.4
-        )
-      )
-      (shape
-        (polygon B.Cu 0
-          -331.4 -800.0
-          331.4 -800.0
-          800.0 -331.4
-          800.0 331.4
-          331.4 800.0
-          -331.4 800.0
-          -800.0 331.4
-          -800.0 -331.4
-        )
-      )
+    (padstack Oval[A]Pad_8000x4000_um
+      (shape (path F.Cu 4000  -2000 0  2000 0))
+      (shape (path B.Cu 4000  -2000 0  2000 0))
       (attach off)
     )
-    (padstack "Oval[A]Pad_1727.2x1727.2_um"
-      (shape
-        (polygon F.Cu 0
-          -357.7 -863.6
-          357.7 -863.6
-          863.6 -357.7
-          863.6 357.7
-          357.7 863.6
-          -357.7 863.6
-          -863.6 357.7
-          -863.6 -357.7
-        )
-      )
-      (shape
-        (polygon B.Cu 0
-          -357.7 -863.6
-          357.7 -863.6
-          863.6 -357.7
-          863.6 357.7
-          357.7 863.6
-          -357.7 863.6
-          -863.6 357.7
-          -863.6 -357.7
-        )
-      )
+    (padstack Rect[T]Pad_2050x3500_um
+      (shape (rect F.Cu -1025 -1750 1025 1750))
       (attach off)
     )
-    (padstack "Oval[A]Pad_1998.98x1998.98_um"
-      (shape
-        (polygon F.Cu 0
-          -414.0 -999.5
-          414.0 -999.5
-          999.5 -414.0
-          999.5 414.0
-          414.0 999.5
-          -414.0 999.5
-          -999.5 414.0
-          -999.5 -414.0
-        )
-      )
-      (shape
-        (polygon B.Cu 0
-          -414.0 -999.5
-          414.0 -999.5
-          999.5 -414.0
-          999.5 414.0
-          414.0 999.5
-          -414.0 999.5
-          -999.5 414.0
-          -999.5 -414.0
-        )
-      )
+    (padstack Rect[T]Pad_2050x4000_um
+      (shape (rect F.Cu -1025 -2000 1025 2000))
       (attach off)
     )
-    (padstack "Oval[A]Pad_2032x2540_um"
-      (shape
-        (polygon F.Cu 0
-          -420.8 -1270.0
-          420.8 -1270.0
-          1016.0 -674.8
-          1016.0 674.8
-          420.8 1270.0
-          -420.8 1270.0
-          -1016.0 674.8
-          -1016.0 -674.8
-        )
-      )
-      (shape
-        (polygon B.Cu 0
-          -420.8 -1270.0
-          420.8 -1270.0
-          1016.0 -674.8
-          1016.0 674.8
-          420.8 1270.0
-          -420.8 1270.0
-          -1016.0 674.8
-          -1016.0 -674.8
-        )
-      )
+    (padstack Rect[T]Pad_500x2250_um
+      (shape (rect F.Cu -250 -1125 250 1125))
       (attach off)
     )
-    (padstack "Oval[A]Pad_2400x2400_um"
-      (shape
-        (polygon F.Cu 0
-          -497.1 -1200.0
-          497.1 -1200.0
-          1200.0 -497.1
-          1200.0 497.1
-          497.1 1200.0
-          -497.1 1200.0
-          -1200.0 497.1
-          -1200.0 -497.1
-        )
-      )
-      (shape
-        (polygon B.Cu 0
-          -497.1 -1200.0
-          497.1 -1200.0
-          1200.0 -497.1
-          1200.0 497.1
-          497.1 1200.0
-          -497.1 1200.0
-          -1200.0 497.1
-          -1200.0 -497.1
-        )
-      )
+    (padstack Rect[T]Pad_500x900_um
+      (shape (rect F.Cu -250 -450 250 450))
       (attach off)
     )
-    (padstack "Rect[B]Pad_2500x2500_um"
-      (shape
-        (rect B.Cu -1250.0 -1250.0 1250.0 1250.0)
-      )
+    (padstack Rect[T]Pad_698.5x1699.26_um
+      (shape (rect F.Cu -349.25 -849.63 349.25 849.63))
       (attach off)
     )
-    (padstack "Rect[A]Pad_1200x1200_um"
-      (shape
-        (rect F.Cu -600.0 -600.0 600.0 600.0)
-      )
-      (shape
-        (rect B.Cu -600.0 -600.0 600.0 600.0)
-      )
+    (padstack Rect[T]Pad_700x250_um
+      (shape (rect F.Cu -350 -125 350 125))
       (attach off)
     )
-    (padstack "Rect[A]Pad_1600x1600_um"
-      (shape
-        (rect F.Cu -800.0 -800.0 800.0 800.0)
-      )
-      (shape
-        (rect B.Cu -800.0 -800.0 800.0 800.0)
-      )
+    (padstack Rect[T]Pad_800x750_um
+      (shape (rect F.Cu -400 -375 400 375))
       (attach off)
     )
-    (padstack "Rect[A]Pad_1998.98x1998.98_um"
-      (shape
-        (rect F.Cu -999.5 -999.5 999.5 999.5)
-      )
-      (shape
-        (rect B.Cu -999.5 -999.5 999.5 999.5)
-      )
+    (padstack Rect[T]Pad_899.16x1501.14_um
+      (shape (rect F.Cu -449.58 -750.57 449.58 750.57))
+      (attach off)
+    )
+    (padstack Rect[T]Pad_900x1200_um
+      (shape (rect F.Cu -450 -600 450 600))
+      (attach off)
+    )
+    (padstack Rect[T]Pad_998.22x698.5_um
+      (shape (rect F.Cu -499.11 -349.25 499.11 349.25))
+      (attach off)
+    )
+    (padstack Rect[A]Pad_1700x1700_um
+      (shape (rect F.Cu -850 -850 850 850))
+      (shape (rect B.Cu -850 -850 850 850))
+      (attach off)
+    )
+    (padstack Rect[T]Pad_1725x1725_um
+      (shape (rect F.Cu -862.5 -862.5 862.5 862.5))
       (attach off)
     )
     (padstack "Via[0-1]_600:400_um"
-      (shape
-        (circle F.Cu 600.0 0.0 0.0)
-      )
-      (shape
-        (circle B.Cu 600.0 0.0 0.0)
-      )
+      (shape (circle F.Cu 600))
+      (shape (circle B.Cu 600))
+      (attach off)
+    )
+    (padstack "Via[0-1]_254:101.6_um"
+      (shape (circle F.Cu 254))
+      (shape (circle B.Cu 254))
+      (attach off)
+    )
+    (padstack "Via[0-1]_400:200_um"
+      (shape (circle F.Cu 400))
+      (shape (circle B.Cu 400))
       (attach off)
     )
   )
   (network
-    (net "Net-(ARD1-PadRST2)" 1
-      (pins
-        ARD1-RST2
+    (net GND
+      (pins P2-4 C6-2 C4-2 C1-1 C3-2 C2-2 P1-6 P3-16 Y1-2 J1-5 C5-2 C7-2 RGB1-3 RGB2-3
+        RGB3-3 RST1-2 RST1-2@1 C8-2 C9-2 RGB4-3 RGB5-3 IC1-28 IC1-3)
+    )
+    (net VCC
+      (pins P2-1 C6-1 C4-1 C1-2 C2-1 P1-2 P3-1 J1-1 R3-1 C5-1 C7-1 RGB1-1 RGB2-1 RGB3-1
+        C8-1 C9-1 RGB4-1 RGB5-1 IC1-32 IC1-31 IC1-4)
+    )
+    (net "Net-(C3-Pad1)"
+      (pins C3-1 IC1-27)
+    )
+    (net "Net-(D1-Pad2)"
+      (pins SW1-1 D1-2)
+    )
+    (net /PC2
+      (pins P3-9 IC1-5)
+    )
+    (net /PD0
+      (pins P3-2 IC1-6)
+    )
+    (net /PD1
+      (pins P3-4 IC1-7)
+    )
+    (net /PD2
+      (pins P3-6 IC1-8)
+    )
+    (net /PD4
+      (pins P3-8 IC1-10)
+    )
+    (net /PD5
+      (pins P3-10 IC1-11)
+    )
+    (net /PD6
+      (pins P3-12 IC1-12)
+    )
+    (net /PD7
+      (pins P3-14 IC1-13)
+    )
+    (net /PB5
+      (pins P3-3 IC1-19)
+    )
+    (net /PC7
+      (pins P3-15 IC1-22)
+    )
+    (net /~RES~
+      (pins P1-5 R3-2 RST1-1 RST1-1@1 IC1-24)
+    )
+    (net /PC5
+      (pins P3-13 IC1-25)
+    )
+    (net /PC4
+      (pins P3-11 IC1-26)
+    )
+    (net "Net-(J1-Pad2)"
+      (pins J1-2 R1-2)
+    )
+    (net "Net-(J1-Pad3)"
+      (pins J1-3 R2-2)
+    )
+    (net /COL
+      (pins D1-1 IC1-18)
+    )
+    (net /DIN
+      (pins RGB1-4 IC1-9)
+    )
+    (net /ROW
+      (pins SW1-2 IC1-14)
+    )
+    (net /SCK
+      (pins P1-3 IC1-15)
+    )
+    (net /MOSI
+      (pins P1-4 IC1-16)
+    )
+    (net /MISO
+      (pins P1-1 IC1-17)
+    )
+    (net /DOUT
+      (pins P2-2 RGB5-2)
+    )
+    (net "Net-(RGB1-Pad2)"
+      (pins RGB1-2 RGB2-4)
+    )
+    (net "Net-(RGB2-Pad2)"
+      (pins RGB2-2 RGB3-4)
+    )
+    (net /PC6
+      (pins P2-3 IC1-23)
+    )
+    (net /PB6
+      (pins P3-5 IC1-20)
+    )
+    (net /PB7
+      (pins P3-7 IC1-21)
+    )
+    (net "Net-(RGB3-Pad2)"
+      (pins RGB3-2 RGB4-4)
+    )
+    (net "Net-(RGB4-Pad2)"
+      (pins RGB4-2 RGB5-4)
+    )
+    (net "Net-(IC1-Pad2)"
+      (pins Y1-3 IC1-2)
+    )
+    (net "Net-(IC1-Pad1)"
+      (pins Y1-1 IC1-1)
+    )
+    (net /USB_Dneg
+      (pins R1-1 IC1-30)
+    )
+    (net /USB_Dplus
+      (pins R2-1 IC1-29)
+    )
+    (class kicad_default "" /COL /DIN /DOUT /MISO /MOSI /PB5 /PB6 /PB7 /PC2
+      /PC4 /PC5 /PC6 /PC7 /PD0 /PD1 /PD2 /PD4 /PD5 /PD6 /PD7 /ROW /SCK /USB_Dneg
+      /USB_Dplus /~RES~ GND "Net-(C3-Pad1)" "Net-(D1-Pad2)" "Net-(IC1-Pad1)"
+      "Net-(IC1-Pad2)" "Net-(IC1-Pad29)" "Net-(IC1-Pad30)" "Net-(J1-Pad2)"
+      "Net-(J1-Pad3)" "Net-(J1-Pad4)" "Net-(J1-Pad6)" "Net-(RGB1-Pad2)" "Net-(RGB2-Pad2)"
+      "Net-(RGB3-Pad2)" "Net-(RGB4-Pad2)" VCC
+      (circuit
+        (use_via Via[0-1]_600:400_um)
       )
-    )
-    (net "Net-(ARD1-PadGND4)" 1
-      (pins
-        ARD1-GND4
-      )
-    )
-    (net "Net-(ARD1-PadMOSI)" 1
-      (pins
-        ARD1-MOSI
-      )
-    )
-    (net "Net-(ARD1-PadSCK)" 1
-      (pins
-        ARD1-SCK
-      )
-    )
-    (net "Net-(ARD1-Pad5V2)" 1
-      (pins
-        ARD1-5V2
-      )
-    )
-    (net "Net-(ARD1-PadA0)" 1
-      (pins
-        J6-2
-        ARD1-A0
-      )
-    )
-    (net "Net-(ARD1-PadVIN)" 1
-      (pins
-        ARD1-VIN
-      )
-    )
-    (net "Net-(ARD1-PadGND3)" 1
-      (pins
-        ARD1-GND3
-      )
-    )
-    (net "Net-(ARD1-PadGND2)" 1
-      (pins
-        ARD1-GND2
-      )
-    )
-    (net "Net-(ARD1-Pad5V1)" 1
-      (pins
-        J5-6
-        J5-2
-        J5-4
-        J3-6
-        J3-2
-        J3-4
-        J1-6
-        J1-2
-        J1-4
-        ARD1-5V1
-      )
-    )
-    (net "Net-(ARD1-Pad3.3V)" 1
-      (pins
-        ARD1-3.3V
-      )
-    )
-    (net "Net-(ARD1-PadRST1)" 1
-      (pins
-        ARD1-RST1
-      )
-    )
-    (net "Net-(ARD1-PadIORF)" 1
-      (pins
-        ARD1-IORF
-      )
-    )
-    (net "Net-(ARD1-PadD0)" 1
-      (pins
-        ARD1-D0
-      )
-    )
-    (net "Net-(ARD1-PadD1)" 1
-      (pins
-        ARD1-D1
-      )
-    )
-    (net "Net-(ARD1-PadD2)" 1
-      (pins
-        J1-1
-        ARD1-D2
-      )
-    )
-    (net "Net-(ARD1-PadD3)" 1
-      (pins
-        J3-1
-        ARD1-D3
-      )
-    )
-    (net "Net-(ARD1-PadD4)" 1
-      (pins
-        J5-1
-        ARD1-D4
-      )
-    )
-    (net "Net-(ARD1-PadD5)" 1
-      (pins
-        J1-3
-        ARD1-D5
-      )
-    )
-    (net "Net-(ARD1-PadD6)" 1
-      (pins
-        J3-3
-        ARD1-D6
-      )
-    )
-    (net "Net-(ARD1-PadD7)" 1
-      (pins
-        J5-3
-        ARD1-D7
-      )
-    )
-    (net "Net-(ARD1-PadGND1)" 1
-      (pins
-        U1-2
-        J6-1
-        J4-3
-        J4-1
-        J2-3
-        J2-1
-        ARD1-GND1
-      )
-    )
-    (net "Net-(ARD1-PadD8)" 1
-      (pins
-        J5-5
-        J3-5
-        J1-5
-        ARD1-D8
-      )
-    )
-    (net "Net-(ARD1-PadD9)" 1
-      (pins
-        J2-2
-        ARD1-D9
-      )
-    )
-    (net "Net-(ARD1-PadD10)" 1
-      (pins
-        J2-4
-        ARD1-D10
-      )
-    )
-    (net "Net-(ARD1-PadSCL)" 1
-      (pins
-        ARD1-SCL
-      )
-    )
-    (net "Net-(ARD1-PadSDA)" 1
-      (pins
-        ARD1-SDA
-      )
-    )
-    (net "Net-(ARD1-PadAREF)" 1
-      (pins
-        ARD1-AREF
-      )
-    )
-    (net "Net-(ARD1-PadD13)" 1
-      (pins
-        R1-2
-        ARD1-D13
-      )
-    )
-    (net "Net-(ARD1-PadD12)" 1
-      (pins
-        J4-2
-        ARD1-D12
-      )
-    )
-    (net "Net-(ARD1-PadD11)" 1
-      (pins
-        ARD1-D11
-      )
-    )
-    (net "Net-(ARD1-PadA1)" 1
-      (pins
-        J6-3
-        ARD1-A1
-      )
-    )
-    (net "Net-(ARD1-PadA2)" 1
-      (pins
-        J6-4
-        ARD1-A2
-      )
-    )
-    (net "Net-(ARD1-PadA3)" 1
-      (pins
-        ARD1-A3
-      )
-    )
-    (net "Net-(ARD1-PadA4)" 1
-      (pins
-        ARD1-A4
-      )
-    )
-    (net "Net-(ARD1-PadA5)" 1
-      (pins
-        J4-4
-        ARD1-A5
-      )
-    )
-    (net "Net-(ARD1-PadMISO)" 1
-      (pins
-        ARD1-MISO
-      )
-    )
-    (net "Net-(C1-Pad1)" 1
-      (pins
-        U1-5
-        RV1-2
-        J8-1
-        C1-1
-      )
-    )
-    (net "Net-(C1-Pad2)" 1
-      (pins
-        U2-2
-        U1-4
-        RV1-3
-        J8-2
-        J7-2
-        C1-2
-      )
-    )
-    (net "Net-(J7-Pad1)" 1
-      (pins
-        U2-1
-        J7-1
-      )
-    )
-    (net "Net-(R1-Pad1)" 1
-      (pins
-        U1-1
-        R1-1
-      )
-    )
-    (net "Net-(RV1-Pad1)" 1
-      (pins
-        U2-3
-        RV1-1
-      )
-    )
-    (net "Net-(U1-Pad3)" 1
-      (pins
-        U1-3
-      )
-    )
-    (net "Net-(U1-Pad6)" 1
-      (pins
-        U1-6
-      )
-    )
-    (via 
-      "Via[0-1]_600:400_um" "Via[0-1]_600:400_um" default
-    )
-    (via 
-      "Via[0-1]_600:400_um-kicad_default" "Via[0-1]_600:400_um" "kicad_default"
-    )
-    (via_rule
-      default "Via[0-1]_600:400_um"
-    )
-    (via_rule
-      "kicad_default" "Via[0-1]_600:400_um-kicad_default"
-    )
-    (class default
-      (clearance_class default)
-      (via_rule default)
       (rule
-        (width 250.0)
-      )
-      (circuit 
-        (use_layer F.Cu B.Cu)
+        (width 250)
+        (clearance 200.1)
       )
     )
-    (class "kicad_default"
-      "Net-(ARD1-PadRST2)" "Net-(ARD1-PadGND4)" "Net-(ARD1-PadMOSI)" "Net-(ARD1-PadSCK)" "Net-(ARD1-Pad5V2)" "Net-(ARD1-PadA0)" "Net-(ARD1-PadVIN)" "Net-(ARD1-PadGND3)"
-      "Net-(ARD1-PadGND2)" "Net-(ARD1-Pad5V1)" "Net-(ARD1-Pad3.3V)" "Net-(ARD1-PadRST1)" "Net-(ARD1-PadIORF)" "Net-(ARD1-PadD0)" "Net-(ARD1-PadD1)" "Net-(ARD1-PadD2)"
-      "Net-(ARD1-PadD3)" "Net-(ARD1-PadD4)" "Net-(ARD1-PadD5)" "Net-(ARD1-PadD6)" "Net-(ARD1-PadD7)" "Net-(ARD1-PadGND1)" "Net-(ARD1-PadD8)" "Net-(ARD1-PadD9)"
-      "Net-(ARD1-PadD10)" "Net-(ARD1-PadSCL)" "Net-(ARD1-PadSDA)" "Net-(ARD1-PadAREF)" "Net-(ARD1-PadD13)" "Net-(ARD1-PadD12)" "Net-(ARD1-PadD11)" "Net-(ARD1-PadA1)"
-      "Net-(ARD1-PadA2)" "Net-(ARD1-PadA3)" "Net-(ARD1-PadA4)" "Net-(ARD1-PadA5)" "Net-(ARD1-PadMISO)" "Net-(C1-Pad1)" "Net-(C1-Pad2)" "Net-(J7-Pad1)"
-      "Net-(R1-Pad1)" "Net-(RV1-Pad1)" "Net-(U1-Pad3)" "Net-(U1-Pad6)"
-      (clearance_class "kicad_default")
-      (via_rule kicad_default)
-      (rule
-        (width 250.0)
+    (class Micro
+      (circuit
+        (use_via Via[0-1]_254:101.6_um)
       )
-      (circuit 
-        (use_layer F.Cu B.Cu)
+      (rule
+        (width 127)
+        (clearance 127.1)
+      )
+    )
+    (class Mid /USB_DN /USB_DP
+      (circuit
+        (use_via Via[0-1]_400:200_um)
+      )
+      (rule
+        (width 150)
+        (clearance 150.1)
+      )
+    )
+    (class Power
+      (circuit
+        (use_via Via[0-1]_600:400_um)
+      )
+      (rule
+        (width 350)
+        (clearance 200.1)
       )
     )
   )
