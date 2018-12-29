@@ -217,15 +217,6 @@ point_3d pcb::node_to_pad_point(const node &n)
 node pcb::pad_point_to_node(const point_3d &p)
 {
 	auto n = point_to_node(p);
-	// auto itr = m_deform.find(n);
-	// if (itr != end(m_deform))
-	// {
-	// 	auto p2 = itr->second;
-	// 	std::cerr << "n(" << n.m_x << " " << n.m_y << " " << n.m_z << ")\n";
-	// 	std::cerr << "p1(" << p2.m_x << " " << p2.m_y << " " << p2.m_z << ")\n"; 
-	// 	std::cerr << "p2(" << p.m_x << " " << p.m_y << " " << p.m_z << ")\n"; 
-	// 	exit(1);
-	// }
 	m_deform[n] = p;
 	return n;
 }
@@ -310,10 +301,10 @@ nodes &pcb::all_nearer_sorted(const nodess &vec, const node &n)
 nodes &pcb::all_not_shorting(const nodes &gather, const node &n, double radius, double gap)
 {
 	static auto yield = nodes{}; yield.clear();
-	auto np = node_to_point(n);
+	auto np = node_to_pad_point(n);
 	for (auto &new_node : gather)
 	{
-		auto nnp = node_to_point(new_node);
+		auto nnp = node_to_pad_point(new_node);
 		if (!m_layers.hit_line(np, nnp, radius, gap)) yield.emplace_back(new_node);
 	}
 	return yield;
@@ -323,11 +314,11 @@ nodes &pcb::all_not_shorting(const nodes &gather, const node &n, double radius, 
 nodes &pcb::all_not_shorting_via(const nodes &gather, const node &n, double radius, double gap)
 {
 	static auto yield = nodes{}; yield.clear();
-	auto np = node_to_point(n);
+	auto np = node_to_pad_point(n);
 	np.m_z = m_depth - 1;
 	for (auto &new_node : gather)
 	{
-		auto nnp = node_to_point(new_node);
+		auto nnp = node_to_pad_point(new_node);
 		nnp.m_z = 0.0;
 		if (m_via_layers.hit_line(np, nnp, radius, gap)) continue;
 		if (m_layers.hit_line(np, nnp, radius, gap)) continue;
@@ -503,9 +494,13 @@ net::net(const track &t, pcb *pcb)
 		{
 			for (auto z = z1; z <= z2; ++z)
 			{
+				auto pc = point_3d{x, y, z};
 				auto p1 = point_3d{x + shape[0].m_x, y + shape[0].m_y, z};
 				for (auto i = 1; i < (int)shape.size(); ++i)
 				{
+					//add pad entries to via only spacial cache
+					m_pcb->m_via_layers.add_line(layers::line{pc, p1, r, g});
+
 					auto p0 = p1;
 					p1 = point_3d{x + shape[i].m_x, y + shape[i].m_y, z};
 					m_pad_collision_lines.emplace_back(layers::line{p0, p1, r, g});
@@ -553,7 +548,7 @@ net::net(const track &t, pcb *pcb)
 					auto pn = add_2d(p, scale_2d(norm, i));
 					m_wire_nodes.insert(m_pcb->pad_point_to_node(point_3d(pn.m_x, pn.m_y, p0.m_z)));
 				}
-				m_wire_nodes.insert(m_pcb->point_to_node(p1));
+				m_wire_nodes.insert(m_pcb->pad_point_to_node(p1));
 			}
 		}
 	}
@@ -606,11 +601,11 @@ std::vector<layers::line> net::paths_collision_lines() const
 	paths_lines.reserve(max_lines);
 	for (auto const &path : m_paths)
 	{
-		auto p1 = m_pcb->node_to_point(path[0]);
+		auto p1 = m_pcb->node_to_pad_point(path[0]);
 		for (auto i = 1; i < static_cast<int>(path.size()); ++i)
 		{
 			auto p0 = p1;
-			p1 = m_pcb->node_to_point(path[i]);
+			p1 = m_pcb->node_to_pad_point(path[i]);
 			if (p0.m_z != p1.m_z) paths_lines.emplace_back(layers::line{
 				point_3d(p0.m_x, p0.m_y, 0),
 				point_3d(p0.m_x, p0.m_y, double(m_pcb->m_depth - 1)),
@@ -654,11 +649,11 @@ nodess net::optimise_paths(const nodess &paths)
 	{
 		auto opt_path = nodes{};
 		auto d0 = point_3d{0.0, 0.0, 0.0};
-		auto p1 = m_pcb->node_to_point(path[0]);
+		auto p1 = m_pcb->node_to_pad_point(path[0]);
 		for (auto i = 1; i < (int)path.size(); ++i)
 		{
 			auto p0 = p1;
-			p1 = m_pcb->node_to_point(path[i]);
+			p1 = m_pcb->node_to_pad_point(path[i]);
 			auto d1 = norm_3d(sub_3d(p1, p0));
 			if (d0 != d1)
 			{
@@ -774,17 +769,11 @@ void net::print_net()
 	{
 		auto &&path = m_paths[i];
 		std::cout << "(";
-		// auto np = m_pcb->node_to_point(path.front());
-		// auto sp = m_pcb->node_to_pad_point(path.front());
-		// if (np != sp) std::cout << "(" << sp.m_x*scale << " " << sp.m_y*scale << " " << sp.m_z << ")";
 		for (auto &&node : path)
 		{
-			auto np = m_pcb->node_to_point(node);
+			auto np = m_pcb->node_to_pad_point(node);
 			std::cout << "(" << np.m_x*scale << " " << np.m_y*scale << " " << np.m_z << ")";
 		}
-		// np = m_pcb->node_to_point(path.back());
-		// sp = m_pcb->node_to_pad_point(path.back());
-		// if (np != sp) std::cout << "(" << sp.m_x*scale << " " << sp.m_y*scale << " " << sp.m_z << ")";
 		std::cout << ")";
 	}
 	std::cout << "))\n";
