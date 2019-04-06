@@ -164,7 +164,6 @@ void pcb::print_stats()
 {
 	auto vias_set = std::set<node>{};
 	auto num_pads = 0;
-	auto num_nets = m_netlist.size();
 	for (auto &net : m_netlist)
 	{
 		num_pads += net.m_pads.size();
@@ -191,7 +190,7 @@ void pcb::print_stats()
 		for (auto &term : net.m_pads) vias_set.erase(point_to_node({term.m_pos.m_x, term.m_pos.m_y, 0}));
 	}
 	std::cerr << "Number of Pads: " << num_pads << '\n';
-	std::cerr << "Number of Nets: " << num_nets << '\n';
+	std::cerr << "Number of Nets: " << m_netlist.size() << '\n';
 	std::cerr << "Number of Vias: " << vias_set.size() << std::endl;
 }
 
