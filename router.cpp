@@ -167,6 +167,7 @@ void pcb::print_stats()
 	auto num_nets = m_netlist.size();
 	for (auto &net : m_netlist)
 	{
+		num_pads += net.m_pads.size();
 		for (auto &path : net.m_paths)
 		{
 			auto p1 = path[0];
@@ -177,16 +178,17 @@ void pcb::print_stats()
 				if (p0.m_z != p1.m_z) vias_set.insert(node{p0.m_x, p0.m_y, 0});
 			}
 		}
-	}
-	for (auto &net : m_netlist)
-	{
-		num_pads += net.m_pads.size();
-		for (auto &term : net.m_pads)
+		for (auto &wire : net.m_wires)
 		{
-			auto n = point_to_node(term.m_pos);
-			n.m_z = 0;
-			vias_set.erase(n);
+			auto p1 = wire[0];
+			for (auto itr = begin(wire) + 1; itr != end(wire); ++itr)
+			{
+				auto p0 = p1;
+				p1 = *itr;
+				if (p0.m_z != p1.m_z) vias_set.insert(point_to_node({p0.m_x, p0.m_y, 0}));
+			}
 		}
+		for (auto &term : net.m_pads) vias_set.erase(point_to_node({term.m_pos.m_x, term.m_pos.m_y, 0}));
 	}
 	std::cerr << "Number of Pads: " << num_pads << '\n';
 	std::cerr << "Number of Nets: " << num_nets << '\n';
@@ -448,27 +450,26 @@ net::net(const track &t, pcb *pcb)
 	, m_pads(t.m_pads)
 	, m_wires(t.m_paths)
 {
-	//scale pads for resolution of grid
+	//scale pads and wires for resolution of grid
+	auto res = m_pcb->m_resolution;
 	for (auto &t : m_pads)
 	{
-		t.m_radius *= m_pcb->m_resolution;
-		t.m_gap *= m_pcb->m_resolution;
-		t.m_pos.m_x *= m_pcb->m_resolution;
-		t.m_pos.m_y *= m_pcb->m_resolution;
+		t.m_radius *= res;
+		t.m_gap *= res;
+		t.m_pos.m_x *= res;
+		t.m_pos.m_y *= res;
 		for (auto &p : t.m_shape)
 		{
-			p.m_x *= m_pcb->m_resolution;
-			p.m_y *= m_pcb->m_resolution;
+			p.m_x *= res;
+			p.m_y *= res;
 		}
 	}
-
-	//scale wires for resolution of grid
 	for (auto &p : m_wires)
 	{
 		for (auto &t : p)
 		{
-			t.m_x *= m_pcb->m_resolution;
-			t.m_y *= m_pcb->m_resolution;
+			t.m_x *= res;
+			t.m_y *= res;
 		}
 	}
 
