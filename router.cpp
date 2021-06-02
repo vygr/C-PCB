@@ -748,6 +748,7 @@ bool net::route()
 //output net, pads, wires and paths, for viewer app
 void net::print_net()
 {
+	std::cout << std::fixed;
 	auto scale = 1.0 / m_pcb->m_resolution;
 	std::cout << "(" << m_id << " " << m_radius*scale << " "
 					<< m_via*scale << " " << m_gap*scale << " (";
