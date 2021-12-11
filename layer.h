@@ -62,12 +62,13 @@ public:
 			, m_line(l)
 		{
 			auto pv = perp_2d(sub_2d(l.m_p2, l.m_p1));
-			m_lv_norm = scale_2d(pv, 1.0 / length_2d(pv));
+			auto len = length_2d(pv);
+			m_lv_norm = scale_2d(pv, 1.0 / len);
 			m_lv_dist = dot_2d(m_lv_norm, l.m_p1);
 
-			// m_pv_norm = perp_2d(m_lv_norm);
-			// m_pv_dist1 = dot_2d(m_pv_norm, l.m_p1);
-			// m_pv_dist2 = m_pv_dist1 - len;
+			m_pv_norm = perp_2d(m_lv_norm);
+			m_pv_dist1 = dot_2d(m_pv_norm, l.m_p1);
+			m_pv_dist2 = m_pv_dist1 - len;
 		}
 		auto hit(const line &l, double d)
 		{
@@ -76,10 +77,10 @@ public:
 			if (dp1 > d && dp2 > d) return false;
 			if (dp1 < -d && dp2 < -d) return false;
 
-			// dp1 = dot_2d(m_pv_norm, l.m_p1);
-			// dp2 = dot_2d(m_pv_norm, l.m_p2);
-			// if (dp1 - m_pv_dist1 > d && dp2 - m_pv_dist1 > d) return false;
-			// if (dp1 - m_pv_dist2 < -d && dp2 - m_pv_dist2 < -d) return false;
+			dp1 = dot_2d(m_pv_norm, l.m_p1);
+			dp2 = dot_2d(m_pv_norm, l.m_p2);
+			if (dp1 - m_pv_dist1 > d && dp2 - m_pv_dist1 > d) return false;
+			if (dp1 - m_pv_dist2 < -d && dp2 - m_pv_dist2 < -d) return false;
 
 			return collide_thick_lines_2d(l.m_p1, l.m_p2, m_line.m_p1, m_line.m_p2, d);
 		}
@@ -88,9 +89,9 @@ public:
 		point_2d m_lv_norm;
 		double m_lv_dist;
 
-		// point_2d m_pv_norm;
-		// double m_pv_dist1;
-		// double m_pv_dist2;
+		point_2d m_pv_norm;
+		double m_pv_dist1;
+		double m_pv_dist2;
 	};
 
 	struct aabb
