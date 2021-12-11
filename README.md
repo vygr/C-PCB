@@ -23,7 +23,7 @@ Example command lines would be:
 
 ```
 ./c_pcb --v 1 netlist.pcb | ./c_pcb_view --o 1 --s 7
-./c_pcb_dsn test1.dsn | ./c_pcb --v 1 --z 8 --q 10 --r 2 | ./c_pcb_view
+./c_pcb_dsn test1.dsn | ./c_pcb --v 2 --z 1 --q 4 --r 1 | ./c_pcb_view --s 12
 ```
 
 You can drop the output to a file and view it as an animation with:

@@ -66,6 +66,13 @@ struct node
 		auto dz = m_z - n.m_z;
 		return int(sqrt(dx * dx + dy * dy + dz * dz));
 	}
+	int squared_euclidian_distance(const node &n) const
+	{
+		auto dx = m_x - n.m_x;
+		auto dy = m_y - n.m_y;
+		auto dz = m_z - n.m_z;
+		return int(dx * dx + dy * dy + dz * dz);
+	}
 	node mid(const node &n) const
 	{
 		return node{(m_x + n.m_x)/2, (m_y + n.m_y)/2, (m_z + n.m_z)/2};
@@ -106,14 +113,6 @@ struct track
 	paths m_paths;
 };
 typedef std::vector<track> tracks;
-
-//sortable node
-struct sort_node
-{
-	int m_mark;
-	node m_node;
-};
-typedef std::vector<sort_node> sort_nodes;
 
 typedef std::vector<net> nets;
 typedef double (*dfunc_t)(const point_3d &, const point_3d &);
@@ -185,9 +184,9 @@ public:
 	node point_to_node(const point_3d &p);
 	point_3d node_to_pad_point(const node &n);
 	node pad_point_to_node(const point_3d &p);
+	nodes &all_marked(const nodess &vec, const node &n);
 	nodes &all_not_shorting(const nodes &gather, const node &n, double radius, double gap);
 	nodes &all_not_shorting_via(const nodes &gather, const node &n, double radius, double gap);
-	nodes &all_nearer_sorted(const nodess &vec, const node &n);
 	void mark_distances(double radius, double via, double gap,
 		const node_set &starts, const nodes &ends, const node &mid, double mid_scale);
 	void unmark_distances();
@@ -204,7 +203,6 @@ public:
 
 private:
 	void set_node(const node &n, unsigned int value);
-	sort_nodes &all_marked(const nodess &vec, const node &n);
 	nodes &all_not_marked(const nodess &vec, const node &n);
 	void reset_areas();
 	void shuffle_netlist();

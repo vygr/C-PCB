@@ -104,21 +104,18 @@ bool pcb::route(double timeout)
 			}
 			else
 			{
+				m_netlist[index].shuffle_topology();
 				auto pos = hoist_net(index);
 				if ((pos == index) || (hoisted_nets.find(&m_netlist[pos]) != end(hoisted_nets)))
 				{
-					if (pos != 0)
-					{
-						m_netlist[pos].m_area = m_netlist[pos-1].m_area;
-						pos = hoist_net(pos);
-					}
+					m_netlist[index].m_area = m_netlist[index-1].m_area;
+					pos = hoist_net(index);
 					hoisted_nets.erase(&m_netlist[pos]);
 				}
 				else hoisted_nets.insert(&m_netlist[pos]);
 				while (index > pos)
 				{
 					m_netlist[index].remove();
-					m_netlist[index].shuffle_topology();
 					index--;
 				}
 			}
@@ -234,30 +231,6 @@ inline auto pcb::get_node(const node &n)
 	return m_nodes[(m_stride*n.m_z)+(n.m_y*m_width)+n.m_x];
 }
 
-//generate all grid points surrounding node, that are not value 0
-sort_nodes &pcb::all_marked(const nodess &vec, const node &n)
-{
-	static auto yield = sort_nodes{}; yield.clear();
-	auto x = n.m_x;
-	auto y = n.m_y;
-	auto z = n.m_z;
-	for (auto &v : vec[z%2])
-	{
-		auto nx = x + v.m_x;
-		auto ny = y + v.m_y;
-		auto nz = z + v.m_z;
-		if ((0 <= nx) && (nx < m_width)
-		 	&& (0 <= ny) && (ny < m_height)
-			&& (0 <= nz) && (nz < m_depth))
-		{
-			auto n = node{nx, ny, nz};
-			auto mark = get_node(n);
-			if (mark) yield.emplace_back(sort_node{mark, n});
-		}
-	}
-	return yield;
-}
-
 //generate all grid points surrounding node, that are value 0
 nodes &pcb::all_not_marked(const nodess &vec, const node &n)
 {
@@ -281,20 +254,28 @@ nodes &pcb::all_not_marked(const nodess &vec, const node &n)
 	return yield;
 }
 
-//generate all grid points surrounding node sorted
-nodes &pcb::all_nearer_sorted(const nodess &vec, const node &n)
+//generate all grid points surrounding node, that are not value 0, but less than node
+nodes &pcb::all_marked(const nodess &vec, const node &n)
 {
 	static auto yield = nodes{}; yield.clear();
-	auto distance = get_node(n);
-	auto &marked_nodes = all_marked(vec, n);
-	auto marked_nodes_end = std::remove_if(begin(marked_nodes), end(marked_nodes), [=] (auto &mn)
+	auto d = get_node(n);
+	auto x = n.m_x;
+	auto y = n.m_y;
+	auto z = n.m_z;
+	for (auto &v : vec[z%2])
 	{
-		if ((distance - mn.m_mark) <= 0) return true;
-		mn.m_mark = n.manhattan_distance(mn.m_node);
-		return false;
-	});
-	std::sort(begin(marked_nodes), marked_nodes_end, [&] (auto &s1, auto &s2) { return s1.m_mark < s2.m_mark; });
-	std::for_each(begin(marked_nodes), marked_nodes_end, [&] (auto &sn) { yield.emplace_back(sn.m_node); });
+		auto nx = x + v.m_x;
+		auto ny = y + v.m_y;
+		auto nz = z + v.m_z;
+		if ((0 <= nx) && (nx < m_width)
+		 	&& (0 <= ny) && (ny < m_height)
+			&& (0 <= nz) && (nz < m_depth))
+		{
+			auto n = node{nx, ny, nz};
+			auto dn = get_node(n);
+			if (dn > 0 && dn < d) yield.emplace_back(n);
+		}
+	}
 	return yield;
 }
 
@@ -682,10 +663,10 @@ std::pair<nodes, bool> net::backtrack_path(const node_set &visited, const node &
 		path.emplace_back(path_node);
 		nearer_nodes.clear();
 		for (auto &node : m_pcb->all_not_shorting(
-			m_pcb->all_nearer_sorted(m_pcb->m_routing_path_vectors, path_node),
+			m_pcb->all_marked(m_pcb->m_routing_path_vectors, path_node),
 			path_node, radius, gap)) nearer_nodes.emplace_back(node);
 		for (auto &node : m_pcb->all_not_shorting_via(
-			m_pcb->all_nearer_sorted(via_vectors, path_node),
+			m_pcb->all_marked(via_vectors, path_node),
 			path_node, via, gap)) nearer_nodes.emplace_back(node);
 		if (nearer_nodes.empty()) return std::pair<nodes, bool>(nodes{}, false);
 		auto search = std::find_if(cbegin(nearer_nodes), cend(nearer_nodes), [&] (auto &node)
@@ -698,7 +679,17 @@ std::pair<nodes, bool> net::backtrack_path(const node_set &visited, const node &
 			path.emplace_back(*search);
 			return std::pair<nodes, bool>(std::move(path), true);
 		}
-		path_node = nearer_nodes[0];
+		//sort nodes and take the first
+		std::sort(begin(nearer_nodes), end(nearer_nodes), [&] (auto &n1, auto &n2)
+			{ return m_pcb->get_node(n1) < m_pcb->get_node(n2); });
+		auto d = m_pcb->get_node(nearer_nodes[0]);
+		nearer_nodes.erase(std::remove_if(begin(nearer_nodes), end(nearer_nodes), [&] (auto &n)
+			{ return m_pcb->get_node(n) != d; }), end(nearer_nodes));
+		auto sort_nodes = std::vector<std::pair<int, node>>{};
+		for (auto &node : nearer_nodes) sort_nodes.emplace_back(node.squared_euclidian_distance(path_node), node);
+		std::sort(begin(sort_nodes), end(sort_nodes), [&] (auto &s1, auto &s2)
+			{ return s1.first < s2.first; });
+		path_node = sort_nodes[0].second;
 	}
 }
 
